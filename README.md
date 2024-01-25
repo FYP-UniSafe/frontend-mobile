@@ -1,16 +1,25 @@
-# unisafe
+# UniSafe
 
-A new Flutter project.
+UniSafe is a mobile and web application developed for the University of Dar es Salaam (UDSM) community...
 
-## Getting Started
+## Features
+- Comprehensive solution for addressing gender-based violence on campus
+- Counseling and support system
+- Collaboration with university authorities
+- Social community for students to share experiences
 
-This project is a starting point for a Flutter application.
+## Installation
+- Clone the repository
+- Run `flutter run` to launch the app
 
-A few resources to get you started if this is your first Flutter project:
+## Usage
+- ...
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Contributing
+Contributions are welcome. Please follow our guidelines...
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+## License
+This project is licensed under the [MIT License](LICENSE).
+
+## Contact
+For inquiries, contact [Reuben William Mollam](mailto:euphoricreuben@gmail.com).
