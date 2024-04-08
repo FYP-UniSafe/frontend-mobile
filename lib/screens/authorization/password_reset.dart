@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../resources/validator.dart';
+import '../../resources/validator.dart';
 
 class PasswordReset extends StatefulWidget {
   const PasswordReset({super.key});
@@ -15,31 +15,39 @@ class _PasswordResetState extends State<PasswordReset> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
+      appBar: AppBar(
+        automaticallyImplyLeading: false,
+        centerTitle: false,
+        title: InkWell(
+          onTap: () {
+            Navigator.pop(context);
+          },
+          child: Row(
+            children: [
+              Icon(
+                Icons.arrow_back_ios,
+                size: 20.0,
+                color: Colors.white,
+              ),
+              SizedBox(
+                width: 4.0,
+              ),
+              Text(
+                'Back',
+                style: TextStyle(
+                    fontSize: 16.0,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white),
+              )
+            ],
+          ),
+        ),
+      ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: EdgeInsets.all(16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            AppBar(
-              leading: IconButton(
-                icon: Icon(Icons.arrow_back),
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                iconSize: 28.0,
-                color: Colors.black,
-                padding: EdgeInsets.zero,
-              ),
-              title: Text(
-                'Back',
-                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-              ),
-              backgroundColor: Colors.transparent,
-              elevation: 0.0,
-            ),
-            SizedBox(
-              height: 8,
-            ),
             Expanded(
               child: SizedBox(
                 width: MediaQuery.of(context).size.width,
@@ -47,7 +55,6 @@ class _PasswordResetState extends State<PasswordReset> {
                 child: Form(
                   key: _formKey,
                   child: ListView(
-                    padding: EdgeInsets.only(top: 8),
                     children: [
                       Text(
                         'Forgot Password',
@@ -68,14 +75,14 @@ class _PasswordResetState extends State<PasswordReset> {
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
-                          contentPadding:
-                              EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 12.0),
                           labelText: 'Email',
                           border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18.0),
+                            borderRadius: BorderRadius.circular(5.0),
                           ),
                           enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(18),
+                            borderRadius: BorderRadius.circular(5.0),
                             borderSide:
                                 BorderSide(color: Colors.black, width: 1.1),
                           ),
@@ -89,11 +96,11 @@ class _PasswordResetState extends State<PasswordReset> {
                           if (_formKey.currentState!.validate()) {}
                         },
                         style: ElevatedButton.styleFrom(
-                          foregroundColor: Colors.grey,
-                          backgroundColor: Color.fromRGBO(54, 37, 85, 1.0),
+                          foregroundColor: Colors.white,
+                          backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
                           padding: EdgeInsets.all(12.0),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(18.0),
+                            borderRadius: BorderRadius.circular(5.0),
                           ),
                         ),
                         child: Text(

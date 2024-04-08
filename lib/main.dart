@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
-import 'screens/splash_screen.dart';
+import 'package:unisafe/screens/main/main_screen.dart';
+import 'package:unisafe/screens/main/onboarding.dart';
+import 'package:unisafe/screens/profile/profile_page.dart';
+import 'screens/main/splash_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -9,14 +12,43 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'UniSafe',
+      title: '',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        appBarTheme: AppBarTheme(
+          color: Color.fromRGBO(8, 100, 175, 1.0),
+          centerTitle: true,
+          /*titleTextStyle: TextStyle(
+              color: Colors.black,
+              fontFamily: 'Montserrat',
+              fontSize: 28,
+              fontWeight: FontWeight.w100),*/
+        ),
         fontFamily: 'Montserrat',
         iconTheme: IconThemeData(color: Colors.grey[600]),
-        primarySwatch: Colors.blue,
+        textSelectionTheme: TextSelectionThemeData(
+          cursorColor: Colors.black,
+        ),
+        inputDecorationTheme: InputDecorationTheme(
+          focusedBorder: OutlineInputBorder(
+            borderSide: BorderSide(
+              color: Colors.black,
+            ),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color: Colors.black),
+          ),
+          floatingLabelBehavior: FloatingLabelBehavior.never,
+        ),
+        //primarySwatch: Colors.blue,
+        listTileTheme: ListTileThemeData(
+          horizontalTitleGap: 4,
+        ),
       ),
-      home: SplashScreen(),
+      routes: {
+        '/option1Page': (context) => MainScreen(),
+      },
+      home: Onboarding(),
     );
   }
 }

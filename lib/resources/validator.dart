@@ -24,7 +24,7 @@ class TextFormValidators {
     RegExp phoneNumberPattern = RegExp(r'^\d{10,}$');
     if (phone.isEmpty) {
       return 'Phone Number is required';
-    }else if(!phoneNumberPattern.hasMatch(phone)){
+    } else if (!phoneNumberPattern.hasMatch(phone)) {
       return 'At least 10 digits required';
     }
     return null;
@@ -37,17 +37,25 @@ class TextFormValidators {
     return null;
   }
 
-
   static String? studentIDValidator(String? text) {
     RegExp studentIdPattern = RegExp(r'^\d{4}-\d{2}-\d{5}$');
     if (text!.isEmpty) {
       return "Field can't be empty";
-    }else if(!studentIdPattern.hasMatch(text)){
+    } else if (!studentIdPattern.hasMatch(text)) {
       return 'Invalid Student ID';
     }
     return null;
   }
 
+  static String? staffIDValidator(String? text) {
+    RegExp studentIdPattern = RegExp(r'^\d{4}-\d{2}-\d{5}$');
+    if (text!.isEmpty) {
+      return "Field can't be empty";
+    } else if (!studentIdPattern.hasMatch(text)) {
+      return 'Invalid Staff ID';
+    }
+    return null;
+  }
 
   static String? chooseItems(String? item) {
     if (item == null) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:unisafe/screens/login.dart';
-import 'signup.dart';
+import 'package:unisafe/screens/authorization/login.dart';
+import 'package:unisafe/screens/main/onboarding.dart';
+import '../authorization/signup.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -20,7 +21,7 @@ class _SplashScreenState extends State<SplashScreen> {
     await Future.delayed(Duration(seconds: 2));
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (context) => Login()),
+      MaterialPageRoute(builder: (context) => Onboarding()),
     );
   }
 
@@ -28,8 +29,10 @@ class _SplashScreenState extends State<SplashScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Image.asset('assets/images/splash_image.png',
-        fit: BoxFit.cover,),
+        child: Image.asset(
+          'assets/images/splash_image.png',
+          fit: BoxFit.cover,
+        ),
       ),
     );
   }

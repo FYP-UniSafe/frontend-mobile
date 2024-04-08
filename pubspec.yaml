@@ -35,7 +35,13 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  email_validator: ^2.1.17
+  email_validator: '^2.1.16'
+  intl: ^0.19.0
+  file_picker: ^6.2.0
+  flutter_linkify: ^6.0.0
+  url_launcher: ^6.2.5
+  smooth_page_indicator: ^1.1.0
+  google_generative_ai: ^0.2.2
 
 dev_dependencies:
   flutter_test:
@@ -45,8 +51,9 @@ dev_dependencies:
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: true
-  image_path: "assets/images/unisafe_alt_logo.png"
-  adaptive_icon_background: "#342354"
+  image_path: "assets/images/unisafe_icon.png"
+  adaptive_icon_background: "#0864AF"
+  remove_alpha_ios: true
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -69,6 +76,18 @@ flutter:
   assets:
       - assets/images/splash_image.png
       - assets/images/unisafe_icon.png
+      - assets/images/unisafe_alt_logo.png
+      - assets/images/report_gbv.jpg
+      - assets/images/profile_image.jpg
+      - assets/images/counsel.png
+      - assets/images/share_story.png
+      - assets/images/appointments.png
+      - assets/images/home.jpg
+      - assets/images/welcome.png
+      - assets/images/home 2.jpg
+      - assets/images/world-bank-group.png
+      - assets/images/un_women.png
+      - assets/images/who_gbv.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
@@ -88,7 +107,7 @@ flutter:
          - asset: fonts/Montserrat-Italic.ttf
            style: italic
          - asset: fonts/Montserrat-Bold.ttf
-           weight: 700
+           weight: 800
   #   - family: Trajan Pro
   #     fonts:
   #       - asset: fonts/TrajanPro.ttf
