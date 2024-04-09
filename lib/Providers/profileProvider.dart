@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class ProfileTypeProvider extends ChangeNotifier {
-  String selectedProfileType = '';
+  String? selectedProfileType;
   String selectedCollege = '';
   String staffID = '';
   String registrationNumber = '';
   String policeID = '';
   String station = '';
 
-  void setSelectedProfileType(String profileType) {
+  void setSelectedProfileType(String? profileType) {
     selectedProfileType = profileType;
     notifyListeners();
   }

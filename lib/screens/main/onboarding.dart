@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
+import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/screens/authorization/login.dart';
 
 class Onboarding extends StatefulWidget {
@@ -183,11 +184,14 @@ class _OnboardingState extends State<Onboarding> {
                 padding: EdgeInsets.symmetric(horizontal: 32.0, vertical: 32.0),
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => Login(),
-                    ),
-                  ),
+                  onPressed: () async {
+                    await LocalStorage.storeOnboarding();
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => Login(),
+                      ),
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
                     elevation: 3,
                     backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),

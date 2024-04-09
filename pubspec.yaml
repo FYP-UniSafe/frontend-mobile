@@ -43,6 +43,11 @@ dependencies:
   smooth_page_indicator: ^1.1.0
   google_generative_ai: ^0.2.2
   provider: ^6.1.2
+  loading_indicator: ^3.1.1
+  flutter_dotenv: ^5.1.0
+  http: ^1.2.1
+  shared_preferences: '>=2.0.0 <3.0.0'
+  flutter_secure_storage: ^9.0.0
 
 dev_dependencies:
   flutter_test:
@@ -89,6 +94,7 @@ flutter:
       - assets/images/world-bank-group.png
       - assets/images/un_women.png
       - assets/images/who_gbv.png
+      - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware

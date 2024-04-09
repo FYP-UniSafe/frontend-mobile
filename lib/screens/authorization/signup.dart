@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/screens/authorization/login.dart';
-import 'package:unisafe/screens/main/homepage.dart';
-import 'package:unisafe/screens/main/main_screen.dart';
-import 'package:unisafe/screens/profile/profile_page.dart';
-
-import '../../resources/provider_model.dart';
+import '../../Providers/profileProvider.dart';
 import '../../resources/validator.dart';
 
 class SignUp extends StatefulWidget {
@@ -50,6 +46,7 @@ class _SignUpState extends State<SignUp> {
   final _gender = TextEditingController();
   final _counsel = TextEditingController();
   final _police = TextEditingController();
+  late ProfileTypeProvider profileTypeProvider;
 
   String? college;
   String? gender;
@@ -60,11 +57,13 @@ class _SignUpState extends State<SignUp> {
   final _formKey = GlobalKey<FormState>();
 
   @override
+  void didChangeDependencies() {
+    profileTypeProvider = Provider.of<ProfileTypeProvider>(context);
+    super.didChangeDependencies();
+  }
+
+  @override
   Widget build(BuildContext context) {
-    var provider = Provider.of<ProfileTypeProvider>(context);
-    final profileTypeProvider =
-        Provider.of<ProfileTypeProvider>(context, listen: false);
-    _student.text.isNotEmpty;
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.98,
       child: Scaffold(
@@ -259,9 +258,9 @@ class _SignUpState extends State<SignUp> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                           ),
-                          value: provider.selectedProfileType,
+                          value: profileTypeProvider.selectedProfileType,
                           onChanged: (newValue) {
-                            provider
+                            profileTypeProvider
                                 .setSelectedProfileType(newValue.toString());
                           },
                           items: profiles.map((profile) {
@@ -272,13 +271,15 @@ class _SignUpState extends State<SignUp> {
                           }).toList(),
                         ),
                         SizedBox(height: 16.0),
-                        if (provider.selectedProfileType == 'student')
+                        if (profileTypeProvider.selectedProfileType ==
+                            'student')
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextFormField(
                                 onChanged: (value) {
-                                  provider.setRegistrationNumber(value);
+                                  profileTypeProvider
+                                      .setRegistrationNumber(value);
                                 },
                                 decoration: InputDecoration(
                                     labelText: 'Registration Number'),
@@ -321,21 +322,23 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ],
                           ),
-                        if (provider.selectedProfileType == 'gender_desk' ||
-                            provider.selectedProfileType == 'counselling_unit')
+                        if (profileTypeProvider.selectedProfileType ==
+                                'gender_desk' ||
+                            profileTypeProvider.selectedProfileType ==
+                                'counselling_unit')
                           TextFormField(
                             onChanged: (value) {
-                              provider.setStaffID(value);
+                              profileTypeProvider.setStaffID(value);
                             },
                             decoration: InputDecoration(labelText: 'Staff ID'),
                           ),
-                        if (provider.selectedProfileType == 'police')
+                        if (profileTypeProvider.selectedProfileType == 'police')
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextFormField(
                                 onChanged: (value) {
-                                  provider.setPoliceID(value);
+                                  profileTypeProvider.setPoliceID(value);
                                 },
                                 decoration:
                                     InputDecoration(labelText: 'Police ID'),
@@ -343,7 +346,7 @@ class _SignUpState extends State<SignUp> {
                               SizedBox(height: 16.0),
                               TextFormField(
                                 onChanged: (value) {
-                                  provider.setStation(value);
+                                  profileTypeProvider.setStation(value);
                                 },
                                 decoration:
                                     InputDecoration(labelText: 'Station'),
@@ -356,8 +359,7 @@ class _SignUpState extends State<SignUp> {
                             final profileType =
                                 profileTypeProvider.selectedProfileType;
                             if (_formKey.currentState!.validate()) {
-                              if (Provider.of<ProfileTypeProvider>(context)
-                                      .selectedProfileType ==
+                              if (profileTypeProvider.selectedProfileType ==
                                   'option1') {
                                 Navigator.pushNamed(context, '/option1Page');
                               } else if (selectedOption == 'option2') {
@@ -389,10 +391,11 @@ class _SignUpState extends State<SignUp> {
                                   color: Colors.black, fontSize: 18.0),
                             ),
                             GestureDetector(
-                              onTap: () => Navigator.of(context).push(
+                              onTap: () => Navigator.pushAndRemoveUntil(
+                                  context,
                                   MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          Login())),
+                                      builder: (context) => Login()),
+                                  (route) => false),
                               child: Text(
                                 'Login',
                                 style: TextStyle(

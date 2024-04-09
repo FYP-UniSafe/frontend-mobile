@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:unisafe/Services/storage.dart';
+import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/authorization/otp.dart';
 import 'package:unisafe/screens/chatbot.dart';
 import 'package:unisafe/screens/profile/account_security.dart';
@@ -127,7 +129,13 @@ class _ProfilePageState extends State<ProfilePage> {
                 size: 26.0,
                 color: Colors.red,
               ),
-              press: () {}),
+              press: () async {
+                await LocalStorage.logout();
+                Navigator.pushAndRemoveUntil(
+                    context,
+                    MaterialPageRoute(builder: (context) => Login()),
+                    (route) => false);
+              }),
         ],
       ),
     );

@@ -1,7 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/screens/authorization/password_reset.dart';
 import 'package:unisafe/screens/authorization/signup.dart';
 
+import '../../Providers/Models/User.dart';
+import '../../Widgets/Flashbar/flashbar.dart';
 import '../../resources/validator.dart';
 import '../main/main_screen.dart';
 
@@ -16,6 +22,17 @@ class _LoginState extends State<Login> {
   bool _isHidden = true;
 
   final _formKey = GlobalKey<FormState>();
+
+  final _emailController = TextEditingController();
+  final _passwordController = TextEditingController();
+
+  late AuthProvider _authProvider;
+
+  @override
+  void didChangeDependencies() {
+    _authProvider = Provider.of<AuthProvider>(context);
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -53,6 +70,7 @@ class _LoginState extends State<Login> {
                       padding: EdgeInsets.only(top: 8.0),
                       children: [
                         TextFormField(
+                          controller: _emailController,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
@@ -73,6 +91,7 @@ class _LoginState extends State<Login> {
                         ),
                         SizedBox(height: 16.0),
                         TextFormField(
+                          controller: _passwordController,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           obscureText: _isHidden,
                           style: TextStyle(color: Colors.black),
@@ -126,15 +145,7 @@ class _LoginState extends State<Login> {
                         ),
                         SizedBox(height: 16.0),
                         ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {
-                              Navigator.pushReplacement(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MainScreen()),
-                              );
-                            }
-                          },
+                          onPressed: _login,
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
@@ -159,10 +170,11 @@ class _LoginState extends State<Login> {
                                   color: Colors.black, fontSize: 18.0),
                             ),
                             GestureDetector(
-                              onTap: () => Navigator.of(context).push(
+                              onTap: () => Navigator.pushAndRemoveUntil(
+                                  context,
                                   MaterialPageRoute(
-                                      builder: (BuildContext context) =>
-                                          SignUp())),
+                                      builder: (context) => SignUp()),
+                                  (route) => false),
                               child: Text(
                                 'Sign Up',
                                 style: TextStyle(
@@ -187,5 +199,74 @@ class _LoginState extends State<Login> {
     setState(() {
       _isHidden = !_isHidden;
     });
+  }
+
+  _login() async {
+    if (_formKey.currentState!.validate()) {
+      if (_emailController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.login(
+            user: User(
+                email: _emailController.text,
+                password: _passwordController.text));
+
+        if (_authProvider.isLoggedIn != null &&
+            _authProvider.isLoggedIn == true) {
+          Navigator.pop(context);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MainScreen()),
+              (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(12),
+            backgroundColor: Colors.black,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.red,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Login Failed',
+              style: TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
   }
 }
