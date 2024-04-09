@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:unisafe/Providers/profileProvider.dart';
 import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 import 'package:unisafe/screens/main/onboarding.dart';
@@ -18,7 +19,7 @@ void main() async {
   await Future.wait([initializeApp()]);
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => AuthProvider()),
-    ChangeNotifierProvider(create: (context) => LocalStorageProvider()),
+    ChangeNotifierProvider(create: (context) => ProfileTypeProvider()),
     ChangeNotifierProvider(create: (context) => LocalStorageProvider()),
   ], child: UniSafe()));
 }
