@@ -266,7 +266,7 @@ class _HomePageState extends State<HomePage> {
                 ),
               ),
               Positioned(
-                top: MediaQuery.of(context).size.height * 0.72,
+                top: MediaQuery.of(context).size.height * 0.71,
                 left: MediaQuery.of(context).size.width * 0.76,
                 child: IconButton(
                   padding: EdgeInsets.all(15.0),

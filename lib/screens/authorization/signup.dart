@@ -282,6 +282,19 @@ class _SignUpState extends State<SignUp> {
                                       .setRegistrationNumber(value);
                                 },
                                 decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 12.0, vertical: 12.0),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 1.3),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
                                     labelText: 'Registration Number'),
                               ),
                               SizedBox(height: 16.0),
@@ -330,7 +343,22 @@ class _SignUpState extends State<SignUp> {
                             onChanged: (value) {
                               profileTypeProvider.setStaffID(value);
                             },
-                            decoration: InputDecoration(labelText: 'Staff ID'),
+                            decoration: InputDecoration(
+                              labelText: 'Staff ID',
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 12.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1.3),
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                            ),
                           ),
                         if (profileTypeProvider.selectedProfileType == 'police')
                           Column(
@@ -340,16 +368,44 @@ class _SignUpState extends State<SignUp> {
                                 onChanged: (value) {
                                   profileTypeProvider.setPoliceID(value);
                                 },
-                                decoration:
-                                    InputDecoration(labelText: 'Police ID'),
+                                decoration: InputDecoration(
+                                  labelText: 'Police ID',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 12.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 1.3),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                ),
                               ),
                               SizedBox(height: 16.0),
                               TextFormField(
                                 onChanged: (value) {
                                   profileTypeProvider.setStation(value);
                                 },
-                                decoration:
-                                    InputDecoration(labelText: 'Station'),
+                                decoration: InputDecoration(
+                                  labelText: 'Station',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 12.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 1.3),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
