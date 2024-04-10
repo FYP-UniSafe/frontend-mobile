@@ -13,14 +13,16 @@ import 'Services/storage.dart';
 
 Widget? _landingPage;
 
+final storageProvider = LocalStorageProvider();
+
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   dotenv.load(fileName: ".env");
-  await Future.wait([initializeApp()]);
+  await Future.wait([initializeApp(), storageProvider.initialize()]);
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => AuthProvider()),
     ChangeNotifierProvider(create: (context) => ProfileTypeProvider()),
-    ChangeNotifierProvider(create: (context) => LocalStorageProvider()),
+    ChangeNotifierProvider.value(value: storageProvider),
   ], child: UniSafe()));
 }
 

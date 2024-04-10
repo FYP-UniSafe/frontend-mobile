@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:unisafe/resources/validator.dart';
 import 'package:file_picker/file_picker.dart';
@@ -603,22 +604,26 @@ class _ReportFormState extends State<ReportForm> {
                         SizedBox(
                           height: 20.0,
                         ),
-                        ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {}
-                          },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
-                            padding: EdgeInsets.all(12.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
+                        SafeArea(
+                          bottom: true,
+                          top: false,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              if (_formKey.currentState!.validate()) {}
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                              padding: EdgeInsets.all(12.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
                             ),
-                          ),
-                          child: Text(
-                            'Submit',
-                            style: TextStyle(
-                                fontSize: 18.0, fontWeight: FontWeight.bold),
+                            child: Text(
+                              'Submit',
+                              style: TextStyle(
+                                  fontSize: 18.0, fontWeight: FontWeight.bold),
+                            ),
                           ),
                         ),
                       ],

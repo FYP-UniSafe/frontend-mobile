@@ -6,7 +6,7 @@ import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/screens/authorization/password_reset.dart';
 import 'package:unisafe/screens/authorization/signup.dart';
 
-import '../../Providers/Models/User.dart';
+import '../../Models/User.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
 import '../../resources/validator.dart';
 import '../main/main_screen.dart';

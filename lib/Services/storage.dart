@@ -4,7 +4,9 @@ import 'dart:io';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
-import '../Providers/Models/User.dart';
+import '../Models/User.dart';
+
+
 
 
 class LocalStorage {
@@ -16,7 +18,7 @@ class LocalStorage {
 
   static Future<User?> getUserData() async {
     var user = await _storage.read(key: 'user');
-    var userData = User.fromJson(json.decode(user ?? '[]'));
+    var userData = User.fromJsonStorage(json.decode(user ?? '[]'));
     return userData;
   }
 
@@ -27,6 +29,16 @@ class LocalStorage {
   static Future<String?> getToken() async {
     var token = await _storage.read(key: 'token');
     return token;
+  }
+
+  static Future logout() async {
+    await _storage.delete(key: 'token');
+    await _storage.delete(key: 'user');
+  }
+
+  static Future<bool> checkSession() async {
+    var available = await _storage.containsKey(key: 'token');
+    return available;
   }
 
 
@@ -43,15 +55,7 @@ class LocalStorage {
     return onboarding;
   }
 
-  static Future logout() async {
-    await _storage.delete(key: 'token');
-    await _storage.delete(key: 'user');
-  }
 
-  static Future<bool> checkSession() async {
-    var available = await _storage.containsKey(key: 'token');
-    return available;
-  }
 }
 
 class LocalStorageProvider extends ChangeNotifier {

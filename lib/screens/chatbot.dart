@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:intl/intl.dart';
@@ -75,52 +76,56 @@ class _ChatbotState extends State<Chatbot> {
                     );
                   }),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 15,
-                    child: TextFormField(
-                      controller: _userMessage,
-                      style: TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 12.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+            SafeArea(
+              top: false,
+              bottom: true,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 15,
+                      child: TextFormField(
+                        controller: _userMessage,
+                        style: TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 12.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 1.1),
+                          ),
+                          labelText: 'Message',
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              BorderSide(color: Colors.black, width: 1.1),
-                        ),
-                        labelText: 'Message',
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                  IconButton(
-                    padding: EdgeInsets.all(15.0),
-                    iconSize: 22.0,
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.resolveWith((states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Color.fromRGBO(8, 100, 175, 1.0);
-                        }
-                        return Color.fromRGBO(8, 100, 175, 1.0);
-                      }),
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                    SizedBox(
+                      width: 10.0,
                     ),
-                    onPressed: () {
-                      sendMessage();
-                    },
-                    icon: Icon(Icons.send),
-                  ),
-                ],
+                    IconButton(
+                      padding: EdgeInsets.all(15.0),
+                      iconSize: 22.0,
+                      style: ButtonStyle(
+                        backgroundColor:
+                            MaterialStateProperty.resolveWith((states) {
+                          if (states.contains(MaterialState.pressed)) {
+                            return Color.fromRGBO(8, 100, 175, 1.0);
+                          }
+                          return Color.fromRGBO(8, 100, 175, 1.0);
+                        }),
+                        foregroundColor: MaterialStateProperty.all(Colors.white),
+                      ),
+                      onPressed: () {
+                        sendMessage();
+                      },
+                      icon: Icon(Icons.send),
+                    ),
+                  ],
+                ),
               ),
             )
           ],
