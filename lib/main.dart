@@ -6,6 +6,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Providers/profileProvider.dart';
 import 'package:unisafe/screens/authorization/login.dart';
+import 'package:unisafe/screens/authorization/otp.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 import 'package:unisafe/screens/main/onboarding.dart';
 import 'Providers/authProvider.dart';
@@ -90,7 +91,7 @@ class UniSafe extends StatelessWidget {
       routes: {
         '/option1Page': (context) => MainScreen(),
       },
-      home: _landingPage,
+      home: Otp(),
     );
   }
 }

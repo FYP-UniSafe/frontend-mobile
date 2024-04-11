@@ -6,6 +6,7 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/screens/authorization/login.dart';
+import 'package:unisafe/screens/authorization/otp.dart';
 import '../../Models/User.dart';
 import '../../Providers/profileProvider.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
@@ -517,8 +518,8 @@ class _SignUpState extends State<SignUp> {
           _registration.text.isNotEmpty &&
           college != null &&
           gender != null) {
-
-        Map<String,dynamic> phoneNumber = await parse(_phone.text,region: 'TZ');
+        Map<String, dynamic> phoneNumber =
+            await parse(_phone.text, region: 'TZ');
         showDialog(
             context: context,
             // barrierDismissible: false,
@@ -538,24 +539,22 @@ class _SignUpState extends State<SignUp> {
               );
             });
 
-
         await _authProvider.registerStudent(
-            user: User(email: _email.text, password: _password.text,
-            full_name: _fullName.text,
-            gender: gender,
-            college: college,
+            user: User(
+                email: _email.text,
+                password: _password.text,
+                full_name: _fullName.text,
+                gender: gender,
+                college: college,
                 phone_number: phoneNumber['e164'],
-            reg_no: _registration.text));
+                reg_no: _registration.text));
 
         if (_authProvider.isLoggedIn != null &&
             _authProvider.isLoggedIn == true) {
           Navigator.pop(context);
 
-          //TODO: Change navigation to otp page
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => MainScreen()),
-              (route) => false);
+          Navigator.pushAndRemoveUntil(context,
+              MaterialPageRoute(builder: (context) => Otp()), (route) => false);
         } else {
           Navigator.pop(context);
           Flashbar(
