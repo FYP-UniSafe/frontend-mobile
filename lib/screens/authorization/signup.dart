@@ -522,7 +522,7 @@ class _SignUpState extends State<SignUp> {
             await parse(_phone.text, region: 'TZ');
         showDialog(
             context: context,
-            // barrierDismissible: false,
+            barrierDismissible: false,
             builder: (BuildContext context) {
               return Dialog(
                 backgroundColor: Colors.transparent,

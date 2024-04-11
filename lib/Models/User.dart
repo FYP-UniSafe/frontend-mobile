@@ -20,6 +20,7 @@ class User {
   bool? is_police;
   String? token;
   String? last_login;
+  String? otp;
 
   User(
       {this.id,
@@ -42,12 +43,18 @@ class User {
       this.station,
       this.password,
       this.last_login,
+      this.otp,
       this.token});
 
   Map<String, dynamic> toLoginJson() => {
         "email": email,
         "password": password,
       };
+
+  Map<String, dynamic> toOtpJson() => {
+    "email": email,
+    "otp": otp,
+  };
 
   Map<String, dynamic> toStudentSignupJson() => {
     "full_name": full_name,

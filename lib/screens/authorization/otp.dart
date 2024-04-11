@@ -1,6 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:loading_indicator/loading_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:unisafe/Providers/authProvider.dart';
+import 'package:unisafe/screens/main/main_screen.dart';
+
+import '../../Models/User.dart';
+import '../../Widgets/Flashbar/flashbar.dart';
 
 class Otp extends StatefulWidget {
   const Otp({super.key});
@@ -10,11 +18,17 @@ class Otp extends StatefulWidget {
 }
 
 class _OtpState extends State<Otp> {
+  final _formKey = GlobalKey<FormState>();
   FocusNode? pin2FocusNode;
   FocusNode? pin3FocusNode;
   FocusNode? pin4FocusNode;
   FocusNode? pin5FocusNode;
   FocusNode? pin6FocusNode;
+
+  List<TextEditingController> otp =
+      List.generate(6, (index) => TextEditingController());
+
+  late AuthProvider _authProvider;
 
   @override
   void initState() {
@@ -24,6 +38,12 @@ class _OtpState extends State<Otp> {
     pin4FocusNode = FocusNode();
     pin5FocusNode = FocusNode();
     pin6FocusNode = FocusNode();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _authProvider = Provider.of<AuthProvider>(context);
+    super.didChangeDependencies();
   }
 
   @override
@@ -120,6 +140,7 @@ class _OtpState extends State<Otp> {
                 height: MediaQuery.of(context).size.height * 0.1,
               ),
               Form(
+                key: _formKey,
                 child: Column(
                   children: [
                     Row(
@@ -128,8 +149,9 @@ class _OtpState extends State<Otp> {
                         SizedBox(
                           width: 55.0,
                           child: TextFormField(
+                            controller: otp[0],
                             //autofocus: true,
-                            obscureText: true,
+                            // obscureText: true,
                             style: TextStyle(
                               fontSize: 24,
                               color: Colors.black,
@@ -145,19 +167,40 @@ class _OtpState extends State<Otp> {
                                 borderSide:
                                     BorderSide(color: Colors.black, width: 1.1),
                               ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide:
+                                    BorderSide(color: Colors.red, width: 1.1),
+                              ),
                             ),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(1),
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             onChanged: (value) {
-                              nextField(value, pin2FocusNode);
+                              if (value.length == 1) {
+                                FocusScope.of(context).nextFocus();
+                              } else if (value.isEmpty) {
+                                // FocusScope.of(context).previousFocus();
+                              }
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return '';
+                              } else {
+                                return null;
+                              }
                             },
                           ),
                         ),
                         SizedBox(
                           width: 55.0,
                           child: TextFormField(
+                            controller: otp[1],
                             focusNode: pin2FocusNode,
-                            obscureText: true,
+                            // obscureText: true,
                             style: TextStyle(
                               fontSize: 24,
                               color: Colors.black,
@@ -173,18 +216,40 @@ class _OtpState extends State<Otp> {
                                 borderSide:
                                     BorderSide(color: Colors.black, width: 1.1),
                               ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide:
+                                    BorderSide(color: Colors.red, width: 1.1),
+                              ),
                             ),
                             keyboardType: TextInputType.number,
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(1),
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             textAlign: TextAlign.center,
-                            onChanged: (value) =>
-                                nextField(value, pin3FocusNode),
+                            onChanged: (value) {
+                              if (value.length == 1) {
+                                FocusScope.of(context).nextFocus();
+                              } else if (value.isEmpty) {
+                                FocusScope.of(context).previousFocus();
+                              }
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return '';
+                              } else {
+                                return null;
+                              }
+                            },
                           ),
                         ),
                         SizedBox(
                           width: 55.0,
                           child: TextFormField(
+                            controller: otp[2],
                             focusNode: pin3FocusNode,
-                            obscureText: true,
+                            // obscureText: true,
                             style: TextStyle(
                               fontSize: 24,
                               color: Colors.black,
@@ -200,18 +265,40 @@ class _OtpState extends State<Otp> {
                                 borderSide:
                                     BorderSide(color: Colors.black, width: 1.1),
                               ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide:
+                                    BorderSide(color: Colors.red, width: 1.1),
+                              ),
                             ),
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
-                            onChanged: (value) =>
-                                nextField(value, pin4FocusNode),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(1),
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
+                            onChanged: (value) {
+                              if (value.length == 1) {
+                                FocusScope.of(context).nextFocus();
+                              } else if (value.isEmpty) {
+                                FocusScope.of(context).previousFocus();
+                              }
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return '';
+                              } else {
+                                return null;
+                              }
+                            },
                           ),
                         ),
                         SizedBox(
                           width: 55.0,
                           child: TextFormField(
+                            controller: otp[3],
                             focusNode: pin4FocusNode,
-                            obscureText: true,
+                            // obscureText: true,
                             style: TextStyle(
                               fontSize: 24,
                               color: Colors.black,
@@ -227,18 +314,40 @@ class _OtpState extends State<Otp> {
                                 borderSide:
                                     BorderSide(color: Colors.black, width: 1.1),
                               ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide:
+                                    BorderSide(color: Colors.red, width: 1.1),
+                              ),
                             ),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(1),
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
-                            onChanged: (value) =>
-                                nextField(value, pin5FocusNode),
+                            onChanged: (value) {
+                              if (value.length == 1) {
+                                FocusScope.of(context).nextFocus();
+                              } else if (value.isEmpty) {
+                                FocusScope.of(context).previousFocus();
+                              }
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return '';
+                              } else {
+                                return null;
+                              }
+                            },
                           ),
                         ),
                         SizedBox(
                           width: 55.0,
                           child: TextFormField(
+                            controller: otp[4],
                             focusNode: pin5FocusNode,
-                            obscureText: true,
+                            // obscureText: true,
                             style: TextStyle(
                               fontSize: 24,
                               color: Colors.black,
@@ -254,18 +363,40 @@ class _OtpState extends State<Otp> {
                                 borderSide:
                                     BorderSide(color: Colors.black, width: 1.1),
                               ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide:
+                                    BorderSide(color: Colors.red, width: 1.1),
+                              ),
                             ),
+                            inputFormatters: [
+                              LengthLimitingTextInputFormatter(1),
+                              FilteringTextInputFormatter.digitsOnly
+                            ],
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
-                            onChanged: (value) =>
-                                nextField(value, pin6FocusNode),
+                            onChanged: (value) {
+                              if (value.length == 1) {
+                                FocusScope.of(context).nextFocus();
+                              } else if (value.isEmpty) {
+                                FocusScope.of(context).previousFocus();
+                              }
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return '';
+                              } else {
+                                return null;
+                              }
+                            },
                           ),
                         ),
                         SizedBox(
                           width: 55.0,
                           child: TextFormField(
+                            controller: otp[5],
                             focusNode: pin6FocusNode,
-                            obscureText: true,
+                            // obscureText: true,
                             style: TextStyle(
                               fontSize: 24,
                               color: Colors.black,
@@ -280,14 +411,27 @@ class _OtpState extends State<Otp> {
                                 borderRadius: BorderRadius.circular(5.0),
                                 borderSide:
                                     BorderSide(color: Colors.black, width: 1.1),
+                              ),
+                              errorBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                                borderSide:
+                                    BorderSide(color: Colors.red, width: 1.1),
                               ),
                             ),
                             keyboardType: TextInputType.number,
                             textAlign: TextAlign.center,
                             onChanged: (value) {
                               if (value.length == 1) {
-                                pin6FocusNode!.unfocus();
-                                // Then you need to check is the code is correct or not
+                                FocusScope.of(context).unfocus();
+                              } else if (value.isEmpty) {
+                                FocusScope.of(context).previousFocus();
+                              }
+                            },
+                            validator: (value) {
+                              if (value!.isEmpty) {
+                                return '';
+                              } else {
+                                return null;
                               }
                             },
                           ),
@@ -300,7 +444,7 @@ class _OtpState extends State<Otp> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _verifyOtp,
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
@@ -340,5 +484,106 @@ class _OtpState extends State<Otp> {
         ),
       ),
     );
+  }
+
+  _verifyOtp() async {
+    bool? otpGiven;
+    String? otpValue;
+
+    if (_formKey.currentState!.validate()) {
+      for (TextEditingController value in otp) {
+        if (value.text.isNotEmpty) {
+          setState(() {
+            otpGiven = true;
+          });
+        } else {
+          setState(() {
+            otpGiven = false;
+          });
+          break;
+        }
+      }
+
+      if (otpGiven != null && otpGiven == true) {
+        otp.forEach((element) {
+          if (element.text.isNotEmpty) {
+            if (otpValue != null) {
+              setState(() {
+                otpValue = '${otpValue}${element.text.toString()}';
+              });
+            } else {
+              setState(() {
+                otpValue = element.text.toString();
+              });
+            }
+          }
+        });
+      }
+
+      if (otpValue != null && otpValue!.length == 6) {
+        print(otpValue);
+        showDialog(
+            context: context,
+            //TODO: Remove this after testing is successful
+            // barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.verifyOtp(
+            user: User(email: _authProvider.currentUser!.email, otp: otpValue));
+
+        if (_authProvider.otpVerifed != null &&
+            _authProvider.otpVerifed == true) {
+          Navigator.pop(context);
+
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => MainScreen()),
+              (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(12),
+            backgroundColor: Colors.black,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.red,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'OTP Verification Failed',
+              style: TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
   }
 }

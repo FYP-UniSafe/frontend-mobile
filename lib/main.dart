@@ -91,7 +91,7 @@ class UniSafe extends StatelessWidget {
       routes: {
         '/option1Page': (context) => MainScreen(),
       },
-      home: Otp(),
+      home: _landingPage,
     );
   }
 }
