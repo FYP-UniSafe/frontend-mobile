@@ -95,6 +95,8 @@ flutter:
       - assets/images/world-bank-group.png
       - assets/images/un_women.png
       - assets/images/who_gbv.png
+      - assets/images/amnesty_logo.jpg
+      - assets/images/HRW_Logo.jpg
       - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

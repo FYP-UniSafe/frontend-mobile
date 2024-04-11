@@ -13,12 +13,11 @@ import '../Models/User.dart';
 class AuthProvider extends ChangeNotifier {
   bool? _isLoggedIn;
 
-
   bool? get isLoggedIn => _isLoggedIn;
 
   bool? _otpVerifed;
 
-  bool?get otpVerifed => _otpVerifed;
+  bool? get otpVerifed => _otpVerifed;
 
   User? _currentUser;
 
@@ -49,6 +48,7 @@ class AuthProvider extends ChangeNotifier {
           notifyListeners();
         }
       } else {
+        log(response.body);
         throw HttpException('${response.statusCode}: ${response.reasonPhrase}',
             uri: Uri.parse('$baseUrl/users/login'));
       }
@@ -81,6 +81,7 @@ class AuthProvider extends ChangeNotifier {
           notifyListeners();
         }
       } else {
+        log(response.body);
         throw HttpException('${response.statusCode}: ${response.reasonPhrase}',
             uri: Uri.parse('$baseUrl/users/login'));
       }
@@ -110,7 +111,6 @@ class AuthProvider extends ChangeNotifier {
           print(e.toString());
           _otpVerifed = false;
           notifyListeners();
-
         }
       } else {
         throw HttpException('${response.statusCode}: ${response.reasonPhrase}',

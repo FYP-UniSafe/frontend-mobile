@@ -92,10 +92,13 @@ class _HomePageState extends State<HomePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          leading: Image.asset(
-                            'assets/images/un_women.png',
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            width: MediaQuery.of(context).size.width * 0.25,
+                          leading: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Image.asset(
+                              'assets/images/un_women.png',
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                            ),
                           ),
                           title: Row(
                             children: [
@@ -145,10 +148,13 @@ class _HomePageState extends State<HomePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          leading: Image.asset(
-                            'assets/images/world-bank-group.png',
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            width: MediaQuery.of(context).size.width * 0.25,
+                          leading: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Image.asset(
+                              'assets/images/world-bank-group.png',
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                            ),
                           ),
                           title: Row(
                             children: [
@@ -199,10 +205,13 @@ class _HomePageState extends State<HomePage> {
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         ListTile(
-                          leading: Image.asset(
-                            'assets/images/who_gbv.png',
-                            height: MediaQuery.of(context).size.height * 0.3,
-                            width: MediaQuery.of(context).size.width * 0.25,
+                          leading: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Image.asset(
+                              'assets/images/who_gbv.png',
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                            ),
                           ),
                           title: Row(
                             children: [
@@ -237,6 +246,118 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 12,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _launchUrl('https://www.amnesty.org/en/');
+                  },
+                  child: Card(
+                    //clipBehavior: Clip.antiAlias,
+                    color: Colors.white,
+                    //elevation: 10.0,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          leading: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Image.asset(
+                              'assets/images/amnesty_logo.jpg',
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                            ),
+                          ),
+                          title: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Amnesty International',
+                                  style: TextStyle(fontSize: 17.0),
+                                ),
+                              ),
+                              Icon(
+                                CupertinoIcons.arrow_up_right_square,
+                                color: Colors.blue,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: Divider(
+                            height: 10.0,
+                            color: Color.fromRGBO(8, 100, 175, 1.0),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Amnesty International conducts research and advocacy on human rights issues, including gender-based violence, and publishes reports with statistics and case studies.",
+                            style: TextStyle(fontSize: 16.0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 12,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _launchUrl('https://www.hrw.org/');
+                  },
+                  child: Card(
+                    //clipBehavior: Clip.antiAlias,
+                    color: Colors.white,
+                    //elevation: 10.0,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          leading: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Image.asset(
+                              'assets/images/HRW_Logo.jpg',
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              width: MediaQuery.of(context).size.width * 0.25,
+                            ),
+                          ),
+                          title: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'Human Rights Watch',
+                                  style: TextStyle(fontSize: 17.0),
+                                ),
+                              ),
+                              Icon(
+                                CupertinoIcons.arrow_up_right_square,
+                                color: Colors.blue,
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          width: MediaQuery.of(context).size.width * 0.8,
+                          child: Divider(
+                            height: 10.0,
+                            color: Color.fromRGBO(8, 100, 175, 1.0),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.all(8.0),
+                          child: Text(
+                            "Human Rights Watch investigates and reports on human rights abuses worldwide, including gender-based violence, and provides data and analysis in their publications.",
+                            style: TextStyle(fontSize: 16.0),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
@@ -259,7 +380,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _launchUrl(String url) async {
     try {
-      await launch(Uri.parse(url).toString());
+      await launchUrl(Uri.parse(url));
     } catch (e) {
       throw Exception('Could not launch $url: $e');
     }
