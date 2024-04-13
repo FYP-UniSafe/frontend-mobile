@@ -1,5 +1,5 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:unisafe/resources/validator.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -32,6 +32,8 @@ class _ReportFormState extends State<ReportForm> {
     "Other"
   ];
 
+  List<String> locations = [];
+
   List<String> genders = ["Male", "Female"];
   List<String> abuses = [
     "Physical Violence",
@@ -43,9 +45,14 @@ class _ReportFormState extends State<ReportForm> {
   String? gender;
   String selectedOption = '';
   String? abuse;
+  String? location;
 
   TextEditingController _dateController = TextEditingController();
   TextEditingController _timeController = TextEditingController();
+  final _fullName = TextEditingController();
+  final _email = TextEditingController();
+  final _phone = TextEditingController();
+  final _registration = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -98,6 +105,7 @@ class _ReportFormState extends State<ReportForm> {
                           height: 12.0,
                         ),
                         TextFormField(
+                          controller: _fullName,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
@@ -115,6 +123,29 @@ class _ReportFormState extends State<ReportForm> {
                           ),
                           validator: (text) =>
                               TextFormValidators.textFieldValidator(text),
+                        ),
+                        SizedBox(
+                          height: 16.0,
+                        ),
+                        TextFormField(
+                          controller: _phone,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            labelText: 'Phone Number',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.1),
+                            ),
+                          ),
+                          validator: (text) =>
+                              TextFormValidators.phoneValidator(text!),
                         ),
                         SizedBox(
                           height: 16.0,
@@ -155,6 +186,52 @@ class _ReportFormState extends State<ReportForm> {
                         SizedBox(
                           height: 16.0,
                         ),
+                        TextFormField(
+                          controller: _email,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.1),
+                            ),
+                            labelText: 'Email',
+                          ),
+                          validator: (text) =>
+                              TextFormValidators.emailValidator(text!),
+                        ),
+                        SizedBox(
+                          height: 16.0,
+                        ),
+                        TextFormField(
+                          controller: _registration,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.1),
+                            ),
+                            labelText: 'Registration Number',
+                          ),
+                          validator: (text) =>
+                              TextFormValidators.studentIDValidator(text),
+                        ),
+                        SizedBox(
+                          height: 16.0,
+                        ),
                         DropdownButtonFormField(
                           //alignment: Alignment.bottomCenter,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -188,72 +265,6 @@ class _ReportFormState extends State<ReportForm> {
                               college = value;
                             });
                           },
-                        ),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        TextFormField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          style: TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 12.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 1.1),
-                            ),
-                            labelText: 'Registration Number',
-                          ),
-                          validator: (text) =>
-                              TextFormValidators.studentIDValidator(text),
-                        ),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        TextFormField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          style: TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 12.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 1.1),
-                            ),
-                            labelText: 'Email',
-                          ),
-                          validator: (text) =>
-                              TextFormValidators.emailValidator(text!),
-                        ),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        TextFormField(
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          style: TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 12.0),
-                            labelText: 'Phone Number',
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 1.1),
-                            ),
-                          ),
-                          validator: (text) =>
-                              TextFormValidators.phoneValidator(text!),
                         ),
                         Divider(
                           height: 30.0,
@@ -357,9 +368,14 @@ class _ReportFormState extends State<ReportForm> {
                         SizedBox(
                           height: 16.0,
                         ),
-                        TextFormField(
+                        DropdownButtonFormField(
+                          //alignment: Alignment.bottomCenter,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          style: TextStyle(color: Colors.black),
+                          borderRadius: BorderRadius.circular(5.0),
+                          icon: Icon(Icons.arrow_drop_down),
+                          hint: Text('Location'),
+                          validator: (text) =>
+                              TextFormValidators.chooseItems(text),
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 12.0, vertical: 12.0),
@@ -367,14 +383,24 @@ class _ReportFormState extends State<ReportForm> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                             enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
                               borderSide:
-                                  BorderSide(color: Colors.black, width: 1.1),
+                                  BorderSide(color: Colors.black, width: 1.3),
+                              borderRadius: BorderRadius.circular(5.0),
                             ),
-                            labelText: 'Location',
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
                           ),
-                          validator: (text) =>
-                              TextFormValidators.textFieldValidator(text),
+                          value: location,
+                          items: locations
+                              .map((e) => DropdownMenuItem<String>(
+                                  value: e.toString(), child: Text(e)))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              location = value;
+                            });
+                          },
                         ),
                         SizedBox(
                           height: 16.0,
@@ -643,12 +669,13 @@ class _ReportFormState extends State<ReportForm> {
       context: context,
       initialDate: DateTime.now(),
       firstDate: DateTime(2000),
-      lastDate: DateTime(2100),
+      lastDate: DateTime.now(),
     );
 
     if (_picked != null) {
       setState(() {
-        _dateController.text = _picked.toString().split(" ")[0];
+        String formattedDate = DateFormat('dd-MM-yyyy').format(_picked);
+        _dateController.text = formattedDate;
       });
     }
   }

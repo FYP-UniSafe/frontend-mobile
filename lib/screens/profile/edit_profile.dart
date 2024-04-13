@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:unisafe/resources/validator.dart';
-import 'package:unisafe/resources/validator.dart';
+import 'dart:io';
+
+import '../../Services/storage.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -31,6 +34,22 @@ class _EditProfileState extends State<EditProfile> {
     "Other"
   ];
   String? college;
+
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _changeProfileImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      await LocalStorage.storeProfileImage(imageFile, profile: '');
+
+      setState(() {
+        // Update your profile image widget with the new image
+        //_profileImage = imageFile;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +107,7 @@ class _EditProfileState extends State<EditProfile> {
                             size: 28.0,
                           ),
                           color: Colors.grey.shade700,
-                          onPressed: () {},
+                          onPressed: _changeProfileImage,
                         ),
                       ),
                     ),

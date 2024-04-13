@@ -1,14 +1,19 @@
+import 'dart:convert';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
+import 'package:http/http.dart' as http;
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 
 import '../../Models/User.dart';
+import '../../Providers/OTPResendProvider.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
+import '../../resources/constants.dart';
 
 class Otp extends StatefulWidget {
   const Otp({super.key});
@@ -64,6 +69,7 @@ class _OtpState extends State<Otp> {
 
   @override
   Widget build(BuildContext context) {
+    final otpResendProvider = Provider.of<OTPResendProvider>(context);
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.98,
       child: Scaffold(
@@ -467,9 +473,9 @@ class _OtpState extends State<Otp> {
                 height: 20.0,
               ),
               GestureDetector(
-                onTap: () {
-                  // OTP code resend
-                },
+                onTap: otpResendProvider.isLoading
+                    ? null
+                    : () => resendOTP(context),
                 child: Text(
                   "Resend OTP Code",
                   style: TextStyle(
@@ -484,6 +490,37 @@ class _OtpState extends State<Otp> {
         ),
       ),
     );
+  }
+
+  Future<void> resendOTP(BuildContext context) async {
+    final otpResendProvider =
+        Provider.of<OTPResendProvider>(context, listen: false);
+    otpResendProvider.setIsLoading(true);
+
+    final String email = otpResendProvider.emailController.text;
+
+    final Uri apiUrl = Uri.parse('$baseUrl/users/otp/resend');
+    final Map<String, dynamic> requestData = {
+      'email': email,
+    };
+
+    try {
+      final http.Response response = await http.post(
+        apiUrl,
+        body: json.encode(requestData),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        print('OTP Resent Successfully');
+      } else {
+        print('Failed to Resend OTP');
+      }
+    } catch (e) {
+      print('Error: $e');
+    }
+
+    otpResendProvider.setIsLoading(false);
   }
 
   _verifyOtp() async {
@@ -557,7 +594,7 @@ class _OtpState extends State<Otp> {
           Navigator.pop(context);
           Flashbar(
             flashbarPosition: FlashbarPosition.TOP,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(5),
             backgroundColor: Colors.black,
             icon: Icon(
               CupertinoIcons.exclamationmark_triangle,

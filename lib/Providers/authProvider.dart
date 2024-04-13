@@ -5,10 +5,12 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/resources/constants.dart';
 
 import '../Models/User.dart';
+import 'OTPResendProvider.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool? _isLoggedIn;
@@ -22,6 +24,8 @@ class AuthProvider extends ChangeNotifier {
   User? _currentUser;
 
   User? get currentUser => _currentUser;
+
+  bool _isLoading = false;
 
   Future login({required User user}) async {
     try {

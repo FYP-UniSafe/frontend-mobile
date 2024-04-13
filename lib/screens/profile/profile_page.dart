@@ -99,18 +99,6 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           ProfileMenu(
-            text: "Notifications",
-            icon: Icon(
-              Icons.notifications,
-              size: 26.0,
-              color: Color.fromRGBO(8, 100, 175, 1.0),
-            ),
-            press: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => Otp()),
-            ),
-          ),
-          ProfileMenu(
             text: "Contact Us",
             icon: Icon(
               Icons.phone,

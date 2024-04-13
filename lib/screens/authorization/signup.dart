@@ -294,7 +294,7 @@ class _SignUpState extends State<SignUp> {
                         ),
                         SizedBox(height: 16.0),
                         if (profileTypeProvider.selectedProfileType ==
-                            'student')
+                            'student') ...[
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -320,12 +320,49 @@ class _SignUpState extends State<SignUp> {
                                     ),
                                     labelText: 'Registration Number'),
                               ),
+                              SizedBox(height: 16.0),
+                              DropdownButtonFormField(
+                                //alignment: Alignment.bottomCenter,
+                                autovalidateMode:
+                                    AutovalidateMode.onUserInteraction,
+                                borderRadius: BorderRadius.circular(5.0),
+                                icon: Icon(Icons.arrow_drop_down),
+                                hint: Text('College / School'),
+                                validator: (text) =>
+                                    TextFormValidators.chooseItems(text),
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 12.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 1.3),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                ),
+                                value: college,
+                                items: colleges
+                                    .map((e) => DropdownMenuItem<String>(
+                                        value: e.toString(), child: Text(e)))
+                                    .toList(),
+                                onChanged: (value) {
+                                  setState(() {
+                                    college = value;
+                                  });
+                                },
+                              ),
                             ],
                           ),
+                        ],
                         if (profileTypeProvider.selectedProfileType ==
                                 'gender_desk' ||
                             profileTypeProvider.selectedProfileType ==
-                                'counselling_unit')
+                                'counselling_unit') ...[
                           TextFormField(
                             controller: _staffID,
                             onChanged: (value) {
@@ -348,7 +385,45 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ),
                           ),
-                        if (profileTypeProvider.selectedProfileType == 'police')
+                          SizedBox(height: 16.0),
+                          DropdownButtonFormField(
+                            //alignment: Alignment.bottomCenter,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            borderRadius: BorderRadius.circular(5.0),
+                            icon: Icon(Icons.arrow_drop_down),
+                            hint: Text('College / School'),
+                            validator: (text) =>
+                                TextFormValidators.chooseItems(text),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 12.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1.3),
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                            ),
+                            value: college,
+                            items: colleges
+                                .map((e) => DropdownMenuItem<String>(
+                                    value: e.toString(), child: Text(e)))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                college = value;
+                              });
+                            },
+                          ),
+                        ],
+                        if (profileTypeProvider.selectedProfileType ==
+                            'police') ...[
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
@@ -398,44 +473,6 @@ class _SignUpState extends State<SignUp> {
                                 ),
                               ),
                             ],
-                          ),
-                        if (profileTypeProvider.selectedProfileType !=
-                            'police') ...[
-                          SizedBox(height: 16.0),
-                          DropdownButtonFormField(
-                            //alignment: Alignment.bottomCenter,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            borderRadius: BorderRadius.circular(5.0),
-                            icon: Icon(Icons.arrow_drop_down),
-                            hint: Text('College / School'),
-                            validator: (text) =>
-                                TextFormValidators.chooseItems(text),
-                            decoration: InputDecoration(
-                              contentPadding: EdgeInsets.symmetric(
-                                  horizontal: 12.0, vertical: 12.0),
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                borderSide:
-                                    BorderSide(color: Colors.black, width: 1.3),
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                              focusedBorder: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                            ),
-                            value: college,
-                            items: colleges
-                                .map((e) => DropdownMenuItem<String>(
-                                    value: e.toString(), child: Text(e)))
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                college = value;
-                              });
-                            },
                           ),
                         ],
                         SizedBox(height: 20.0),
