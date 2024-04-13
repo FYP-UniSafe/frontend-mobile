@@ -10,7 +10,6 @@ import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/resources/constants.dart';
 
 import '../Models/User.dart';
-import 'OTPResendProvider.dart';
 
 class AuthProvider extends ChangeNotifier {
   bool? _isLoggedIn;
@@ -21,11 +20,17 @@ class AuthProvider extends ChangeNotifier {
 
   bool? get otpVerifed => _otpVerifed;
 
+  bool? _otpSent;
+
+
+  bool? get otpSent => _otpSent;
   User? _currentUser;
 
   User? get currentUser => _currentUser;
 
   bool _isLoading = false;
+
+  bool get isLoading => _isLoading;
 
   Future login({required User user}) async {
     try {
@@ -107,19 +112,50 @@ class AuthProvider extends ChangeNotifier {
         if (kDebugMode) {
           log(output.toString());
         }
-
-        try {
           _otpVerifed = true;
           notifyListeners();
-        } catch (e) {
-          print(e.toString());
-          _otpVerifed = false;
-          notifyListeners();
-        }
+
       } else {
+        _otpVerifed = false;
         throw HttpException('${response.statusCode}: ${response.reasonPhrase}',
             uri: Uri.parse('$baseUrl/users/login'));
       }
-    } catch (e) {}
+    } catch (e) {
+      _otpVerifed = false;
+      notifyListeners();
+    }
+  }
+
+  Future<void> resendOTP() async {
+
+
+
+    final Uri apiUrl = Uri.parse('$baseUrl/users/otp/resend');
+    final Map<String, dynamic> requestData = {
+      'email': _currentUser!.email,
+    };
+
+    try {
+      final http.Response response = await http.post(
+        apiUrl,
+        body: json.encode(requestData),
+        headers: {'Content-Type': 'application/json'},
+      );
+
+      if (response.statusCode == 200) {
+        _otpSent=true;
+        notifyListeners();
+        print('OTP Resent Successfully');
+      } else {
+        _otpSent=false;
+        notifyListeners();
+        print('Failed to Resend OTP');
+      }
+    } catch (e) {
+      _otpSent=false;
+      notifyListeners();
+      print('Error: $e');
+    }
+
   }
 }

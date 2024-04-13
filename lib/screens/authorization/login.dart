@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Providers/authProvider.dart';
+import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/screens/authorization/password_reset.dart';
 import 'package:unisafe/screens/authorization/signup.dart';
 
@@ -231,6 +232,7 @@ class _LoginState extends State<Login> {
 
         if (_authProvider.isLoggedIn != null &&
             _authProvider.isLoggedIn == true) {
+          await Provider.of<LocalStorageProvider>(context,listen: false).initialize();
           Navigator.pop(context);
           Navigator.pushAndRemoveUntil(
               context,

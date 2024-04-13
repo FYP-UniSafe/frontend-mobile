@@ -11,7 +11,6 @@ import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 
 import '../../Models/User.dart';
-import '../../Providers/OTPResendProvider.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
 import '../../resources/constants.dart';
 
@@ -69,22 +68,21 @@ class _OtpState extends State<Otp> {
 
   @override
   Widget build(BuildContext context) {
-    final otpResendProvider = Provider.of<OTPResendProvider>(context);
     return SizedBox(
       height: MediaQuery.of(context).size.height * 0.98,
       child: Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
-          leading: IconButton(
-            onPressed: () {
-              Navigator.pop(context);
-            },
-            icon: Icon(
-              Icons.arrow_back_ios,
-              size: 20.0,
-              color: Colors.white,
-            ),
-          ),
+          // leading: IconButton(
+          //   onPressed: () {
+          //     Navigator.pop(context);
+          //   },
+          //   icon: Icon(
+          //     Icons.arrow_back_ios,
+          //     size: 20.0,
+          //     color: Colors.white,
+          //   ),
+          // ),
           title: Text(
             'OTP Verification',
             style: TextStyle(
@@ -473,9 +471,7 @@ class _OtpState extends State<Otp> {
                 height: 20.0,
               ),
               GestureDetector(
-                onTap: otpResendProvider.isLoading
-                    ? null
-                    : () => resendOTP(context),
+                onTap:  _resendOTP,
                 child: Text(
                   "Resend OTP Code",
                   style: TextStyle(
@@ -492,36 +488,7 @@ class _OtpState extends State<Otp> {
     );
   }
 
-  Future<void> resendOTP(BuildContext context) async {
-    final otpResendProvider =
-        Provider.of<OTPResendProvider>(context, listen: false);
-    otpResendProvider.setIsLoading(true);
 
-    final String email = otpResendProvider.emailController.text;
-
-    final Uri apiUrl = Uri.parse('$baseUrl/users/otp/resend');
-    final Map<String, dynamic> requestData = {
-      'email': email,
-    };
-
-    try {
-      final http.Response response = await http.post(
-        apiUrl,
-        body: json.encode(requestData),
-        headers: {'Content-Type': 'application/json'},
-      );
-
-      if (response.statusCode == 200) {
-        print('OTP Resent Successfully');
-      } else {
-        print('Failed to Resend OTP');
-      }
-    } catch (e) {
-      print('Error: $e');
-    }
-
-    otpResendProvider.setIsLoading(false);
-  }
 
   _verifyOtp() async {
     bool? otpGiven;
@@ -561,8 +528,7 @@ class _OtpState extends State<Otp> {
         print(otpValue);
         showDialog(
             context: context,
-            //TODO: Remove this after testing is successful
-            // barrierDismissible: false,
+            barrierDismissible: false,
             builder: (BuildContext context) {
               return Dialog(
                 backgroundColor: Colors.transparent,
@@ -621,6 +587,90 @@ class _OtpState extends State<Otp> {
           ).show(context);
         }
       }
+    }
+  }
+
+  _resendOTP() async {
+    showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (BuildContext context) {
+          return Dialog(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            child: Container(
+              height: 100,
+              width: 100,
+              alignment: Alignment.center,
+              child: LoadingIndicator(
+                indicatorType: Indicator.ballPulseRise,
+                colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+              ),
+            ),
+          );
+        });
+
+    await _authProvider.resendOTP();
+
+    if (_authProvider.otpSent != null &&
+        _authProvider.otpSent == true) {
+      Navigator.pop(context);
+      Flashbar(
+        flashbarPosition: FlashbarPosition.TOP,
+        borderRadius: BorderRadius.circular(5),
+        backgroundColor: Colors.black,
+        icon: Icon(
+          CupertinoIcons.exclamationmark_triangle,
+          color: Colors.green,
+          size: 32,
+        ),
+        titleText: Text(
+          'Success',
+          style: TextStyle(
+              color: Colors.red,
+              fontFamily: 'Poppins',
+              fontSize: 18,
+              fontWeight: FontWeight.w500),
+        ),
+        messageText: Text(
+          'An OTP has been sent to you email',
+          style: TextStyle(
+              color: Colors.red,
+              fontFamily: 'Poppins',
+              fontSize: 16,
+              fontWeight: FontWeight.w500),
+        ),
+        duration: Duration(seconds: 3),
+      ).show(context);
+    } else {
+      Navigator.pop(context);
+      Flashbar(
+        flashbarPosition: FlashbarPosition.TOP,
+        borderRadius: BorderRadius.circular(5),
+        backgroundColor: Colors.black,
+        icon: Icon(
+          CupertinoIcons.exclamationmark_triangle,
+          color: Colors.red,
+          size: 32,
+        ),
+        titleText: Text(
+          'Alert',
+          style: TextStyle(
+              color: Colors.red,
+              fontFamily: 'Poppins',
+              fontSize: 18,
+              fontWeight: FontWeight.w500),
+        ),
+        messageText: Text(
+          'OTP Resend Failed',
+          style: TextStyle(
+              color: Colors.red,
+              fontFamily: 'Poppins',
+              fontSize: 16,
+              fontWeight: FontWeight.w500),
+        ),
+        duration: Duration(seconds: 3),
+      ).show(context);
     }
   }
 }

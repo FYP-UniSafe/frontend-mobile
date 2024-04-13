@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/authorization/otp.dart';
@@ -16,6 +17,17 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
+
+
+  late LocalStorageProvider storageProvider;
+
+
+  @override
+  void didChangeDependencies() {
+   storageProvider = Provider.of<LocalStorageProvider>(context);
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(
@@ -64,11 +76,11 @@ class _ProfilePageState extends State<ProfilePage> {
             height: 10.0,
           ),*/
           Text(
-            'John Doe',
+           storageProvider.user!.full_name!,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
           ),
           Text(
-            'example@gmail.com',
+            storageProvider.user!.email!,
             style: TextStyle(fontSize: 16.0),
           ),
           SizedBox(

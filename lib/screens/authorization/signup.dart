@@ -9,6 +9,7 @@ import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/authorization/otp.dart';
 import '../../Models/User.dart';
 import '../../Providers/profileProvider.dart';
+import '../../Services/storage.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
 import '../../resources/validator.dart';
 import '../main/main_screen.dart';
@@ -588,6 +589,7 @@ class _SignUpState extends State<SignUp> {
 
         if (_authProvider.isLoggedIn != null &&
             _authProvider.isLoggedIn == true) {
+          await Provider.of<LocalStorageProvider>(context,listen: false).initialize();
           Navigator.pop(context);
 
           Navigator.pushAndRemoveUntil(context,

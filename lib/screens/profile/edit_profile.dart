@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
 import 'package:unisafe/resources/validator.dart';
 import 'dart:io';
 
@@ -14,6 +15,40 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
+
+  TextEditingController _fullName = TextEditingController();
+  TextEditingController _phone = TextEditingController();
+  TextEditingController _email = TextEditingController();
+
+  late LocalStorageProvider storageProvider;
+
+  @override
+  void initState() {
+    final storageProviders =
+        Provider.of<LocalStorageProvider>(context, listen: false);
+
+    if (storageProviders.user!.full_name != null) {
+      _fullName = TextEditingController(text: storageProviders.user!.full_name);
+    }
+
+    if (storageProviders.user!.phone_number != null) {
+      _phone = TextEditingController(text: storageProviders.user!.phone_number);
+    }
+
+    if (storageProviders.user!.email != null) {
+      _email = TextEditingController(text: storageProviders.user!.email);
+    }
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    storageProvider = Provider.of<LocalStorageProvider>(context);
+
+    super.didChangeDependencies();
+  }
+
   List<String> colleges = [
     "CoSS",
     "CoICT",
@@ -127,6 +162,7 @@ class _EditProfileState extends State<EditProfile> {
                       padding: EdgeInsets.only(top: 8.0),
                       children: [
                         TextFormField(
+                          controller: _fullName,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
@@ -147,6 +183,7 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
+                          controller: _phone,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
@@ -167,6 +204,7 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
+                          controller: _email,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
