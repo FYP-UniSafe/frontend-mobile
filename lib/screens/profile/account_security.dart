@@ -20,10 +20,12 @@ class AccountSecurity extends StatefulWidget {
 class _AccountSecurityState extends State<AccountSecurity> {
   final _formKey = GlobalKey<FormState>();
   bool _isHidden = true;
+  bool _isHidden2 = true;
   late AuthProvider _authProvider;
   String old_password = '';
   String new_password = '';
-  final _passwordController = TextEditingController();
+  final _oldpasswordController = TextEditingController();
+  final _newpasswordController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -77,7 +79,7 @@ class _AccountSecurityState extends State<AccountSecurity> {
                           height: 20.0,
                         ),
                         TextFormField(
-                          controller: _passwordController,
+                          controller: _oldpasswordController,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           obscureText: _isHidden,
                           style: TextStyle(color: Colors.black),
@@ -133,8 +135,9 @@ class _AccountSecurityState extends State<AccountSecurity> {
                           height: 8.0,
                         ),
                         TextFormField(
+                          controller: _newpasswordController,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          obscureText: _isHidden,
+                          obscureText: _isHidden2,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.symmetric(
@@ -150,9 +153,9 @@ class _AccountSecurityState extends State<AccountSecurity> {
                             ),
                             labelText: 'New Password',
                             suffixIcon: InkWell(
-                              onTap: _togglePasswordView,
+                              onTap: _togglePasswordView2,
                               child: Icon(
-                                _isHidden
+                                _isHidden2
                                     ? Icons.visibility
                                     : Icons.visibility_off,
                                 size: 20,
@@ -197,10 +200,15 @@ class _AccountSecurityState extends State<AccountSecurity> {
       _isHidden = !_isHidden;
     });
   }
+  void _togglePasswordView2() {
+    setState(() {
+      _isHidden2 = !_isHidden2;
+    });
+  }
 
   _changePassword() async {
     if (_formKey.currentState!.validate()) {
-      if (_passwordController.text.isNotEmpty) {
+      if (_oldpasswordController.text.isNotEmpty&&_newpasswordController.text.isNotEmpty) {
         showDialog(
             context: context,
             barrierDismissible: false,
@@ -220,13 +228,46 @@ class _AccountSecurityState extends State<AccountSecurity> {
               );
             });
 
-        await _authProvider.changePassword(old_password, new_password,
-            user: User(password: _passwordController.text));
+        await _authProvider.changePassword(old_password:_oldpasswordController.text,new_password:  _newpasswordController.text,
+        );
+        if (_authProvider.isChanged != null &&
+            _authProvider.isChanged == true) {
+          Navigator.pop(context);
 
-        Navigator.pop(context);
-
-        Navigator.pushAndRemoveUntil(context,
-            MaterialPageRoute(builder: (context) => Login()), (route) => false);
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Login()),
+              (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(12),
+            backgroundColor: Colors.black,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.red,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Password Change Failed',
+              style: TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
       }
     }
   }

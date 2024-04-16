@@ -10,9 +10,11 @@ import 'package:unisafe/resources/constants.dart';
 import '../Models/User.dart';
 
 class AuthProvider extends ChangeNotifier {
-  bool? _isLoggedIn;
-
   bool? _isChanged;
+
+  bool? get isChanged => _isChanged;
+
+  bool? _isLoggedIn;
 
   bool? get isLoggedIn => _isLoggedIn;
 
@@ -153,14 +155,17 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
-  Future<void> changePassword(String? old_password, String? new_password,
-      {required User user}) async {
+  Future<void> changePassword(
+      {required String? old_password,required String? new_password}) async {
+
+    String? token = await LocalStorage.getToken();
     try {
       final http.Response response = await http.post(
         Uri.parse('$baseUrl/users/password/change'),
         headers: {
           'Accept': 'application/json',
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token'
         },
         body: json.encode({
           'old_password': old_password,
@@ -172,23 +177,23 @@ class AuthProvider extends ChangeNotifier {
         Map<String, dynamic> output = jsonDecode(response.body);
 
         try {
-          _currentUser = User.fromJson(output);
-          await LocalStorage.storeToken(token: output['tokens']['access']);
-          await LocalStorage.storeUserData(user: _currentUser!);
-          _isLoggedIn = true;
+          await LocalStorage.logout();
+          _isChanged = true;
           notifyListeners();
         } catch (e) {
           print(e.toString());
-          _isLoggedIn = false;
+          _isChanged = false;
           notifyListeners();
         }
         notifyListeners();
         print('Password changed successfully');
       } else {
+        _isChanged = false;
         notifyListeners();
         print('Password change failed: ${response.body}');
       }
     } catch (e) {
+      _isChanged = false;
       notifyListeners();
       print('Error changing password: $e');
     }
