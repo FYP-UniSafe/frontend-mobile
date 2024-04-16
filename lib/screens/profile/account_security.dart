@@ -1,6 +1,13 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
+import 'package:provider/provider.dart';
 import 'package:unisafe/resources/validator.dart';
 
+import '../../Models/User.dart';
+import '../../Providers/authProvider.dart';
+import '../../Widgets/Flashbar/flashbar.dart';
+import '../authorization/login.dart';
 import '../authorization/password_reset.dart';
 
 class AccountSecurity extends StatefulWidget {
@@ -13,6 +20,16 @@ class AccountSecurity extends StatefulWidget {
 class _AccountSecurityState extends State<AccountSecurity> {
   final _formKey = GlobalKey<FormState>();
   bool _isHidden = true;
+  late AuthProvider _authProvider;
+  String old_password = '';
+  String new_password = '';
+  final _passwordController = TextEditingController();
+
+  @override
+  void didChangeDependencies() {
+    _authProvider = Provider.of<AuthProvider>(context);
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +77,7 @@ class _AccountSecurityState extends State<AccountSecurity> {
                           height: 20.0,
                         ),
                         TextFormField(
+                          controller: _passwordController,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           obscureText: _isHidden,
                           style: TextStyle(color: Colors.black),
@@ -147,9 +165,7 @@ class _AccountSecurityState extends State<AccountSecurity> {
                         ),
                         SizedBox(height: 20.0),
                         ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {}
-                          },
+                          onPressed: _changePassword,
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
@@ -180,5 +196,38 @@ class _AccountSecurityState extends State<AccountSecurity> {
     setState(() {
       _isHidden = !_isHidden;
     });
+  }
+
+  _changePassword() async {
+    if (_formKey.currentState!.validate()) {
+      if (_passwordController.text.isNotEmpty) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.changePassword(old_password, new_password,
+            user: User(password: _passwordController.text));
+
+        Navigator.pop(context);
+
+        Navigator.pushAndRemoveUntil(context,
+            MaterialPageRoute(builder: (context) => Login()), (route) => false);
+      }
+    }
   }
 }

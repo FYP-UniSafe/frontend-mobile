@@ -21,30 +21,35 @@ class User {
   String? token;
   String? last_login;
   String? otp;
+  String? new_password;
+  String? old_password;
 
-  User(
-      {this.id,
-      this.full_name,
-      this.email,
-      this.phone_number,
-      this.gender,
-      this.reg_no,
-      this.college,
-      this.staff_no,
-      this.office,
-      this.date_joined,
-      this.police_no,
-      this.is_staff,
-      this.is_active,
-      this.is_consultant,
-      this.is_genderdesk,
-      this.is_student,
-      this.is_police,
-      this.station,
-      this.password,
-      this.last_login,
-      this.otp,
-      this.token});
+  User({
+    this.id,
+    this.full_name,
+    this.email,
+    this.phone_number,
+    this.gender,
+    this.reg_no,
+    this.college,
+    this.staff_no,
+    this.office,
+    this.date_joined,
+    this.police_no,
+    this.is_staff,
+    this.is_active,
+    this.is_consultant,
+    this.is_genderdesk,
+    this.is_student,
+    this.is_police,
+    this.station,
+    this.password,
+    this.last_login,
+    this.otp,
+    this.token,
+    this.new_password,
+    this.old_password,
+  });
 
   Map<String, dynamic> toLoginJson() => {
         "email": email,
@@ -52,19 +57,19 @@ class User {
       };
 
   Map<String, dynamic> toOtpJson() => {
-    "email": email,
-    "otp": otp,
-  };
+        "email": email,
+        "otp": otp,
+      };
 
   Map<String, dynamic> toStudentSignupJson() => {
-    "full_name": full_name,
-    "phone_number": phone_number,
-    "gender": gender,
-    "reg_no": reg_no,
-    "college": college,
-    "email": email,
-    "password": password,
-  };
+        "full_name": full_name,
+        "phone_number": phone_number,
+        "gender": gender,
+        "reg_no": reg_no,
+        "college": college,
+        "email": email,
+        "password": password,
+      };
 
   Map<String, dynamic> toJsonStorage() => {
         "id": id,
@@ -78,6 +83,11 @@ class User {
         "date_joined": date_joined,
         "last_login": last_login,
         "token": token
+      };
+
+  Map<String, dynamic> toPasswordChangeJson() => {
+        "old_password": old_password,
+        "new_password": new_password,
       };
 
   factory User.fromJson(Map<String, dynamic> json) {

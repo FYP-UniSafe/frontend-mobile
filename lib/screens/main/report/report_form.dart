@@ -32,7 +32,21 @@ class _ReportFormState extends State<ReportForm> {
     "Other"
   ];
 
-  List<String> locations = [];
+  List<String> locations = [
+    "Hall I",
+    "Hall II",
+    "Hall III",
+    "Hall IV",
+    "Hall V",
+    "Hall VI",
+    "Hall VII",
+    "Magufuli Hostels",
+    "Mabibo Hostels",
+    "Kunduchi Hostels",
+    "CoICT Hostels",
+    "Ubungo Hostels",
+    "Other"
+  ];
 
   List<String> genders = ["Male", "Female"];
   List<String> abuses = [
@@ -319,38 +333,12 @@ class _ReportFormState extends State<ReportForm> {
                           height: 16.0,
                         ),
                         TextFormField(
-                          controller: _dateController,
-                          style: TextStyle(color: Colors.black),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 12.0),
-                            labelText: 'Date',
-                            suffixIcon: Icon(Icons.calendar_month_outlined),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 1.3),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                          ),
-                          readOnly: true,
-                          onTap: () {
-                            _selectDate();
-                          },
-                        ),
-                        SizedBox(
-                          height: 16.0,
-                        ),
-                        TextFormField(
                           controller: _timeController,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.symmetric(
                                 horizontal: 12.0, vertical: 12.0),
-                            labelText: 'Time',
-                            suffixIcon: Icon(Icons.watch_later),
+                            labelText: 'Date and Time',
                             enabledBorder: OutlineInputBorder(
                               borderSide:
                                   BorderSide(color: Colors.black, width: 1.3),
@@ -361,8 +349,28 @@ class _ReportFormState extends State<ReportForm> {
                             ),
                           ),
                           readOnly: true,
-                          onTap: () {
-                            _selectTime(context);
+                          onTap: () async {
+                            final DateTime? pickedDate = await showDatePicker(
+                              context: context,
+                              initialDate: DateTime.now(),
+                              firstDate: DateTime(2000),
+                              lastDate: DateTime.now(),
+                            );
+
+                            if (pickedDate != null) {
+                              final TimeOfDay? pickedTime =
+                                  await showTimePicker(
+                                context: context,
+                                initialTime: TimeOfDay.now(),
+                              );
+
+                              if (pickedTime != null) {
+                                setState(() {
+                                  _timeController.text =
+                                      '${_formatDateTime(pickedDate, pickedTime)}';
+                                });
+                              }
+                            }
                           },
                         ),
                         SizedBox(
@@ -401,6 +409,26 @@ class _ReportFormState extends State<ReportForm> {
                               location = value;
                             });
                           },
+                        ),
+                        SizedBox(
+                          height: 16.0,
+                        ),
+                        TextFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.1),
+                            ),
+                            labelText: "If location is 'other', please specify",
+                          ),
                         ),
                         SizedBox(
                           height: 16.0,
@@ -664,32 +692,9 @@ class _ReportFormState extends State<ReportForm> {
     );
   }
 
-  Future<void> _selectDate() async {
-    DateTime? _picked = await showDatePicker(
-      context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime(2000),
-      lastDate: DateTime.now(),
-    );
-
-    if (_picked != null) {
-      setState(() {
-        String formattedDate = DateFormat('dd-MM-yyyy').format(_picked);
-        _dateController.text = formattedDate;
-      });
-    }
-  }
-
-  Future<void> _selectTime(BuildContext context) async {
-    TimeOfDay? selectedTime = await showTimePicker(
-      context: context,
-      initialTime: TimeOfDay.now(),
-    );
-
-    if (selectedTime != null) {
-      setState(() {
-        _timeController.text = selectedTime.format(context);
-      });
-    }
+  String _formatDateTime(DateTime date, TimeOfDay time) {
+    final formattedDate = DateFormat('dd/MM/yyyy').format(date);
+    final formattedTime = '${time.hour}:${time.minute}';
+    return '$formattedDate $formattedTime';
   }
 }

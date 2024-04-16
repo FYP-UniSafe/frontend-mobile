@@ -3,9 +3,7 @@ import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:provider/provider.dart';
 import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/resources/constants.dart';
 
@@ -14,6 +12,8 @@ import '../Models/User.dart';
 class AuthProvider extends ChangeNotifier {
   bool? _isLoggedIn;
 
+  bool? _isChanged;
+
   bool? get isLoggedIn => _isLoggedIn;
 
   bool? _otpVerifed;
@@ -21,7 +21,6 @@ class AuthProvider extends ChangeNotifier {
   bool? get otpVerifed => _otpVerifed;
 
   bool? _otpSent;
-
 
   bool? get otpSent => _otpSent;
   User? _currentUser;
@@ -112,9 +111,8 @@ class AuthProvider extends ChangeNotifier {
         if (kDebugMode) {
           log(output.toString());
         }
-          _otpVerifed = true;
-          notifyListeners();
-
+        _otpVerifed = true;
+        notifyListeners();
       } else {
         _otpVerifed = false;
         throw HttpException('${response.statusCode}: ${response.reasonPhrase}',
@@ -127,9 +125,6 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> resendOTP() async {
-
-
-
     final Uri apiUrl = Uri.parse('$baseUrl/users/otp/resend');
     final Map<String, dynamic> requestData = {
       'email': _currentUser!.email,
@@ -143,19 +138,59 @@ class AuthProvider extends ChangeNotifier {
       );
 
       if (response.statusCode == 200) {
-        _otpSent=true;
+        _otpSent = true;
         notifyListeners();
         print('OTP Resent Successfully');
       } else {
-        _otpSent=false;
+        _otpSent = false;
         notifyListeners();
         print('Failed to Resend OTP');
       }
     } catch (e) {
-      _otpSent=false;
+      _otpSent = false;
       notifyListeners();
       print('Error: $e');
     }
+  }
 
+  Future<void> changePassword(String? old_password, String? new_password,
+      {required User user}) async {
+    try {
+      final http.Response response = await http.post(
+        Uri.parse('$baseUrl/users/password/change'),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: json.encode({
+          'old_password': old_password,
+          'new_password': new_password,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        Map<String, dynamic> output = jsonDecode(response.body);
+
+        try {
+          _currentUser = User.fromJson(output);
+          await LocalStorage.storeToken(token: output['tokens']['access']);
+          await LocalStorage.storeUserData(user: _currentUser!);
+          _isLoggedIn = true;
+          notifyListeners();
+        } catch (e) {
+          print(e.toString());
+          _isLoggedIn = false;
+          notifyListeners();
+        }
+        notifyListeners();
+        print('Password changed successfully');
+      } else {
+        notifyListeners();
+        print('Password change failed: ${response.body}');
+      }
+    } catch (e) {
+      notifyListeners();
+      print('Error changing password: $e');
+    }
   }
 }

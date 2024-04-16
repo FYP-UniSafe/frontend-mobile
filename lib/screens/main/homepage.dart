@@ -41,7 +41,7 @@ class _HomePageState extends State<HomePage> {
                     ),
                     child: Column(
                       children: [
-                        Text(
+                        /*Text(
                           'Welcome to UniSafe!',
                           style: TextStyle(
                             shadows: [
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
                             fontSize: 28.0,
                             fontWeight: FontWeight.bold,
                           ),
-                        ),
+                        ),*/
                         Padding(
                           padding: EdgeInsets.all(16.0),
                           child: Text(

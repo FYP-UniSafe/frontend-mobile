@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:unisafe/screens/main/report/report_form.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -104,11 +105,11 @@ class _ReportPageState extends State<ReportPage> {
                       ),
                       style: ElevatedButton.styleFrom(
                         elevation: 3,
-                        backgroundColor: Colors.white,
-                        side: BorderSide(
+                        backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                        /*side: BorderSide(
                           width: 1.0,
                           color: Color.fromRGBO(8, 100, 175, 1.0),
-                        ),
+                        ),*/
                         padding: EdgeInsets.all(12.0),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(5.0),
@@ -119,7 +120,7 @@ class _ReportPageState extends State<ReportPage> {
                         style: TextStyle(
                           fontSize: 18.0,
                           fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(8, 100, 175, 1.0),
+                          color: Colors.white,
                         ),
                       ),
                     ),
@@ -156,6 +157,48 @@ class _ReportPageState extends State<ReportPage> {
                   Divider(
                     height: 30.0,
                     color: Color.fromRGBO(8, 100, 175, 1.0),
+                  ),
+                  SafeArea(
+                    top: false,
+                    bottom: true,
+                    child: SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        onPressed: () {},
+                        style: ElevatedButton.styleFrom(
+                          elevation: 3,
+                          backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                          foregroundColor: Colors.white,
+                          /*side: BorderSide(
+                            width: 1.0,
+                            color: Color.fromRGBO(8, 100, 175, 1.0),
+                          ),*/
+                          padding: EdgeInsets.all(12.0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                        ),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Align(
+                                alignment: Alignment.center,
+                                child: Text(
+                                  'Your Reports',
+                                  style: TextStyle(
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.normal),
+                                ),
+                              ),
+                            ),
+                            Icon(
+                              Icons.arrow_forward_ios,
+                              size: 20.0,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
                   ),
                 ],
               ),
