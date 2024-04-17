@@ -694,7 +694,9 @@ class _ReportFormState extends State<ReportForm> {
 
   String _formatDateTime(DateTime date, TimeOfDay time) {
     final formattedDate = DateFormat('dd/MM/yyyy').format(date);
-    final formattedTime = '${time.hour}:${time.minute}';
-    return '$formattedDate $formattedTime';
+    final formattedTime =
+        '${time.hour}:${time.minute < 10 ? '0${time.minute}' : time.minute}';
+
+    return '$formattedDate at $formattedTime';
   }
 }
