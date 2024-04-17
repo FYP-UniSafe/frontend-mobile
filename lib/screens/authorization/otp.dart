@@ -11,6 +11,7 @@ import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 
 import '../../Models/User.dart';
+import '../../Services/stateObserver.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
 import '../../resources/constants.dart';
 
@@ -33,15 +34,19 @@ class _OtpState extends State<Otp> {
       List.generate(6, (index) => TextEditingController());
 
   late AuthProvider _authProvider;
+  final _appStateObserver = AppStateObserver();
+
 
   @override
   void initState() {
-    super.initState();
+
+    WidgetsBinding.instance.addObserver(_appStateObserver);
     pin2FocusNode = FocusNode();
     pin3FocusNode = FocusNode();
     pin4FocusNode = FocusNode();
     pin5FocusNode = FocusNode();
     pin6FocusNode = FocusNode();
+    super.initState();
   }
 
   @override
@@ -52,12 +57,13 @@ class _OtpState extends State<Otp> {
 
   @override
   void dispose() {
-    super.dispose();
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
     pin2FocusNode!.dispose();
     pin3FocusNode!.dispose();
     pin4FocusNode!.dispose();
     pin5FocusNode!.dispose();
     pin6FocusNode!.dispose();
+    super.dispose();
   }
 
   void nextField(String value, FocusNode? focusNode) {

@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../Services/stateObserver.dart';
+
 class AllAppointments extends StatefulWidget {
   const AllAppointments({super.key});
 
@@ -8,6 +10,23 @@ class AllAppointments extends StatefulWidget {
 }
 
 class _AllAppointmentsState extends State<AllAppointments> {
+
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

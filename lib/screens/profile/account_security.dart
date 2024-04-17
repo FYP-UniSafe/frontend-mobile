@@ -6,6 +6,7 @@ import 'package:unisafe/resources/validator.dart';
 
 import '../../Models/User.dart';
 import '../../Providers/authProvider.dart';
+import '../../Services/stateObserver.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
 import '../authorization/login.dart';
 import '../authorization/password_reset.dart';
@@ -26,6 +27,19 @@ class _AccountSecurityState extends State<AccountSecurity> {
   String new_password = '';
   final _oldpasswordController = TextEditingController();
   final _newpasswordController = TextEditingController();
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {

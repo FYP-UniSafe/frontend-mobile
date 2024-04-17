@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:unisafe/resources/validator.dart';
 import 'dart:io';
 
+import '../../Services/stateObserver.dart';
 import '../../Services/storage.dart';
 
 class EditProfile extends StatefulWidget {
@@ -22,8 +23,18 @@ class _EditProfileState extends State<EditProfile> {
 
   late LocalStorageProvider storageProvider;
 
+  final _appStateObserver = AppStateObserver();
+
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
   @override
   void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
     final storageProviders =
         Provider.of<LocalStorageProvider>(context, listen: false);
 

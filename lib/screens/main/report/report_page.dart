@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:unisafe/screens/main/report/report_form.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../Services/stateObserver.dart';
+
 class ReportPage extends StatefulWidget {
   const ReportPage({super.key});
 
@@ -11,6 +13,20 @@ class ReportPage extends StatefulWidget {
 }
 
 class _ReportPageState extends State<ReportPage> {
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return SizedBox(

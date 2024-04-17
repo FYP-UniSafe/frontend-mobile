@@ -8,6 +8,7 @@ import 'package:unisafe/screens/authorization/password_reset.dart';
 import 'package:unisafe/screens/authorization/signup.dart';
 
 import '../../Models/User.dart';
+import '../../Services/stateObserver.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
 import '../../resources/validator.dart';
 import '../main/main_screen.dart';
@@ -28,6 +29,19 @@ class _LoginState extends State<Login> {
   final _passwordController = TextEditingController();
 
   late AuthProvider _authProvider;
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {

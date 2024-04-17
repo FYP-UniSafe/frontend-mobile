@@ -4,6 +4,8 @@ import 'package:unisafe/screens/main/homepage.dart';
 import 'package:unisafe/screens/profile/profile_page.dart';
 import 'package:unisafe/screens/main/report/report_page.dart';
 
+import '../../Services/stateObserver.dart';
+
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
 
@@ -48,6 +50,19 @@ class _MainScreenState extends State<MainScreen> {
               context, MaterialPageRoute(builder: (context) => ProfilePage()));
           break;
       }*/
+  }
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
   }
 
   @override

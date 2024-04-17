@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../Services/stateObserver.dart';
 import '../../resources/validator.dart';
 
 class PasswordReset extends StatefulWidget {
@@ -10,6 +11,19 @@ class PasswordReset extends StatefulWidget {
 
 class _PasswordResetState extends State<PasswordReset> {
   final _formKey = GlobalKey<FormState>();
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

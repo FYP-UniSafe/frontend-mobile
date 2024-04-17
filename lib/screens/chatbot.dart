@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:intl/intl.dart';
 
+import '../Services/stateObserver.dart';
+
 class Chatbot extends StatefulWidget {
   const Chatbot({super.key});
 
@@ -34,6 +36,19 @@ class _ChatbotState extends State<Chatbot> {
       _messages.add(Message(
           isUser: false, message: response.text ?? "", date: DateTime.now()));
     });
+  }
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
   }
 
   @override
@@ -117,7 +132,8 @@ class _ChatbotState extends State<Chatbot> {
                           }
                           return Color.fromRGBO(8, 100, 175, 1.0);
                         }),
-                        foregroundColor: MaterialStateProperty.all(Colors.white),
+                        foregroundColor:
+                            MaterialStateProperty.all(Colors.white),
                       ),
                       onPressed: () {
                         sendMessage();

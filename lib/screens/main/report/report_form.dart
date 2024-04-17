@@ -3,6 +3,8 @@ import 'package:intl/intl.dart';
 import 'package:unisafe/resources/validator.dart';
 import 'package:file_picker/file_picker.dart';
 
+import '../../../Services/stateObserver.dart';
+
 class ReportForm extends StatefulWidget {
   const ReportForm({super.key});
 
@@ -67,6 +69,20 @@ class _ReportFormState extends State<ReportForm> {
   final _email = TextEditingController();
   final _phone = TextEditingController();
   final _registration = TextEditingController();
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
 
   @override
   Widget build(BuildContext context) {

@@ -3,6 +3,8 @@ import 'package:unisafe/screens/main/counsel/all_appointments.dart';
 
 import 'package:unisafe/screens/main/counsel/book_counsel.dart';
 
+import '../../../Services/stateObserver.dart';
+
 class CounselPage extends StatefulWidget {
   const CounselPage({super.key});
 
@@ -11,6 +13,21 @@ class CounselPage extends StatefulWidget {
 }
 
 class _CounselPageState extends State<CounselPage> {
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

@@ -9,6 +9,8 @@ import 'package:unisafe/screens/profile/contact_page.dart';
 import 'package:unisafe/screens/profile/edit_profile.dart';
 import 'package:unisafe/screens/profile/profile_menu.dart';
 
+import '../../Services/stateObserver.dart';
+
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
 
@@ -20,6 +22,20 @@ class _ProfilePageState extends State<ProfilePage> {
 
 
   late LocalStorageProvider storageProvider;
+  final _appStateObserver = AppStateObserver();
+
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
 
 
   @override

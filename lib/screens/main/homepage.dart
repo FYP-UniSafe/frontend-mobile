@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:url_launcher/url_launcher.dart';
+import '../../Services/stateObserver.dart';
 import '../chatbot.dart';
 
 class HomePage extends StatefulWidget {
@@ -13,6 +14,22 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
