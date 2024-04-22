@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/resources/validator.dart';
@@ -126,7 +127,7 @@ class _ReportFormState extends State<ReportForm> {
                   //padding: EdgeInsets.only(top: 8.0),
                   children: [
                     Padding(
-                      padding: EdgeInsets.only(left: 16.0),
+                      padding: EdgeInsets.only(left: 16.0, bottom: 6.0),
                       child: Text(
                         '1. Who are you reporting for?',
                         style: TextStyle(
@@ -141,36 +142,45 @@ class _ReportFormState extends State<ReportForm> {
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Radio(
-                                value: true,
-                                groupValue: selectionProvider.isMyselfSelected,
-                                onChanged: (value) {
-                                  selectionProvider.isMyselfSelected = true;
-                                },
-                                activeColor: Color.fromRGBO(8, 100, 175, 1.0),
+                              ConstrainedBox(
+                                constraints: BoxConstraints(maxHeight: 20),
+                                child: Radio(
+                                  value: true,
+                                  groupValue:
+                                      selectionProvider.isMyselfSelected,
+                                  onChanged: (value) {
+                                    selectionProvider.isMyselfSelected = true;
+                                  },
+                                  activeColor: Color.fromRGBO(8, 100, 175, 1.0),
+                                ),
                               ),
                               Text(
                                 'Myself',
-                                style: TextStyle(
-                                    fontSize: 16, fontWeight: FontWeight.bold),
+                                style: TextStyle(fontSize: 18),
                               ),
                             ],
+                          ),
+                          SizedBox(
+                            height: 10,
                           ),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.start,
                             children: [
-                              Radio(
-                                value: false,
-                                groupValue: selectionProvider.isMyselfSelected,
-                                onChanged: (value) {
-                                  selectionProvider.isMyselfSelected = false;
-                                },
-                                activeColor: Color.fromRGBO(8, 100, 175, 1.0),
+                              ConstrainedBox(
+                                constraints: BoxConstraints(maxHeight: 20),
+                                child: Radio(
+                                  value: false,
+                                  groupValue:
+                                      selectionProvider.isMyselfSelected,
+                                  onChanged: (value) {
+                                    selectionProvider.isMyselfSelected = false;
+                                  },
+                                  activeColor: Color.fromRGBO(8, 100, 175, 1.0),
+                                ),
                               ),
                               Text(
                                 'Someone else',
-                                style: TextStyle(
-                                    fontWeight: FontWeight.bold, fontSize: 16),
+                                style: TextStyle(fontSize: 18),
                               ),
                             ],
                           ),
