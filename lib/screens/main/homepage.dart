@@ -14,8 +14,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
-
   final _appStateObserver = AppStateObserver();
   @override
   void initState() {
@@ -28,7 +26,6 @@ class _HomePageState extends State<HomePage> {
     WidgetsBinding.instance.removeObserver(_appStateObserver);
     super.dispose();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -49,11 +46,12 @@ class _HomePageState extends State<HomePage> {
                     width: double.infinity,
                     height: MediaQuery.of(context).size.height * 0.3,
                     decoration: BoxDecoration(
+                      color: Colors.white,
                       image: DecorationImage(
-                        image: AssetImage('assets/images/home.jpg'),
-                        fit: BoxFit.cover,
+                        image: AssetImage('assets/images/logo_ud.png'),
+                        fit: BoxFit.fitHeight,
                         colorFilter: ColorFilter.mode(
-                            Colors.black.withOpacity(0.3), BlendMode.dstATop),
+                            Colors.white.withOpacity(0.5), BlendMode.dstATop),
                       ),
                     ),
                     child: Column(
@@ -82,6 +80,49 @@ class _HomePageState extends State<HomePage> {
                             ),
                           ),
                         )
+                      ],
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                GestureDetector(
+                  onTap: () {
+                    _launchUrl(
+                        'https://www.udsm.ac.tz/upload/20191018_030915_sexual%20harassment%20policy.pdf');
+                  },
+                  child: Card(
+                    //clipBehavior: Clip.antiAlias,
+                    color: Colors.white,
+                    //elevation: 10.0,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        ListTile(
+                          leading: Padding(
+                            padding: EdgeInsets.only(right: 8.0),
+                            child: Image.asset(
+                              'assets/images/logo_ud.png',
+                              height: MediaQuery.of(context).size.height * 0.3,
+                              width: MediaQuery.of(context).size.width * 0.2,
+                            ),
+                          ),
+                          title: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  'UDSM Anti-Sexual Harassment Policy',
+                                  style: TextStyle(fontSize: 17.0),
+                                ),
+                              ),
+                              Icon(
+                                CupertinoIcons.arrow_up_right_square,
+                                color: Colors.blue,
+                              ),
+                            ],
+                          ),
+                        ),
                       ],
                     ),
                   ),

@@ -98,6 +98,8 @@ flutter:
       - assets/images/who_gbv.png
       - assets/images/amnesty_logo.jpg
       - assets/images/HRW_Logo.jpg
+      - assets/images/nkr.png
+      - assets/images/logo_ud.png
       - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

@@ -9,6 +9,7 @@ import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 import 'package:unisafe/screens/main/onboarding.dart';
 import 'Providers/authProvider.dart';
+import 'Providers/selectionProvider.dart';
 import 'Services/storage.dart';
 
 Widget? _landingPage;
@@ -22,6 +23,7 @@ void main() async {
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => AuthProvider()),
     ChangeNotifierProvider(create: (context) => ProfileTypeProvider()),
+    ChangeNotifierProvider(create: (context) => SelectionProvider()),
     ChangeNotifierProvider.value(value: storageProvider),
   ], child: UniSafe()));
 }
