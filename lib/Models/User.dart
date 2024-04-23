@@ -23,33 +23,34 @@ class User {
   String? otp;
   String? new_password;
   String? old_password;
+  Map? profile;
 
-  User({
-    this.id,
-    this.full_name,
-    this.email,
-    this.phone_number,
-    this.gender,
-    this.reg_no,
-    this.college,
-    this.staff_no,
-    this.office,
-    this.date_joined,
-    this.police_no,
-    this.is_staff,
-    this.is_active,
-    this.is_consultant,
-    this.is_genderdesk,
-    this.is_student,
-    this.is_police,
-    this.station,
-    this.password,
-    this.last_login,
-    this.otp,
-    this.token,
-    this.new_password,
-    this.old_password,
-  });
+  User(
+      {this.id,
+      this.full_name,
+      this.email,
+      this.phone_number,
+      this.gender,
+      this.reg_no,
+      this.college,
+      this.staff_no,
+      this.office,
+      this.date_joined,
+      this.police_no,
+      this.is_staff,
+      this.is_active,
+      this.is_consultant,
+      this.is_genderdesk,
+      this.is_student,
+      this.is_police,
+      this.station,
+      this.password,
+      this.last_login,
+      this.otp,
+      this.token,
+      this.new_password,
+      this.old_password,
+      this.profile});
 
   Map<String, dynamic> toLoginJson() => {
         "email": email,
@@ -82,7 +83,10 @@ class User {
         "is_student": is_student,
         "date_joined": date_joined,
         "last_login": last_login,
-        "token": token
+        "token": token,
+        "reg_no": reg_no,
+        "college": college,
+        "profile": profile
       };
 
   Map<String, dynamic> toPasswordChangeJson() => {
@@ -119,6 +123,9 @@ class User {
           : false,
       phone_number: json['phone_number'],
       token: json['tokens']['access'],
+      profile: json['profile'],
+      reg_no: json['profile']['reg_no'],
+      college: json['profile']['college'],
     );
   }
 
@@ -151,6 +158,9 @@ class User {
           : false,
       phone_number: json['phone_number'],
       token: json['token'],
+      profile: json['profile'],
+      reg_no: json['profile']['reg_no'],
+      college: json['profile']['college'],
     );
   }
 }

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 class Report {
+  String? report_for;
   String? email;
   String? full_name;
   String? phone_number;
@@ -22,12 +25,13 @@ class Report {
   String? reporter_reg_no;
   String? reporter_email;
   String? reporter_phone;
-  String? evidence;
+  List<File>? evidence;
   String? police_status;
   String? assigned_officer;
 
   Report({
     this.email,
+    this.report_for,
     this.full_name,
     this.status,
     this.reporter_reg_no,
@@ -56,7 +60,8 @@ class Report {
   });
 
   Map<String, dynamic> toJsonReportData() => {
-        "report_for": "Self",
+        // "report_for": "Self",
+        "report_for": report_for,
         "victim_email": email,
         "victim_full_name": full_name,
         "victim_phone": phone_number,
@@ -70,18 +75,22 @@ class Report {
         "perpetrator_fullname": perpetrator_fullname,
         "perpetrator_gender": perpetrator_gender,
         "relationship": relationship,
-        "report_id": report_id,
-        "status": status,
-        "assigned_gd": assigned_gd,
-        "reporter": reporter,
-        "reporter_full_name": reporter_full_name,
-        "reporter_gender": reporter_gender,
-        "reporter_college": reporter_college,
-        "reporter_reg_no": reporter_reg_no,
-        "reporter_email": reporter_email,
-        "reporter_phone": reporter_phone,
         "evidence": evidence,
-        "police_status": police_status,
-        "assigned_officer": assigned_officer
+      };
+  Map<String, dynamic> toJsonAnonymousReportData() => {
+        "victim_email": email,
+        "victim_full_name": full_name,
+        "victim_phone": phone_number,
+        "victim_gender": gender,
+        "victim_reg_no": reg_no,
+        "victim_college": college,
+        "abuse_type": abuse_type,
+        "date_and_time": dateTime,
+        "location": location,
+        "description": description,
+        "perpetrator_fullname": perpetrator_fullname,
+        "perpetrator_gender": perpetrator_gender,
+        "relationship": relationship,
+        "evidence": evidence,
       };
 }

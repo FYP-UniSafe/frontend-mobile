@@ -91,7 +91,10 @@ class AuthProvider extends ChangeNotifier {
           notifyListeners();
         }
       } else {
-        log(response.body);
+        if(kDebugMode){
+          log(response.body);
+        }
+
         throw HttpException('${response.statusCode}: ${response.reasonPhrase}',
             uri: Uri.parse('$baseUrl/users/login'));
       }

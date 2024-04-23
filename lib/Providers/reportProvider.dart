@@ -1,29 +1,77 @@
 import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:unisafe/Services/storage.dart';
 
 import '../Models/Report.dart';
 import '../resources/constants.dart';
 
 class ReportProvider extends ChangeNotifier {
-  Future createReport({required Report report}) async {
-    try {
-      final response = await http.post(
-        Uri.parse('$baseUrl/reports/create'),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: json.encode(report.toJsonReportData()),
-      );
+  bool? _isReported;
 
-      if (response.statusCode == 200) {
-        print('Report created successfully');
+  List<Report> _reports = [];
+
+  List<Report> get reports => _reports;
+
+  Future createReport({required Report report}) async {
+    String? token = await LocalStorage.getToken();
+    try {
+      var uri = Uri.parse(
+          '$baseUrl/reports/create'); // Replace with your Laravel API endpoint
+      var request = http.MultipartRequest('POST', uri);
+
+      report.evidence!.forEach((element) async {
+        var file =
+            await http.MultipartFile.fromPath('attachment[]', element.path);
+        request.files.add(file);
+      });
+
+      report.toJsonReportData().forEach((key, value) {
+        request.fields[key] = value;
+      });
+
+      request.headers['Content-Type'] = 'application/json';
+      request.headers['Accept'] = 'application/json';
+      request.headers['Authorization'] = 'Bearer $token';
+
+      final response = await request.send();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        String responseBody = await response.stream.bytesToString();
+        var output = jsonDecode(responseBody);
+        if (kDebugMode) {
+          print('File uploaded successfully');
+        }
+        _isReported = true;
+        notifyListeners();
       } else {
-        print('Failed to create report. Status code: ${response.statusCode}');
+        if (kDebugMode) {
+          print(response.statusCode);
+          print('File upload failed');
+        }
       }
     } catch (e) {
-      print('Error creating report: $e');
+      if (kDebugMode) {
+        print(e.toString());
+      }
     }
+  }
+
+  Future getReports() async {
+    String? token = await LocalStorage.getToken();
+    try {
+      http.Response response =
+          await http.get(Uri.parse("$baseUrl/reports"), headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      });
+
+      if (response.statusCode == 200) {
+        Map output = jsonDecode(response.body);
+      }
+    } catch (e) {}
   }
 }

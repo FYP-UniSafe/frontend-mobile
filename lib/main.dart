@@ -9,12 +9,14 @@ import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 import 'package:unisafe/screens/main/onboarding.dart';
 import 'Providers/authProvider.dart';
+import 'Providers/reportProvider.dart';
 import 'Providers/selectionProvider.dart';
 import 'Services/storage.dart';
 
 Widget? _landingPage;
 
 final storageProvider = LocalStorageProvider();
+final reportProvider = ReportProvider();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -25,6 +27,7 @@ void main() async {
     ChangeNotifierProvider(create: (context) => ProfileTypeProvider()),
     ChangeNotifierProvider(create: (context) => SelectionProvider()),
     ChangeNotifierProvider.value(value: storageProvider),
+    ChangeNotifierProvider.value(value: reportProvider),
   ], child: UniSafe()));
 }
 

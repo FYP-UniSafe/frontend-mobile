@@ -1,8 +1,14 @@
+import 'dart:io';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:unisafe/Models/Report.dart';
+import 'package:unisafe/Providers/reportProvider.dart';
+import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/resources/validator.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -63,17 +69,25 @@ class _ReportFormState extends State<ReportForm> {
   ];
   String? college;
   String? gender;
+  String? _otherGender;
+  String? _perpetratorGender;
   String selectedOption = '';
   String? abuse;
   String? location;
+  List<File> _evidences = [];
 
   TextEditingController _dateController = TextEditingController();
+  TextEditingController _description = TextEditingController();
   TextEditingController _timeController = TextEditingController();
   final _fullName = TextEditingController();
+  final _perpetrator = TextEditingController();
+  final _perpetratorRelationship = TextEditingController();
   final _email = TextEditingController();
   final _phone = TextEditingController();
   final _registration = TextEditingController();
   late SelectionProvider selectionProvider;
+  late LocalStorageProvider storageProvider;
+  late ReportProvider reportProvider;
 
   final _appStateObserver = AppStateObserver();
   @override
@@ -91,6 +105,8 @@ class _ReportFormState extends State<ReportForm> {
   @override
   void didChangeDependencies() {
     selectionProvider = Provider.of<SelectionProvider>(context);
+    storageProvider = Provider.of<LocalStorageProvider>(context);
+    reportProvider = Provider.of<ReportProvider>(context);
     super.didChangeDependencies();
   }
 
@@ -126,242 +142,247 @@ class _ReportFormState extends State<ReportForm> {
                 child: ListView(
                   //padding: EdgeInsets.only(top: 8.0),
                   children: [
-                    Padding(
-                      padding: EdgeInsets.only(left: 16.0, bottom: 6.0),
-                      child: Text(
-                        '1. Who are you reporting for?',
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
+                    if (storageProvider.user != null) ...[
+                      Padding(
+                        padding: EdgeInsets.only(left: 16.0, bottom: 6.0),
+                        child: Text(
+                          'Who are you reporting for?',
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
+                        ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(left: 16.0),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              ConstrainedBox(
-                                constraints: BoxConstraints(maxHeight: 20),
-                                child: Radio(
-                                  value: true,
-                                  groupValue:
-                                      selectionProvider.isMyselfSelected,
-                                  onChanged: (value) {
-                                    selectionProvider.isMyselfSelected = true;
-                                  },
-                                  activeColor: Color.fromRGBO(8, 100, 175, 1.0),
+                      Padding(
+                        padding: EdgeInsets.only(left: 16.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(maxHeight: 20),
+                                  child: Radio(
+                                    value: true,
+                                    groupValue:
+                                        selectionProvider.isMyselfSelected,
+                                    onChanged: (value) {
+                                      selectionProvider.isMyselfSelected = true;
+                                    },
+                                    activeColor:
+                                        Color.fromRGBO(8, 100, 175, 1.0),
+                                  ),
                                 ),
-                              ),
-                              Text(
-                                'Myself',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ],
-                          ),
-                          SizedBox(
-                            height: 10,
-                          ),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            children: [
-                              ConstrainedBox(
-                                constraints: BoxConstraints(maxHeight: 20),
-                                child: Radio(
-                                  value: false,
-                                  groupValue:
-                                      selectionProvider.isMyselfSelected,
-                                  onChanged: (value) {
-                                    selectionProvider.isMyselfSelected = false;
-                                  },
-                                  activeColor: Color.fromRGBO(8, 100, 175, 1.0),
+                                Text(
+                                  'Myself',
+                                  style: TextStyle(fontSize: 18),
                                 ),
-                              ),
-                              Text(
-                                'Someone else',
-                                style: TextStyle(fontSize: 18),
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
-                    ),
-                    if (!selectionProvider.isMyselfSelected) ...[
-                      SizedBox(
-                        height: 12.0,
-                      ),
-                      TextFormField(
-                        controller: _fullName,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 12.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 1.1),
-                          ),
-                          labelText: 'Full Name',
+                              ],
+                            ),
+                            SizedBox(
+                              height: 10,
+                            ),
+                            Row(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              children: [
+                                ConstrainedBox(
+                                  constraints: BoxConstraints(maxHeight: 20),
+                                  child: Radio(
+                                    value: false,
+                                    groupValue:
+                                        selectionProvider.isMyselfSelected,
+                                    onChanged: (value) {
+                                      selectionProvider.isMyselfSelected =
+                                          false;
+                                    },
+                                    activeColor:
+                                        Color.fromRGBO(8, 100, 175, 1.0),
+                                  ),
+                                ),
+                                Text(
+                                  'Someone else',
+                                  style: TextStyle(fontSize: 18),
+                                ),
+                              ],
+                            ),
+                          ],
                         ),
-                        validator: (text) =>
-                            TextFormValidators.textFieldValidator(text),
                       ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      TextFormField(
-                        controller: _phone,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 12.0),
-                          labelText: 'Phone Number',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 1.1),
-                          ),
+                      if (!selectionProvider.isMyselfSelected) ...[
+                        SizedBox(
+                          height: 12.0,
                         ),
-                        validator: (text) =>
-                            TextFormValidators.phoneValidator(text!),
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      DropdownButtonFormField(
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        borderRadius: BorderRadius.circular(5.0),
-                        icon: Icon(Icons.arrow_drop_down),
-                        hint: Text('Gender'),
-                        validator: (text) =>
-                            TextFormValidators.chooseItems(text),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 12.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
+                        TextFormField(
+                          controller: _fullName,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.1),
+                            ),
+                            labelText: 'Full Name',
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 1.3),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
+                          validator: (text) =>
+                              TextFormValidators.textFieldValidator(text),
                         ),
-                        value: gender,
-                        items: genders
-                            .map((e) => DropdownMenuItem<String>(
-                                value: e.toString(), child: Text(e)))
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            gender = value;
-                          });
-                        },
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      TextFormField(
-                        controller: _email,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 12.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 1.1),
-                          ),
-                          labelText: 'Email',
+                        SizedBox(
+                          height: 16.0,
                         ),
-                        validator: (text) =>
-                            TextFormValidators.emailValidator(text!),
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      TextFormField(
-                        controller: _registration,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 12.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
+                        TextFormField(
+                          controller: _phone,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            labelText: 'Phone Number',
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.1),
+                            ),
                           ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 1.1),
-                          ),
-                          labelText: 'Registration Number',
+                          validator: (text) =>
+                              TextFormValidators.phoneValidator(text!),
                         ),
-                        validator: (text) =>
-                            TextFormValidators.studentIDValidator(text),
-                      ),
-                      SizedBox(
-                        height: 16.0,
-                      ),
-                      DropdownButtonFormField(
-                        //alignment: Alignment.bottomCenter,
-                        autovalidateMode: AutovalidateMode.onUserInteraction,
-                        borderRadius: BorderRadius.circular(5.0),
-                        icon: Icon(Icons.arrow_drop_down),
-                        hint: Text('College / School'),
-                        validator: (text) =>
-                            TextFormValidators.chooseItems(text),
-                        decoration: InputDecoration(
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 12.0),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 1.3),
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
+                        SizedBox(
+                          height: 16.0,
                         ),
-                        value: college,
-                        items: colleges
-                            .map((e) => DropdownMenuItem<String>(
-                                value: e.toString(), child: Text(e)))
-                            .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            college = value;
-                          });
-                        },
+                        DropdownButtonFormField(
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          borderRadius: BorderRadius.circular(5.0),
+                          icon: Icon(Icons.arrow_drop_down),
+                          hint: Text('Gender'),
+                          validator: (text) =>
+                              TextFormValidators.chooseItems(text),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.3),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                          ),
+                          value: _otherGender,
+                          items: genders
+                              .map((e) => DropdownMenuItem<String>(
+                                  value: e.toString(), child: Text(e)))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              _otherGender = value;
+                            });
+                          },
+                        ),
+                        SizedBox(
+                          height: 16.0,
+                        ),
+                        TextFormField(
+                          controller: _email,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.1),
+                            ),
+                            labelText: 'Email',
+                          ),
+                          validator: (text) =>
+                              TextFormValidators.emailValidator(text!),
+                        ),
+                        SizedBox(
+                          height: 16.0,
+                        ),
+                        TextFormField(
+                          controller: _registration,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          style: TextStyle(color: Colors.black),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.1),
+                            ),
+                            labelText: 'Registration Number',
+                          ),
+                          validator: (text) =>
+                              TextFormValidators.studentIDValidator(text),
+                        ),
+                        SizedBox(
+                          height: 16.0,
+                        ),
+                        DropdownButtonFormField(
+                          //alignment: Alignment.bottomCenter,
+                          autovalidateMode: AutovalidateMode.onUserInteraction,
+                          borderRadius: BorderRadius.circular(5.0),
+                          icon: Icon(Icons.arrow_drop_down),
+                          hint: Text('College / School'),
+                          validator: (text) =>
+                              TextFormValidators.chooseItems(text),
+                          decoration: InputDecoration(
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 12.0, vertical: 12.0),
+                            border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: Colors.black, width: 1.3),
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(5.0),
+                            ),
+                          ),
+                          value: college,
+                          items: colleges
+                              .map((e) => DropdownMenuItem<String>(
+                                  value: e.toString(), child: Text(e)))
+                              .toList(),
+                          onChanged: (value) {
+                            setState(() {
+                              college = value;
+                            });
+                          },
+                        ),
+                      ],
+                      Divider(
+                        height: 30.0,
+                        color: Color.fromRGBO(8, 100, 175, 1.0),
                       ),
                     ],
-                    Divider(
-                      height: 30.0,
-                      color: Color.fromRGBO(8, 100, 175, 1.0),
-                    ),
                     Padding(
                       padding: EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 0.0),
                       child: Text(
-                        "2. Description of the Abuse",
+                        "Description of the Abuse",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18.0),
                       ),
@@ -482,30 +503,33 @@ class _ReportFormState extends State<ReportForm> {
                         });
                       },
                     ),
-                    SizedBox(
-                      height: 16.0,
-                    ),
-                    TextFormField(
-                      autovalidateMode: AutovalidateMode.onUserInteraction,
-                      style: TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 12.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                          borderSide:
-                              BorderSide(color: Colors.black, width: 1.1),
-                        ),
-                        labelText: "If location is 'other', please specify",
+                    if (location == 'Other') ...[
+                      SizedBox(
+                        height: 16.0,
                       ),
-                    ),
+                      TextFormField(
+                        autovalidateMode: AutovalidateMode.onUserInteraction,
+                        style: TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 12.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 1.1),
+                          ),
+                          labelText: "If location is 'other', please specify",
+                        ),
+                      ),
+                    ],
                     SizedBox(
                       height: 16.0,
                     ),
                     TextFormField(
+                      controller: _description,
                       minLines: 5,
                       maxLines: 10,
                       //textAlign: TextAlign.start,
@@ -550,21 +574,76 @@ class _ReportFormState extends State<ReportForm> {
                         ),
                         TextButton(
                             onPressed: () async {
-                              FilePickerResult? result =
-                                  await FilePicker.platform.pickFiles();
+                              FilePickerResult? result = await FilePicker
+                                  .platform
+                                  .pickFiles(allowMultiple: true);
 
                               if (result != null) {
+                                if (_evidences.isEmpty) {
+                                  setState(() {
+                                    _evidences = result.files
+                                        .map((file) =>
+                                            File(file.path.toString()))
+                                        .toList();
+                                  });
+                                } else {
+                                  setState(() {
+                                    _evidences.addAll(result.files
+                                        .map((file) =>
+                                            File(file.path.toString()))
+                                        .toList());
+                                  });
+                                }
                               } else {}
                             },
                             child: Text(
-                              'Choose File',
+                              _evidences.isNotEmpty
+                                  ? 'Add File'
+                                  : 'Choose File',
                               style: TextStyle(
                                 fontSize: 16.0,
                                 color: Color.fromRGBO(8, 100, 175, 1.0),
                               ),
-                            ))
+                            )),
                       ],
                     ),
+                    if (_evidences.isNotEmpty)
+                      SizedBox(
+                        height: 80,
+                        width: MediaQuery.of(context).size.width,
+                        child: ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemCount: _evidences.length,
+                          itemBuilder: (_, i) => Padding(
+                            padding: EdgeInsets.all(4),
+                            child: Stack(
+                              children: [
+                                ClipRRect(
+                                    borderRadius: BorderRadius.circular(8),
+                                    child: Image.file(
+                                      _evidences[i],
+                                      width: 70,
+                                      height: 70,
+                                      fit: BoxFit.fill,
+                                    )),
+                                Positioned(
+                                    top: 0,
+                                    right: 2,
+                                    child: GestureDetector(
+                                        onTap: () {
+                                          setState(() {
+                                            _evidences.remove(_evidences[i]);
+                                          });
+                                        },
+                                        child: Icon(
+                                          CupertinoIcons.delete_solid,
+                                          color: Colors.red,
+                                        ))),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
                     Divider(
                       height: 30.0,
                       color: Color.fromRGBO(8, 100, 175, 1.0),
@@ -572,7 +651,7 @@ class _ReportFormState extends State<ReportForm> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 0.0),
                       child: Text(
-                        "3. Perpetrator's Details",
+                        "Perpetrator's Details",
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18.0),
                       ),
@@ -581,6 +660,7 @@ class _ReportFormState extends State<ReportForm> {
                       height: 12.0,
                     ),
                     TextFormField(
+                      controller: _perpetrator,
                       style: TextStyle(color: Colors.black),
                       decoration: InputDecoration(
                         contentPadding: EdgeInsets.symmetric(
@@ -620,14 +700,14 @@ class _ReportFormState extends State<ReportForm> {
                           borderRadius: BorderRadius.circular(5.0),
                         ),
                       ),
-                      value: gender,
+                      value: _perpetratorGender,
                       items: genders
                           .map((e) => DropdownMenuItem<String>(
                               value: e.toString(), child: Text(e)))
                           .toList(),
                       onChanged: (value) {
                         setState(() {
-                          gender = value;
+                          _perpetratorGender = value;
                         });
                       },
                     ),
@@ -635,6 +715,7 @@ class _ReportFormState extends State<ReportForm> {
                       height: 16.0,
                     ),
                     TextFormField(
+                      controller: _perpetratorRelationship,
                       minLines: 3,
                       maxLines: 5,
                       //textAlign: TextAlign.start,
@@ -662,7 +743,8 @@ class _ReportFormState extends State<ReportForm> {
                     Padding(
                       padding: EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 0.0),
                       child: Text(
-                        "4. Counselling Services",
+                        "Counselling Services",
+                        textAlign: TextAlign.start,
                         style: TextStyle(
                             fontWeight: FontWeight.bold, fontSize: 18.0),
                       ),
@@ -767,5 +849,90 @@ class _ReportFormState extends State<ReportForm> {
         '${time.hour}:${time.minute < 10 ? '0${time.minute}' : time.minute}';
 
     return '$formattedDate at $formattedTime';
+  }
+
+  _report() async {
+    if (_formKey.currentState!.validate()) {
+      if (abuse != null &&
+          _timeController.text.isNotEmpty &&
+          location != null &&
+          _description.text.isNotEmpty &&
+          _perpetratorGender != null &&
+          _perpetrator.text.isNotEmpty &&
+          _perpetratorRelationship.text.isNotEmpty) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        if (selectionProvider.isMyselfSelected) {
+          await reportProvider.createReport(
+              report: Report(
+                  abuse_type: abuse,
+                  location: location,
+                  description: _description.text,
+                  perpetrator_fullname: _perpetrator.text,
+                  perpetrator_gender: _perpetratorGender,
+                  full_name: storageProvider.user!.full_name,
+                  reg_no: storageProvider.user!.reg_no,
+                  phone_number: storageProvider.user!.phone_number,
+                  email: storageProvider.user!.email,
+                  college: storageProvider.user!.college,
+                  dateTime: _timeController.text,
+                  relationship: _perpetratorRelationship.text,
+                  evidence: _evidences,
+                  report_for: "Self"));
+        } else {
+          if (_fullName.text.isNotEmpty &&
+              _phone.text.isNotEmpty &&
+              _otherGender != null &&
+              _registration.text.isNotEmpty &&
+              college != null &&
+              _email.text.isNotEmpty) {
+            await reportProvider.createReport(
+                report: Report(
+                    abuse_type: abuse,
+                    location: location,
+                    description: _description.text,
+                    perpetrator_fullname: _perpetrator.text,
+                    perpetrator_gender: _perpetratorGender,
+                    full_name: _fullName.text,
+                    phone_number: _phone.text,
+                    reg_no: _registration.text,
+                    email: _email.text,
+                    college: college,
+                    dateTime: _timeController.text,
+                    relationship: _perpetratorRelationship.text,
+                    evidence: _evidences,
+                    report_for: "Else"));
+          } else {
+            await reportProvider.createReport(
+                report: Report(
+                    abuse_type: abuse,
+                    location: location,
+                    description: _description.text,
+                    perpetrator_fullname: _perpetrator.text,
+                    perpetrator_gender: _perpetratorGender,
+                    dateTime: _timeController.text,
+                    relationship: _perpetratorRelationship.text,
+                    evidence: _evidences));
+          }
+        }
+      }
+    }
   }
 }
