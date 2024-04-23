@@ -47,7 +47,7 @@ class AuthProvider extends ChangeNotifier {
         Map<String, dynamic> output = jsonDecode(response.body);
 
         try {
-          _currentUser = User.fromJson(output);
+          _currentUser = User.fromLoginJson(output);
           await LocalStorage.storeToken(token: output['tokens']['access']);
           await LocalStorage.storeUserData(user: _currentUser!);
           _isLoggedIn = true;

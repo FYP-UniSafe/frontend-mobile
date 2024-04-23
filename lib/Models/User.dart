@@ -129,6 +129,41 @@ class User {
     );
   }
 
+  factory User.fromLoginJson(Map<String, dynamic> json) {
+    return User(
+      id: json['user']['id'].toString(),
+      full_name: json['user']['full_name'],
+      email: json['user']['email'],
+      gender: json['user']['gender'],
+      office: json['user']['office'],
+      date_joined: json['user']['date_joined'].toString(),
+      last_login: json['user']['last_login'].toString(),
+      is_consultant: json['user']['is_consultant'] != null
+          ? bool.parse(json['user']['is_consultant'].toString())
+          : false,
+      is_active: json['user']['is_active'] != null
+          ? bool.tryParse(json['user']['is_active'].toString())
+          : false,
+      is_staff: json['user']['is_staff'] != null
+          ? bool.tryParse(json['user']['is_staff'].toString())
+          : false,
+      is_student: json['user']['is_student'] != null
+          ? bool.tryParse(json['user']['is_student'].toString())
+          : false,
+      is_police: json['user']['is_police'] != null
+          ? bool.tryParse(json['user']['is_police'].toString())
+          : false,
+      is_genderdesk: json['user']['is_genderdesk'] != null
+          ? bool.tryParse(json['user']['is_genderdesk'].toString())
+          : false,
+      phone_number: json['user']['phone_number'],
+      token: json['tokens']['access'],
+      profile: json['user']['profile'],
+      reg_no: json['user']['profile']['reg_no'],
+      college: json['user']['profile']['college'],
+    );
+  }
+
   factory User.fromJsonStorage(Map<String, dynamic> json) {
     return User(
       id: json['id'].toString(),

@@ -38,7 +38,7 @@ Future<void> initializeApp() async {
     if (!await LocalStorage.getOnboarding()) {
       _landingPage = const Onboarding();
     } else {
-      if (session) {
+      if (!session) {
         _landingPage = const MainScreen();
       } else {
         _landingPage = const Login();
