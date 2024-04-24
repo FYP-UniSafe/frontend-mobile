@@ -118,7 +118,7 @@ class _PasswordResetState extends State<PasswordReset> {
                           ),
                         ),
                         child: Text(
-                          'Send Link',
+                          'Send Code',
                           style: TextStyle(
                               fontSize: 18.0, fontWeight: FontWeight.bold),
                         ),
