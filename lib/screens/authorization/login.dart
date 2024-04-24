@@ -185,11 +185,10 @@ class _LoginState extends State<Login> {
                                   color: Colors.black, fontSize: 18.0),
                             ),
                             GestureDetector(
-                              onTap: () => Navigator.pushAndRemoveUntil(
+                              onTap: () => Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SignUp()),
-                                  (route) => false),
+                                      builder: (context) => SignUp())),
                               child: Text(
                                 'Sign Up',
                                 style: TextStyle(
@@ -246,12 +245,14 @@ class _LoginState extends State<Login> {
 
         if (_authProvider.isLoggedIn != null &&
             _authProvider.isLoggedIn == true) {
-          await Provider.of<LocalStorageProvider>(context,listen: false).initialize();
+          await Provider.of<LocalStorageProvider>(context, listen: false)
+              .initialize();
           Navigator.pop(context);
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => MainScreen()),
-              (route) => false);
+          Navigator.pop(context);
+          // Navigator.pushAndRemoveUntil(
+          //     context,
+          //     MaterialPageRoute(builder: (context) => MainScreen()),
+          //     (route) => false);
         } else {
           Navigator.pop(context);
           Flashbar(

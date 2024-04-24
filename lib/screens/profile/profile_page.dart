@@ -91,67 +91,98 @@ class _ProfilePageState extends State<ProfilePage> {
           /* SizedBox(
             height: 10.0,
           ),*/
-          Text(
-           storageProvider.user!.full_name!,
+          if(storageProvider.user!=null)...[     Text(
+            storageProvider.user!.full_name!,
             style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
           ),
-          Text(
-            storageProvider.user!.email!,
-            style: TextStyle(fontSize: 16.0),
-          ),
-          SizedBox(
-            height: 10.0,
-          ),
-          ProfileMenu(
-            text: "Personal Details",
-            icon: Icon(
-              Icons.edit,
-              size: 26.0,
-              color: Color.fromRGBO(8, 100, 175, 1.0),
+            Text(
+              storageProvider.user!.email!,
+              style: TextStyle(fontSize: 16.0),
             ),
-            press: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => EditProfile()),
+            SizedBox(
+              height: 10.0,
             ),
-          ),
-          ProfileMenu(
-            text: "Update Password",
-            icon: Icon(
-              Icons.key,
-              size: 26.0,
-              color: Color.fromRGBO(8, 100, 175, 1.0),
-            ),
-            press: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => AccountSecurity()),
-            ),
-          ),
-          ProfileMenu(
-            text: "Contact Us",
-            icon: Icon(
-              Icons.phone,
-              size: 26.0,
-              color: Color.fromRGBO(8, 100, 175, 1.0),
-            ),
-            press: () => Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => ContactPage()),
-            ),
-          ),
-          ProfileMenu(
-              text: "Log Out",
+            ProfileMenu(
+              text: "Personal Details",
               icon: Icon(
-                Icons.logout,
+                Icons.edit,
                 size: 26.0,
-                color: Colors.red,
+                color: Color.fromRGBO(8, 100, 175, 1.0),
               ),
-              press: () async {
-                await LocalStorage.logout();
-                Navigator.pushAndRemoveUntil(
-                    context,
-                    MaterialPageRoute(builder: (context) => Login()),
-                    (route) => false);
-              }),
+              press: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => EditProfile()),
+              ),
+            ),
+            ProfileMenu(
+              text: "Update Password",
+              icon: Icon(
+                Icons.key,
+                size: 26.0,
+                color: Color.fromRGBO(8, 100, 175, 1.0),
+              ),
+              press: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AccountSecurity()),
+              ),
+            ),
+            ProfileMenu(
+              text: "Contact Us",
+              icon: Icon(
+                Icons.phone,
+                size: 26.0,
+                color: Color.fromRGBO(8, 100, 175, 1.0),
+              ),
+              press: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ContactPage()),
+              ),
+            ),
+            ProfileMenu(
+                text: "Log Out",
+                icon: Icon(
+                  Icons.logout,
+                  size: 26.0,
+                  color: Colors.red,
+                ),
+                press: () async {
+                  await LocalStorage.logout();
+                  await storageProvider.initialize();
+                  setState(() {
+
+                  });
+                }),],
+          if(storageProvider.user==null)...[  
+            Text(
+            "Guest User",
+            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+          ),
+            SizedBox(
+              height: 10.0,
+            ),
+            ProfileMenu(
+              text: "Contact Us",
+              icon: Icon(
+                Icons.phone,
+                size: 26.0,
+                color: Color.fromRGBO(8, 100, 175, 1.0),
+              ),
+              press: () => Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ContactPage()),
+              ),
+            ),
+            ProfileMenu(
+                text: "Log In",
+                icon: Icon(
+                  Icons.login,
+                  size: 26.0,
+                  color: Color.fromRGBO(8, 100, 175, 1.0),
+                ),
+                press: () async {
+                 Navigator.push(context, MaterialPageRoute(builder: (_)=>Login()));
+                }),]
+     
         ],
       ),
     );

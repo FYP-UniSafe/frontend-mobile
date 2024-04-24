@@ -530,11 +530,10 @@ class _SignUpState extends State<SignUp> {
                                     color: Colors.black, fontSize: 18.0),
                               ),
                               GestureDetector(
-                                onTap: () => Navigator.pushAndRemoveUntil(
+                                onTap: () => Navigator.pushReplacement(
                                     context,
                                     MaterialPageRoute(
-                                        builder: (context) => Login()),
-                                    (route) => false),
+                                        builder: (context) => Login())),
                                 child: Text(
                                   'Login',
                                   style: TextStyle(
@@ -603,7 +602,8 @@ class _SignUpState extends State<SignUp> {
 
         if (_authProvider.isLoggedIn != null &&
             _authProvider.isLoggedIn == true) {
-          await Provider.of<LocalStorageProvider>(context,listen: false).initialize();
+          await Provider.of<LocalStorageProvider>(context, listen: false)
+              .initialize();
           Navigator.pop(context);
 
           Navigator.pushAndRemoveUntil(context,

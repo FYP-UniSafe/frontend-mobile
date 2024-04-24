@@ -33,16 +33,16 @@ void main() async {
 
 Future<void> initializeApp() async {
   try {
-    late bool session;
-    session = await LocalStorage.checkSession();
+    // late bool session;
+    // session = await LocalStorage.checkSession();
     if (!await LocalStorage.getOnboarding()) {
       _landingPage = const Onboarding();
     } else {
-      if (!session) {
+      // if (!session) {
         _landingPage = const MainScreen();
-      } else {
-        _landingPage = const Login();
-      }
+      // } else {
+      //   _landingPage = const MainScreen();
+      // }
     }
   } catch (e) {
     _landingPage = Login();

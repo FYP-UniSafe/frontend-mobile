@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/screens/main/report/report_form.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -14,10 +16,17 @@ class ReportPage extends StatefulWidget {
 
 class _ReportPageState extends State<ReportPage> {
   final _appStateObserver = AppStateObserver();
+  late LocalStorageProvider storageProvider;
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(_appStateObserver);
     super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    storageProvider = Provider.of<LocalStorageProvider>(context);
+    super.didChangeDependencies();
   }
 
   @override
@@ -162,51 +171,54 @@ class _ReportPageState extends State<ReportPage> {
                   ),
                 ),
               ),
-              Divider(
-                height: 30.0,
-                color: Color.fromRGBO(8, 100, 175, 1.0),
-              ),
-              SafeArea(
-                top: false,
-                bottom: true,
-                child: SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      elevation: 3,
-                      backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
-                      foregroundColor: Colors.white,
-                      /*side: BorderSide(
+              if (storageProvider.user != null) ...[
+                Divider(
+                  height: 30.0,
+                  color: Color.fromRGBO(8, 100, 175, 1.0),
+                ),
+                SafeArea(
+                  top: false,
+                  bottom: true,
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: () {},
+                      style: ElevatedButton.styleFrom(
+                        elevation: 3,
+                        backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                        foregroundColor: Colors.white,
+                        /*side: BorderSide(
                         width: 1.0,
                         color: Color.fromRGBO(8, 100, 175, 1.0),
                       ),*/
-                      padding: EdgeInsets.all(12.0),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(5.0),
+                        padding: EdgeInsets.all(12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
                       ),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Align(
-                            alignment: Alignment.center,
-                            child: Text(
-                              'Your Reports',
-                              style: TextStyle(
-                                  fontSize: 17, fontWeight: FontWeight.normal),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Your Reports',
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.normal),
+                              ),
                             ),
                           ),
-                        ),
-                        Icon(
-                          Icons.arrow_forward_ios,
-                          size: 20.0,
-                        ),
-                      ],
+                          Icon(
+                            Icons.arrow_forward_ios,
+                            size: 20.0,
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
-              ),
+              ]
             ],
           ),
         ),
