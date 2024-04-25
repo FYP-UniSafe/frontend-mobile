@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:unisafe/screens/authorization/forgot_password.dart';
 import '../../Services/stateObserver.dart';
 import '../../resources/validator.dart';
 
@@ -33,27 +34,29 @@ class _PasswordResetState extends State<PasswordReset> {
         automaticallyImplyLeading: false,
         centerTitle: false,
         title: InkWell(
-          onTap: () {
-            Navigator.pop(context);
-          },
-          child: Row(
-            children: [
-              Icon(
-                Icons.arrow_back_ios,
-                size: 20.0,
-                color: Colors.white,
-              ),
-              SizedBox(
-                width: 4.0,
-              ),
-              Text(
-                'Back',
-                style: TextStyle(
-                    fontSize: 16.0,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white),
-              )
-            ],
+          child: GestureDetector(
+            onTap: () {
+              Navigator.pop(context);
+            },
+            child: Row(
+              children: [
+                Icon(
+                  Icons.arrow_back_ios,
+                  size: 20.0,
+                  color: Colors.white,
+                ),
+                SizedBox(
+                  width: 4.0,
+                ),
+                Text(
+                  'Back',
+                  style: TextStyle(
+                      fontSize: 16.0,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.white),
+                )
+              ],
+            ),
           ),
         ),
       ),
@@ -107,7 +110,12 @@ class _PasswordResetState extends State<PasswordReset> {
                       SizedBox(height: 20.0),
                       ElevatedButton(
                         onPressed: () {
-                          if (_formKey.currentState!.validate()) {}
+                          if (_formKey.currentState!.validate()) {
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => ForgotPassword()));
+                          }
                         },
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
