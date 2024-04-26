@@ -9,7 +9,7 @@ import '../../Providers/authProvider.dart';
 import '../../Services/stateObserver.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
 import '../authorization/login.dart';
-import '../authorization/password_reset.dart';
+import '../authorization/forgot_password.dart';
 
 class AccountSecurity extends StatefulWidget {
   const AccountSecurity({super.key});
@@ -136,7 +136,7 @@ class _AccountSecurityState extends State<AccountSecurity> {
                               onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          PasswordReset())),
+                                          ForgotPassword())),
                               child: Text(
                                 'Forgot login details?',
                                 style: TextStyle(
@@ -214,6 +214,7 @@ class _AccountSecurityState extends State<AccountSecurity> {
       _isHidden = !_isHidden;
     });
   }
+
   void _togglePasswordView2() {
     setState(() {
       _isHidden2 = !_isHidden2;
@@ -222,7 +223,8 @@ class _AccountSecurityState extends State<AccountSecurity> {
 
   _changePassword() async {
     if (_formKey.currentState!.validate()) {
-      if (_oldpasswordController.text.isNotEmpty&&_newpasswordController.text.isNotEmpty) {
+      if (_oldpasswordController.text.isNotEmpty &&
+          _newpasswordController.text.isNotEmpty) {
         showDialog(
             context: context,
             barrierDismissible: false,
@@ -242,7 +244,9 @@ class _AccountSecurityState extends State<AccountSecurity> {
               );
             });
 
-        await _authProvider.changePassword(old_password:_oldpasswordController.text,new_password:  _newpasswordController.text,
+        await _authProvider.changePassword(
+          old_password: _oldpasswordController.text,
+          new_password: _newpasswordController.text,
         );
         if (_authProvider.isChanged != null &&
             _authProvider.isChanged == true) {

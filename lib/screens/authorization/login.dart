@@ -4,10 +4,11 @@ import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/Services/storage.dart';
-import 'package:unisafe/screens/authorization/password_reset.dart';
+import 'package:unisafe/screens/authorization/forgot_password.dart';
 import 'package:unisafe/screens/authorization/signup.dart';
 
 import '../../Models/User.dart';
+import '../../Providers/reportProvider.dart';
 import '../../Services/stateObserver.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
 import '../../resources/validator.dart';
@@ -149,7 +150,7 @@ class _LoginState extends State<Login> {
                               onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          PasswordReset())),
+                                          ForgotPassword())),
                               child: Text(
                                 'Forgot Password?',
                                 style: TextStyle(
@@ -245,8 +246,12 @@ class _LoginState extends State<Login> {
 
         if (_authProvider.isLoggedIn != null &&
             _authProvider.isLoggedIn == true) {
-          await Provider.of<LocalStorageProvider>(context, listen: false)
-              .initialize();
+          await Future.wait([
+            Provider.of<ReportProvider>(context, listen: false).getReports(),
+            Provider.of<LocalStorageProvider>(context, listen: false)
+                .initialize()
+          ]);
+
           Navigator.pop(context);
           Navigator.pop(context);
           // Navigator.pushAndRemoveUntil(

@@ -1,3 +1,6 @@
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+
 extension StringExtension on String {
   String capitalizeFirstLetterOfEachWord() {
     if (this.isEmpty) return this;
@@ -7,7 +10,8 @@ extension StringExtension on String {
 
     for (var word in words) {
       if (word.isNotEmpty) {
-        capitalizedWords.add(word[0].toUpperCase() + word.substring(1).toLowerCase());
+        capitalizedWords
+            .add(word[0].toUpperCase() + word.substring(1).toLowerCase());
       }
     }
 

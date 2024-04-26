@@ -33,12 +33,16 @@ void main() async {
 
 Future<void> initializeApp() async {
   try {
-    // late bool session;
-    // session = await LocalStorage.checkSession();
+    late bool session;
+    session = await LocalStorage.checkSession();
     if (!await LocalStorage.getOnboarding()) {
       _landingPage = const Onboarding();
     } else {
-      // if (!session) {
+      if (session) {
+        try {
+          await reportProvider.getReports();
+        } catch (e) {}
+      }
       _landingPage = const MainScreen();
       // } else {
       //   _landingPage = const MainScreen();
@@ -87,7 +91,7 @@ class UniSafe extends StatelessWidget {
           ),
           floatingLabelBehavior: FloatingLabelBehavior.never,
         ),
-        //primarySwatch: Colors.blue,
+        primarySwatch: Colors.blue,
         listTileTheme: ListTileThemeData(
           horizontalTitleGap: 4,
         ),

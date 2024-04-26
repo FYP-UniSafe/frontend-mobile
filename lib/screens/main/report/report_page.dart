@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/screens/main/report/report_form.dart';
+import 'package:unisafe/screens/main/report/report_list.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../Services/stateObserver.dart';
@@ -182,7 +183,12 @@ class _ReportPageState extends State<ReportPage> {
                   child: SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => ReportList()));
+                      },
                       style: ElevatedButton.styleFrom(
                         elevation: 3,
                         backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),

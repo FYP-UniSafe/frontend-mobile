@@ -18,7 +18,6 @@ class ReportProvider extends ChangeNotifier {
   List<Report> get reports => _reports;
 
   Future createReport({required Report report}) async {
-    log(report.toJsonReportData().toString());
     String? token = await LocalStorage.getToken();
     try {
       var uri = Uri.parse(
@@ -40,15 +39,15 @@ class ReportProvider extends ChangeNotifier {
       request.headers['Authorization'] = 'Bearer $token';
 
       final response = await request.send();
-      log(response.statusCode.toString());
-      String responseBody = await response.stream.bytesToString();
-      log(responseBody);
-      if (response.statusCode == 200 || response.statusCode == 201) {
 
+      String responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
         var output = jsonDecode(responseBody);
         if (kDebugMode) {
           print('File uploaded successfully');
         }
+        await getReports();
         _isReported = true;
         notifyListeners();
       } else {
@@ -56,6 +55,7 @@ class ReportProvider extends ChangeNotifier {
         notifyListeners();
         if (kDebugMode) {
           print(response.statusCode);
+          log(responseBody);
           print('File upload failed');
         }
       }
@@ -72,15 +72,24 @@ class ReportProvider extends ChangeNotifier {
     String? token = await LocalStorage.getToken();
     try {
       http.Response response =
-          await http.get(Uri.parse("$baseUrl/reports"), headers: {
+          await http.get(Uri.parse("$baseUrl/reports/list/created"), headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
         "Authorization": "Bearer $token",
       });
 
       if (response.statusCode == 200) {
-        Map output = jsonDecode(response.body);
+        List<dynamic> output = jsonDecode(response.body);
+        _reports = output.map((data) => Report.fromJson(data)).toList();
+
+        notifyListeners();
+      } else {
+        _reports = [];
+        notifyListeners();
       }
-    } catch (e) {}
+    } catch (e) {
+      _reports = [];
+      notifyListeners();
+    }
   }
 }

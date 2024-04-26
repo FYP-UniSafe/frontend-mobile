@@ -90,6 +90,7 @@ class _ReportFormState extends State<ReportForm> {
   late SelectionProvider selectionProvider;
   late LocalStorageProvider storageProvider;
   late ReportProvider reportProvider;
+  String? reportDate;
 
   final _appStateObserver = AppStateObserver();
   @override
@@ -847,8 +848,10 @@ class _ReportFormState extends State<ReportForm> {
     final formattedDate = DateFormat('yyyy-MM-ddT').format(date);
     final formattedTime =
         '${time.hour}:${time.minute < 10 ? '0${time.minute}' : time.minute}';
-
-    return '$formattedDate$formattedTime';
+    setState(() {
+      reportDate = "$formattedDate$formattedTime";
+    });
+    return "${DateFormat('dd/MM/yyyy').format(date)} at $formattedTime";
   }
 
   _report() async {
@@ -856,6 +859,7 @@ class _ReportFormState extends State<ReportForm> {
       if (abuse != null &&
           _timeController.text.isNotEmpty &&
           location != null &&
+          reportDate != null &&
           _description.text.isNotEmpty &&
           _perpetratorGender != null &&
           _perpetrator.text.isNotEmpty &&
@@ -893,7 +897,7 @@ class _ReportFormState extends State<ReportForm> {
                   phone_number: storageProvider.user!.phone_number,
                   email: storageProvider.user!.email,
                   college: storageProvider.user!.college,
-                  dateTime: _timeController.text,
+                  dateTime: reportDate,
                   relationship: _perpetratorRelationship.text,
                   evidence: _evidences,
                   report_for: "Self"));
@@ -916,7 +920,7 @@ class _ReportFormState extends State<ReportForm> {
                     reg_no: _registration.text,
                     email: _email.text,
                     college: college,
-                    dateTime: _timeController.text,
+                    dateTime: reportDate,
                     relationship: _perpetratorRelationship.text,
                     evidence: _evidences,
                     report_for: "Else"));
@@ -928,7 +932,7 @@ class _ReportFormState extends State<ReportForm> {
                     description: _description.text,
                     perpetrator_fullname: _perpetrator.text,
                     perpetrator_gender: _perpetratorGender,
-                    dateTime: _timeController.text,
+                    dateTime: reportDate,
                     relationship: _perpetratorRelationship.text,
                     evidence: _evidences));
           }
