@@ -27,6 +27,10 @@ class AuthProvider extends ChangeNotifier {
   bool? get otpSent => _otpSent;
   User? _currentUser;
 
+  set currentUser(User? value) {
+    _currentUser = value;
+  }
+
   User? get currentUser => _currentUser;
 
   bool _isLoading = false;
@@ -83,6 +87,7 @@ class AuthProvider extends ChangeNotifier {
 
         try {
           _currentUser = User.fromJson(output);
+          _currentUser!.password = user.password;
           await LocalStorage.storeToken(token: output['tokens']['access']);
           await LocalStorage.storeUserData(user: _currentUser!);
           _isLoggedIn = true;
@@ -118,6 +123,7 @@ class AuthProvider extends ChangeNotifier {
         if (kDebugMode) {
           log(output.toString());
         }
+        await login(user: _currentUser!);
         _otpVerifed = true;
         notifyListeners();
       } else {

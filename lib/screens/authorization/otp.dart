@@ -8,6 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Providers/authProvider.dart';
+import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 
 import '../../Models/User.dart';
@@ -36,10 +37,8 @@ class _OtpState extends State<Otp> {
   late AuthProvider _authProvider;
   final _appStateObserver = AppStateObserver();
 
-
   @override
   void initState() {
-
     WidgetsBinding.instance.addObserver(_appStateObserver);
     pin2FocusNode = FocusNode();
     pin3FocusNode = FocusNode();
@@ -477,7 +476,7 @@ class _OtpState extends State<Otp> {
                 height: 20.0,
               ),
               GestureDetector(
-                onTap:  _resendOTP,
+                onTap: _resendOTP,
                 child: Text(
                   "Resend OTP Code",
                   style: TextStyle(
@@ -493,8 +492,6 @@ class _OtpState extends State<Otp> {
       ),
     );
   }
-
-
 
   _verifyOtp() async {
     bool? otpGiven;
@@ -553,6 +550,8 @@ class _OtpState extends State<Otp> {
 
         await _authProvider.verifyOtp(
             user: User(email: _authProvider.currentUser!.email, otp: otpValue));
+        await Provider.of<LocalStorageProvider>(context, listen: false)
+            .initialize();
 
         if (_authProvider.otpVerifed != null &&
             _authProvider.otpVerifed == true) {
@@ -618,8 +617,7 @@ class _OtpState extends State<Otp> {
 
     await _authProvider.resendOTP();
 
-    if (_authProvider.otpSent != null &&
-        _authProvider.otpSent == true) {
+    if (_authProvider.otpSent != null && _authProvider.otpSent == true) {
       Navigator.pop(context);
       Flashbar(
         flashbarPosition: FlashbarPosition.TOP,

@@ -69,7 +69,7 @@ class _ChatbotState extends State<Chatbot> {
             ),
           ),
           title: Text(
-            'Chat Bot',
+            'Conversational AI',
             style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.bold,

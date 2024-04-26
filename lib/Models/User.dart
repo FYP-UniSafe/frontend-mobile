@@ -128,9 +128,6 @@ class User {
           : false,
       phone_number: json['phone_number'],
       token: json['tokens']['access'],
-      profile: json['profile'],
-      reg_no: json['profile']['reg_no'],
-      college: json['profile']['college'],
     );
   }
 

@@ -815,9 +815,7 @@ class _ReportFormState extends State<ReportForm> {
                       bottom: true,
                       top: false,
                       child: ElevatedButton(
-                        onPressed: () {
-                          if (_formKey.currentState!.validate()) {}
-                        },
+                        onPressed: _report,
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
