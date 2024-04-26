@@ -139,8 +139,8 @@ class AuthProvider extends ChangeNotifier {
             'Accept': 'application/json',
             'Content-Type': 'application/json'
           },
-          body: json.encode(user.toOtpJson()));
-
+          body: json.encode(user.toResetJson()));
+      log(response.body);
       if (response.statusCode == 200 || response.statusCode == 201) {
         Map<String, dynamic> output = jsonDecode(response.body);
         if (kDebugMode) {

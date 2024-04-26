@@ -7,6 +7,7 @@ import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/screens/authorization/password_reset.dart';
 
 import '../../Models/User.dart';
+import '../../Services/stateObserver.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
 import '../../resources/validator.dart';
 
@@ -27,10 +28,25 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   final _codeController = TextEditingController();
   late AuthProvider _authProvider;
 
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+
+
   @override
   void didChangeDependencies() {
     _authProvider = Provider.of<AuthProvider>(context);
     super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
   }
 
   @override
@@ -225,7 +241,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
         await _authProvider.resetPassword(
             user: User(
-                email: _authProvider.currentUser!.email,
+                email: _emailController.text,
                 otp: _codeController.text,
                 new_password: _passwordController.text));
 

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Services/storage.dart';
+import 'package:unisafe/resources/formats.dart';
 import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/authorization/otp.dart';
 import 'package:unisafe/screens/chatbot.dart';
@@ -19,11 +20,8 @@ class ProfilePage extends StatefulWidget {
 }
 
 class _ProfilePageState extends State<ProfilePage> {
-
-
   late LocalStorageProvider storageProvider;
   final _appStateObserver = AppStateObserver();
-
 
   @override
   void initState() {
@@ -37,10 +35,9 @@ class _ProfilePageState extends State<ProfilePage> {
     super.dispose();
   }
 
-
   @override
   void didChangeDependencies() {
-   storageProvider = Provider.of<LocalStorageProvider>(context);
+    storageProvider = Provider.of<LocalStorageProvider>(context);
     super.didChangeDependencies();
   }
 
@@ -55,16 +52,16 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Center(
               child: Stack(
                 children: [
-                  SizedBox(
-                    width: 120,
-                    height: 120,
-                    child: ClipRRect(
-                      borderRadius: BorderRadius.circular(100),
-                      child: Image(
-                        image: AssetImage('assets/images/profile_image.jpg'),
-                      ),
-                    ),
-                  ),
+                  // SizedBox(
+                  //   width: 120,
+                  //   height: 120,
+                  //   child: ClipRRect(
+                  //     borderRadius: BorderRadius.circular(100),
+                  //     child: Image(
+                  //       image: AssetImage('assets/images/profile_image.jpg'),
+                  //     ),
+                  //   ),
+                  // ),
                   /*Positioned(
                     bottom: 0,
                     right: 0,
@@ -91,10 +88,31 @@ class _ProfilePageState extends State<ProfilePage> {
           /* SizedBox(
             height: 10.0,
           ),*/
-          if(storageProvider.user!=null)...[     Text(
-            storageProvider.user!.full_name!,
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-          ),
+          if (storageProvider.user != null) ...[
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: Material(
+                elevation: 4,
+                shadowColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(60),
+                    side: BorderSide(color: Colors.grey)),
+                child: Center(
+                    child: Text(
+                  storageProvider.user!.full_name.toString().extractInitials(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 42, fontWeight: FontWeight.w500),
+                )),
+              ),
+            ),
+            SizedBox(
+              height: 10,
+            ),
+            Text(
+              storageProvider.user!.full_name!,
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+            ),
             Text(
               storageProvider.user!.email!,
               style: TextStyle(fontSize: 16.0),
@@ -148,15 +166,14 @@ class _ProfilePageState extends State<ProfilePage> {
                 press: () async {
                   await LocalStorage.logout();
                   await storageProvider.initialize();
-                  setState(() {
-
-                  });
-                }),],
-          if(storageProvider.user==null)...[  
+                  setState(() {});
+                }),
+          ],
+          if (storageProvider.user == null) ...[
             Text(
-            "Guest User",
-            style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
-          ),
+              "Guest User".extractInitials(),
+              style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
+            ),
             SizedBox(
               height: 10.0,
             ),
@@ -180,9 +197,10 @@ class _ProfilePageState extends State<ProfilePage> {
                   color: Color.fromRGBO(8, 100, 175, 1.0),
                 ),
                 press: () async {
-                 Navigator.push(context, MaterialPageRoute(builder: (_)=>Login()));
-                }),]
-     
+                  Navigator.push(
+                      context, MaterialPageRoute(builder: (_) => Login()));
+                }),
+          ]
         ],
       ),
     );

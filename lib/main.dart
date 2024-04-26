@@ -39,7 +39,7 @@ Future<void> initializeApp() async {
       _landingPage = const Onboarding();
     } else {
       // if (!session) {
-        _landingPage = const MainScreen();
+      _landingPage = const MainScreen();
       // } else {
       //   _landingPage = const MainScreen();
       // }
