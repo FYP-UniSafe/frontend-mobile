@@ -62,7 +62,9 @@ class AuthProvider extends ChangeNotifier {
         throw HttpException('${response.statusCode}: ${response.reasonPhrase}',
             uri: Uri.parse('$baseUrl/users/login'));
       }
-    } catch (e) {}
+    } catch (e) {
+      log('Error is ${e.toString()}');
+    }
   }
 
   Future registerStudent({required User user}) async {
@@ -91,7 +93,7 @@ class AuthProvider extends ChangeNotifier {
           notifyListeners();
         }
       } else {
-        if(kDebugMode){
+        if (kDebugMode) {
           log(response.body);
         }
 
@@ -129,6 +131,64 @@ class AuthProvider extends ChangeNotifier {
     }
   }
 
+  Future resetPassword({required User user}) async {
+    try {
+      http.Response response = await http.post(
+          Uri.parse('$baseUrl/users/password/reset'),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: json.encode(user.toOtpJson()));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Map<String, dynamic> output = jsonDecode(response.body);
+        if (kDebugMode) {
+          log(output.toString());
+        }
+        _otpVerifed = true;
+        notifyListeners();
+      } else {
+        _otpVerifed = false;
+        throw HttpException('${response.statusCode}: ${response.reasonPhrase}',
+            uri: Uri.parse('$baseUrl/users/password/reset'));
+      }
+    } catch (e) {
+      _otpVerifed = false;
+      notifyListeners();
+    }
+  }
+
+  Future forgotPassword({required String email}) async {
+    try {
+      http.Response response = await http.post(
+          Uri.parse('$baseUrl/users/password/forgot'),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: json.encode({"email": email}));
+      log('Response is ${response.statusCode.toString()}');
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Map<String, dynamic> output = jsonDecode(response.body);
+        if (kDebugMode) {
+          log(output.toString());
+        }
+        _otpSent = true;
+        notifyListeners();
+      } else {
+        _otpSent = false;
+        throw HttpException('${response.statusCode}: ${response.reasonPhrase}',
+            uri: Uri.parse('$baseUrl/users/password/forgot'));
+      }
+    } catch (e) {
+      log('Error is ${e.toString()}');
+      _otpSent = false;
+      notifyListeners();
+    }
+  }
+
   Future<void> resendOTP() async {
     final Uri apiUrl = Uri.parse('$baseUrl/users/otp/resend');
     final Map<String, dynamic> requestData = {
@@ -159,8 +219,7 @@ class AuthProvider extends ChangeNotifier {
   }
 
   Future<void> changePassword(
-      {required String? old_password,required String? new_password}) async {
-
+      {required String? old_password, required String? new_password}) async {
     String? token = await LocalStorage.getToken();
     try {
       final http.Response response = await http.post(

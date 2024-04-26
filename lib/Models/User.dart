@@ -61,6 +61,11 @@ class User {
         "email": email,
         "otp": otp,
       };
+  Map<String, dynamic> toResetJson() => {
+        "email": email,
+        "otp": otp,
+        "new_password": new_password,
+      };
 
   Map<String, dynamic> toStudentSignupJson() => {
         "full_name": full_name,

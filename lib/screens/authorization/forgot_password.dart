@@ -2,14 +2,13 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:loading_indicator/loading_indicator.dart';
+import 'package:provider/provider.dart';
+import 'package:unisafe/Providers/authProvider.dart';
+import 'package:unisafe/screens/authorization/password_reset.dart';
 
 import '../../Models/User.dart';
-import '../../Providers/authProvider.dart';
-import '../../Services/storage.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
-import '../../main.dart';
 import '../../resources/validator.dart';
-import 'login.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});
@@ -25,8 +24,15 @@ class _ForgotPasswordState extends State<ForgotPassword> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-
+  final _codeController = TextEditingController();
   late AuthProvider _authProvider;
+
+  @override
+  void didChangeDependencies() {
+    _authProvider = Provider.of<AuthProvider>(context);
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,7 +40,8 @@ class _ForgotPasswordState extends State<ForgotPassword> {
       appBar: AppBar(
         leading: IconButton(
           onPressed: () {
-            Navigator.pop(context);
+            Navigator.pushReplacement(context,
+                MaterialPageRoute(builder: (context) => PasswordReset()));
           },
           icon: Icon(
             Icons.arrow_back_ios,
@@ -66,6 +73,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                       height: 20,
                     ),
                     TextFormField(
+                      controller: _codeController,
                       keyboardType: TextInputType.number,
                       inputFormatters: [
                         FilteringTextInputFormatter.digitsOnly,
@@ -159,7 +167,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                     SizedBox(
                       width: double.infinity,
                       child: ElevatedButton(
-                        onPressed: () {},
+                        onPressed: _resetPassword,
                         style: ElevatedButton.styleFrom(
                           foregroundColor: Colors.white,
                           backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
@@ -189,5 +197,74 @@ class _ForgotPasswordState extends State<ForgotPassword> {
     setState(() {
       _isHidden = !_isHidden;
     });
+  }
+
+  _resetPassword() async {
+    if (_formKey.currentState!.validate()) {
+      if (_codeController.text.isNotEmpty &&
+          _emailController.text.isNotEmpty &&
+          _passwordController.text.isNotEmpty) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.resetPassword(
+            user: User(
+                email: _authProvider.currentUser!.email,
+                otp: _codeController.text,
+                new_password: _passwordController.text));
+
+        if (_authProvider.otpVerifed != null &&
+            _authProvider.otpVerifed == true) {
+          Navigator.pop(context);
+
+          Navigator.pop(context);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.black,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.red,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'OTP Verification Failed',
+              style: TextStyle(
+                  color: Colors.red,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
   }
 }
