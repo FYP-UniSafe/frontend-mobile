@@ -179,16 +179,16 @@ class _PasswordResetState extends State<PasswordReset> {
           Flashbar(
             flashbarPosition: FlashbarPosition.TOP,
             borderRadius: BorderRadius.circular(5),
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.red,
             icon: Icon(
               CupertinoIcons.exclamationmark_triangle,
-              color: Colors.red,
+              color: Colors.white,
               size: 32,
             ),
             titleText: Text(
               'Alert',
               style: TextStyle(
-                  color: Colors.red,
+                  color: Colors.white,
                   fontFamily: 'Poppins',
                   fontSize: 18,
                   fontWeight: FontWeight.w500),
@@ -196,7 +196,7 @@ class _PasswordResetState extends State<PasswordReset> {
             messageText: Text(
               'OTP Send Failed',
               style: TextStyle(
-                  color: Colors.red,
+                  color: Colors.white,
                   fontFamily: 'Poppins',
                   fontSize: 16,
                   fontWeight: FontWeight.w500),

@@ -75,7 +75,6 @@ class Report {
         "perpetrator_fullname": perpetrator_fullname,
         "perpetrator_gender": perpetrator_gender,
         "relationship": relationship,
-        "evidence": evidence,
       };
   Map<String, dynamic> toJsonAnonymousReportData() => {
         "victim_email": email,
@@ -91,6 +90,5 @@ class Report {
         "perpetrator_fullname": perpetrator_fullname,
         "perpetrator_gender": perpetrator_gender,
         "relationship": relationship,
-        "evidence": evidence,
       };
 }

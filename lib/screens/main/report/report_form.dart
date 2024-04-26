@@ -1,3 +1,4 @@
+import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
@@ -14,6 +15,7 @@ import 'package:file_picker/file_picker.dart';
 
 import '../../../Providers/selectionProvider.dart';
 import '../../../Services/stateObserver.dart';
+import '../../../Widgets/Flashbar/flashbar.dart';
 
 class ReportForm extends StatefulWidget {
   const ReportForm({super.key});
@@ -842,11 +844,11 @@ class _ReportFormState extends State<ReportForm> {
   }
 
   String _formatDateTime(DateTime date, TimeOfDay time) {
-    final formattedDate = DateFormat('dd/MM/yyyy').format(date);
+    final formattedDate = DateFormat('yyyy-MM-ddT').format(date);
     final formattedTime =
         '${time.hour}:${time.minute < 10 ? '0${time.minute}' : time.minute}';
 
-    return '$formattedDate at $formattedTime';
+    return '$formattedDate$formattedTime';
   }
 
   _report() async {
@@ -860,7 +862,7 @@ class _ReportFormState extends State<ReportForm> {
           _perpetratorRelationship.text.isNotEmpty) {
         showDialog(
             context: context,
-            barrierDismissible: false,
+            // barrierDismissible: false,
             builder: (BuildContext context) {
               return Dialog(
                 backgroundColor: Colors.transparent,
@@ -882,6 +884,7 @@ class _ReportFormState extends State<ReportForm> {
               report: Report(
                   abuse_type: abuse,
                   location: location,
+                  gender: storageProvider.user!.gender,
                   description: _description.text,
                   perpetrator_fullname: _perpetrator.text,
                   perpetrator_gender: _perpetratorGender,
@@ -929,6 +932,68 @@ class _ReportFormState extends State<ReportForm> {
                     relationship: _perpetratorRelationship.text,
                     evidence: _evidences));
           }
+        }
+        log(reportProvider.isReported.toString());
+        if (reportProvider.isReported != null &&
+            reportProvider.isReported == true) {
+          await Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(12),
+            backgroundColor: Colors.green,
+            icon: Icon(
+              CupertinoIcons.check_mark_circled,
+              color: Colors.white,
+              size: 32,
+            ),
+            titleText: Text(
+              'Success',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Report Submitted Successfully',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(12),
+            backgroundColor: Colors.red,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.white,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Report Submission Failed',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
         }
       }
     }

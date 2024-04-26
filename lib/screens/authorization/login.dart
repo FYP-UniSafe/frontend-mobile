@@ -258,16 +258,16 @@ class _LoginState extends State<Login> {
           Flashbar(
             flashbarPosition: FlashbarPosition.TOP,
             borderRadius: BorderRadius.circular(12),
-            backgroundColor: Colors.black,
+            backgroundColor: Colors.red,
             icon: Icon(
               CupertinoIcons.exclamationmark_triangle,
-              color: Colors.red,
+              color: Colors.white,
               size: 32,
             ),
             titleText: Text(
               'Alert',
               style: TextStyle(
-                  color: Colors.red,
+                  color: Colors.white,
                   fontFamily: 'Poppins',
                   fontSize: 18,
                   fontWeight: FontWeight.w500),
@@ -275,7 +275,7 @@ class _LoginState extends State<Login> {
             messageText: Text(
               'Login Failed',
               style: TextStyle(
-                  color: Colors.red,
+                  color: Colors.white,
                   fontFamily: 'Poppins',
                   fontSize: 16,
                   fontWeight: FontWeight.w500),

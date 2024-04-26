@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,11 +12,13 @@ import '../resources/constants.dart';
 class ReportProvider extends ChangeNotifier {
   bool? _isReported;
 
+  bool? get isReported => _isReported;
   List<Report> _reports = [];
 
   List<Report> get reports => _reports;
 
   Future createReport({required Report report}) async {
+    log(report.toJsonReportData().toString());
     String? token = await LocalStorage.getToken();
     try {
       var uri = Uri.parse(
@@ -37,9 +40,11 @@ class ReportProvider extends ChangeNotifier {
       request.headers['Authorization'] = 'Bearer $token';
 
       final response = await request.send();
-
+      log(response.statusCode.toString());
+      String responseBody = await response.stream.bytesToString();
+      log(responseBody);
       if (response.statusCode == 200 || response.statusCode == 201) {
-        String responseBody = await response.stream.bytesToString();
+
         var output = jsonDecode(responseBody);
         if (kDebugMode) {
           print('File uploaded successfully');
@@ -47,12 +52,16 @@ class ReportProvider extends ChangeNotifier {
         _isReported = true;
         notifyListeners();
       } else {
+        _isReported = false;
+        notifyListeners();
         if (kDebugMode) {
           print(response.statusCode);
           print('File upload failed');
         }
       }
     } catch (e) {
+      _isReported = false;
+      notifyListeners();
       if (kDebugMode) {
         print(e.toString());
       }
