@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:provider/provider.dart';
+import 'package:unisafe/resources/formats.dart';
 import 'package:unisafe/resources/validator.dart';
 import 'dart:io';
 
@@ -48,6 +49,9 @@ class _EditProfileState extends State<EditProfile> {
 
     if (storageProviders.user!.email != null) {
       _email = TextEditingController(text: storageProviders.user!.email);
+    }
+    if (storageProviders.user!.college != null) {
+      college = storageProviders.user!.college;
     }
 
     super.initState();
@@ -99,6 +103,8 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
+
+    print(storageProvider.user!.college);
     return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
@@ -126,38 +132,22 @@ class _EditProfileState extends State<EditProfile> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Center(
-                child: Stack(
-                  children: [
-                    SizedBox(
-                      width: 120,
-                      height: 120,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: Image(
-                          image: AssetImage('assets/images/profile_image.jpg'),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        width: 35,
-                        height: 35,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.photo_camera,
-                            size: 28.0,
-                          ),
-                          color: Colors.grey.shade700,
-                          onPressed: _changeProfileImage,
-                        ),
-                      ),
-                    ),
-                  ],
+                child:    SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Material(
+                    elevation: 4,
+                    shadowColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(60),
+                        side: BorderSide(color: Colors.grey)),
+                    child: Center(
+                        child: Text(
+                          storageProvider.user!.full_name.toString().extractInitials(),
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 42, fontWeight: FontWeight.w500),
+                        )),
+                  ),
                 ),
               ),
               SizedBox(

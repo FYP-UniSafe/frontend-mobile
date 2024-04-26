@@ -170,8 +170,28 @@ class _ProfilePageState extends State<ProfilePage> {
                 }),
           ],
           if (storageProvider.user == null) ...[
+            SizedBox(
+              width: 100,
+              height: 100,
+              child: Material(
+                elevation: 4,
+                shadowColor: Colors.black,
+                shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(60),
+                    side: BorderSide(color: Colors.grey)),
+                child: Center(
+                    child: Text(
+                  "Guest User".extractInitials(),
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 42, fontWeight: FontWeight.w500),
+                )),
+              ),
+            ),
+            SizedBox(
+              height: 10.0,
+            ),
             Text(
-              "Guest User".extractInitials(),
+              "Guest User",
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.0),
             ),
             SizedBox(
