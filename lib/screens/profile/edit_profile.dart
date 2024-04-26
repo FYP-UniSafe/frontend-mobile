@@ -26,7 +26,6 @@ class _EditProfileState extends State<EditProfile> {
 
   final _appStateObserver = AppStateObserver();
 
-
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(_appStateObserver);
@@ -103,7 +102,6 @@ class _EditProfileState extends State<EditProfile> {
 
   @override
   Widget build(BuildContext context) {
-
     print(storageProvider.user!.college);
     return Scaffold(
         resizeToAvoidBottomInset: true,
@@ -132,7 +130,7 @@ class _EditProfileState extends State<EditProfile> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Center(
-                child:    SizedBox(
+                child: SizedBox(
                   width: 100,
                   height: 100,
                   child: Material(
@@ -143,10 +141,13 @@ class _EditProfileState extends State<EditProfile> {
                         side: BorderSide(color: Colors.grey)),
                     child: Center(
                         child: Text(
-                          storageProvider.user!.full_name.toString().extractInitials(),
-                          textAlign: TextAlign.center,
-                          style: TextStyle(fontSize: 42, fontWeight: FontWeight.w500),
-                        )),
+                      storageProvider.user!.full_name
+                          .toString()
+                          .extractInitials(),
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontSize: 42, fontWeight: FontWeight.w500),
+                    )),
                   ),
                 ),
               ),
