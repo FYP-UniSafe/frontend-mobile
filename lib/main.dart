@@ -66,6 +66,7 @@ class UniSafe extends StatelessWidget {
       title: 'UniSafe',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
+        primaryColor: Color.fromRGBO(8, 100, 175, 1.0),
         appBarTheme: AppBarTheme(
           color: Color.fromRGBO(8, 100, 175, 1.0),
           centerTitle: true,

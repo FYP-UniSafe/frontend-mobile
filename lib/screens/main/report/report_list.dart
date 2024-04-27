@@ -69,8 +69,7 @@ class _ReportListState extends State<ReportList> {
               physics: ClampingScrollPhysics(),
               itemCount: _reports.length,
               itemBuilder: (context, i) => Padding(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                     child: ListTile(
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
@@ -80,14 +79,26 @@ class _ReportListState extends State<ReportList> {
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold),
                         ),
-                        subtitle: Text(
-                          "Status: ${_reports[i].status.toString()}",
-                          style: TextStyle(fontSize: 16),
+                        subtitle: RichText(
+                          text: TextSpan(
+                            text: 'Status: ',
+                            style: TextStyle(fontSize: 14, color: Colors.black),
+                            children: [
+                              TextSpan(
+                                text: _reports[i]
+                                    .status
+                                    .toString()
+                                    .capitalizeFirstLetterOfEachWord(),
+                                style:
+                                    TextStyle(fontSize: 14, color: Colors.blue),
+                              ),
+                            ],
+                          ),
                         ),
                         trailing: Text(
                           _formatDateTime(DateTime.parse(
                               _reports[i].created_on.toString())),
-                          style: TextStyle(fontSize: 16),
+                          style: TextStyle(fontSize: 12),
                         )),
                   )),
         ),
