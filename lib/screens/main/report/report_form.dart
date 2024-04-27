@@ -453,10 +453,54 @@ class _ReportFormState extends State<ReportForm> {
                           initialDate: DateTime.now(),
                           firstDate: DateTime(2000),
                           lastDate: DateTime.now(),
+                            builder: (context, child) {
+                              return Theme(
+                                data: Theme.of(context).copyWith(
+                                  textTheme: TextTheme(
+                                    bodyMedium: TextStyle(fontWeight: FontWeight.bold)
+                                  ),
+                                  colorScheme: ColorScheme.light(
+                                    primary: Color.fromRGBO(8, 100, 175, 1.0), // header background color
+                                    onPrimary: Colors.white, // header text color
+                                    onSurface: Colors.black, // body text color
+                                  ),
+                                  datePickerTheme: DatePickerThemeData(weekdayStyle: TextStyle(fontWeight: FontWeight.w700,color: Colors.black)),
+                                  textButtonTheme: TextButtonThemeData(
+                                    style: TextButton.styleFrom(
+                                      textStyle:TextStyle(fontWeight: FontWeight.bold),
+                                      foregroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                                    ),
+                                  ),
+                                ),
+                                child: child!,
+                              );
+                            }
                         );
 
                         if (pickedDate != null) {
                           final TimeOfDay? pickedTime = await showTimePicker(
+                            builder: (context,child) {
+                              return Theme(
+                                data: ThemeData.light().copyWith(
+                                  primaryColor: Color.fromRGBO(8, 100, 175, 1.0),
+                                  hintColor: Color.fromRGBO(8, 100, 175, 1.0),
+                                  colorScheme: ColorScheme.light(primary: Color.fromRGBO(8, 100, 175, 1.0)),
+                                  buttonTheme: ButtonThemeData(
+                                      textTheme: ButtonTextTheme.primary
+                                  ),
+                                    textButtonTheme: TextButtonThemeData(
+                                      style: TextButton.styleFrom(
+                                        textStyle:TextStyle(fontWeight: FontWeight.bold),
+                                        foregroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                                      ),
+                                    ),
+                                  timePickerTheme: TimePickerThemeData(
+                                    helpTextStyle: TextStyle(fontWeight: FontWeight.bold),
+                                  )
+                                ),
+                                child: child!,
+                              );
+                            },
                             context: context,
                             initialTime: TimeOfDay.now(),
                           );

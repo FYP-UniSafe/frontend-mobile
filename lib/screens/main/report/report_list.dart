@@ -90,7 +90,10 @@ class _ReportListState extends State<ReportList> {
                                     .toString()
                                     .capitalizeFirstLetterOfEachWord(),
                                 style:
-                                    TextStyle(fontSize: 14, color: Colors.blue),
+                                    TextStyle(fontSize: 14, color: _getStatusColor(_reports[i]
+                                        .status
+                                        .toString()
+                                        .capitalizeFirstLetterOfEachWord())),
                               ),
                             ],
                           ),
@@ -111,5 +114,18 @@ class _ReportListState extends State<ReportList> {
     final formattedTime = DateFormat('HH:mm').format(date);
 
     return formattedDate + " at " + formattedTime;
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Rejected':
+        return Colors.red;
+      case 'Pending':
+        return Color.fromRGBO(8, 100, 175, 1.0);
+      case 'Verified':
+        return Colors.green;
+      default:
+        return Colors.black;
+    }
   }
 }
