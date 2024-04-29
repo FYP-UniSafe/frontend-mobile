@@ -980,7 +980,7 @@ class _ReportFormState extends State<ReportForm> {
                     evidence: _evidences));
           }
         }
-        log(reportProvider.isReported.toString());
+
         if (reportProvider.isReported != null &&
             reportProvider.isReported == true) {
           await Flashbar(

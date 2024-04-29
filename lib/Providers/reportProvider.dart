@@ -27,7 +27,7 @@ class ReportProvider extends ChangeNotifier {
 
       report.evidence!.forEach((element) async {
         var file =
-            await http.MultipartFile.fromPath('attachment[]', element.path);
+            await http.MultipartFile.fromPath('evidence[]', element.path);
         request.files.add(file);
       });
 
