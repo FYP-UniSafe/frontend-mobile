@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/Services/storage.dart';
 
 import '../Models/Report.dart';
@@ -50,6 +51,9 @@ class ReportProvider extends ChangeNotifier {
         await getReports();
         _isReported = true;
         notifyListeners();
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken();
+        await createReport(report: report);
       } else {
         _isReported = false;
         notifyListeners();
@@ -83,6 +87,9 @@ class ReportProvider extends ChangeNotifier {
         _reports = output.map((data) => Report.fromJson(data)).toList();
 
         notifyListeners();
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken();
+        await getReports();
       } else {
         _reports = [];
         notifyListeners();

@@ -266,4 +266,35 @@ class AuthProvider extends ChangeNotifier {
       print('Error changing password: $e');
     }
   }
+
+  static Future refreshToken() async {
+    User? user = await LocalStorage.getUserData();
+    try {
+      http.Response response = await http.post(
+          Uri.parse('$baseUrl/api/token/refresh/'),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: json.encode(user?.toRefreshJson()));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Map<String, dynamic> output = jsonDecode(response.body);
+
+        try {
+          user!.token = output['access'];
+          await LocalStorage.storeToken(token: output['access']);
+          await LocalStorage.storeUserData(user: user);
+        } catch (e) {
+          print(e.toString());
+        }
+      } else {
+        log(response.body);
+        throw HttpException('${response.statusCode}: ${response.reasonPhrase}',
+            uri: Uri.parse('$baseUrl/api/token/refresh/'));
+      }
+    } catch (e) {
+      log('Error is ${e.toString()}');
+    }
+  }
 }

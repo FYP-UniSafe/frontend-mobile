@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
@@ -155,64 +156,52 @@ class _ReportFormState extends State<ReportForm> {
                         ),
                       ),
                       Padding(
-                        padding: EdgeInsets.only(left: 16.0),
+                        padding: EdgeInsets.only(left: 8.0),
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                ConstrainedBox(
-                                  constraints: BoxConstraints(maxHeight: 20),
-                                  child: Radio(
-                                    value: true,
-                                    groupValue:
-                                        selectionProvider.isMyselfSelected,
-                                    onChanged: (value) {
-                                      selectionProvider.isMyselfSelected = true;
-                                    },
-                                    activeColor:
-                                        Color.fromRGBO(8, 100, 175, 1.0),
-                                  ),
-                                ),
-                                Text(
+                            ConstrainedBox(
+                              constraints: BoxConstraints(maxHeight: 35),
+                              child: RadioListTile(
+                                visualDensity:
+                                    VisualDensity(horizontal: -4, vertical: -2),
+                                dense: true,
+                                activeColor: Color.fromRGBO(8, 100, 175, 1.0),
+                                title: Text(
                                   'Myself',
-                                  style: TextStyle(fontSize: 18),
+                                  style: TextStyle(fontSize: 18.0),
                                 ),
-                              ],
+                                value: true,
+                                groupValue: selectionProvider.isMyselfSelected,
+                                onChanged: (value) {
+                                  selectionProvider.isMyselfSelected = true;
+                                },
+                              ),
                             ),
-                            SizedBox(
-                              height: 10,
-                            ),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              children: [
-                                ConstrainedBox(
-                                  constraints: BoxConstraints(maxHeight: 20),
-                                  child: Radio(
-                                    value: false,
-                                    groupValue:
-                                        selectionProvider.isMyselfSelected,
-                                    onChanged: (value) {
-                                      selectionProvider.isMyselfSelected =
-                                          false;
-                                    },
-                                    activeColor:
-                                        Color.fromRGBO(8, 100, 175, 1.0),
-                                  ),
+                            ConstrainedBox(
+                              constraints: BoxConstraints(maxHeight: 35),
+                              child: RadioListTile(
+                                visualDensity:
+                                    VisualDensity(horizontal: -4, vertical: -2),
+                                dense: true,
+                                activeColor: Color.fromRGBO(8, 100, 175, 1.0),
+                                title: Text(
+                                  'Someone Else',
+                                  style: TextStyle(fontSize: 18.0),
                                 ),
-                                Text(
-                                  'Someone else',
-                                  style: TextStyle(fontSize: 18),
-                                ),
-                              ],
+                                value: false,
+                                groupValue: selectionProvider.isMyselfSelected,
+                                onChanged: (value) {
+                                  selectionProvider.isMyselfSelected = false;
+                                },
+                              ),
                             ),
                           ],
                         ),
                       ),
                       if (!selectionProvider.isMyselfSelected) ...[
                         SizedBox(
-                          height: 12.0,
+                          height: 8.0,
                         ),
                         TextFormField(
                           controller: _fullName,
@@ -897,22 +886,6 @@ class _ReportFormState extends State<ReportForm> {
       ),
     );
   }
-
-  MaterialColor buttonTextColor = const MaterialColor(
-    0xFF4A5BF6,
-    const <int, Color>{
-      50: const Color(0xFF4A5BF6),
-      100: const Color(0xFF4A5BF6),
-      200: const Color(0xFF4A5BF6),
-      300: const Color(0xFF4A5BF6),
-      400: const Color(0xFF4A5BF6),
-      500: const Color(0xFF4A5BF6),
-      600: const Color(0xFF4A5BF6),
-      700: const Color(0xFF4A5BF6),
-      800: const Color(0xFF4A5BF6),
-      900: const Color(0xFF4A5BF6),
-    },
-  );
 
   String _formatDateTime(DateTime date, TimeOfDay time) {
     final formattedDate = DateFormat('yyyy-MM-ddT').format(date);

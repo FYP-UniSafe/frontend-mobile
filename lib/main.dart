@@ -40,6 +40,7 @@ Future<void> initializeApp() async {
     } else {
       if (session) {
         try {
+          await AuthProvider.refreshToken();
           await reportProvider.getReports();
         } catch (e) {}
       }

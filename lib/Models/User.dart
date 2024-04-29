@@ -19,6 +19,7 @@ class User {
   bool? is_student;
   bool? is_police;
   String? token;
+  String? refresh;
   String? last_login;
   String? otp;
   String? new_password;
@@ -48,6 +49,7 @@ class User {
       this.last_login,
       this.otp,
       this.token,
+      this.refresh,
       this.new_password,
       this.old_password,
       this.profile});
@@ -55,6 +57,10 @@ class User {
   Map<String, dynamic> toLoginJson() => {
         "email": email,
         "password": password,
+      };
+  Map<String, dynamic> toRefreshJson() => {
+        "refresh": refresh,
+        "access": token,
       };
 
   Map<String, dynamic> toOtpJson() => {
@@ -89,6 +95,7 @@ class User {
         "date_joined": date_joined,
         "last_login": last_login,
         "token": token,
+        "refresh": refresh,
         "reg_no": reg_no,
         "college": college,
         "profile": profile
@@ -160,6 +167,7 @@ class User {
           : false,
       phone_number: json['user']['phone_number'],
       token: json['tokens']['access'],
+      refresh: json['tokens']['refresh'],
       profile: json['user']['profile'],
       reg_no: json['user']['profile']['reg_no'],
       college: json['user']['profile']['college'],
@@ -195,6 +203,7 @@ class User {
           : false,
       phone_number: json['phone_number'],
       token: json['token'],
+      refresh: json['refresh'],
       profile: json['profile'],
       reg_no: json['profile']['reg_no'],
       college: json['profile']['college'],
