@@ -25,7 +25,7 @@ class ReportProvider extends ChangeNotifier {
       var request = http.MultipartRequest('POST', uri);
       for (var element in report.evidence!) {
         var file =
-            await http.MultipartFile.fromPath('attachment[]', element.path);
+            await http.MultipartFile.fromPath('evidence[]', element.path);
         request.files.add(file);
       }
 
