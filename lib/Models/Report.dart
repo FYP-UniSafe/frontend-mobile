@@ -19,6 +19,7 @@ class Report {
   String? status;
   String? assigned_gd;
   String? reporter;
+  String? rejection_reason;
   String? reporter_full_name;
   String? reporter_gender;
   String? reporter_college;
@@ -28,7 +29,6 @@ class Report {
   List<File>? evidence;
   String? police_status;
   String? assigned_officer;
-  String? rejection_reason;
   String? created_on;
   String? victim_email;
   String? victim_full_name;
@@ -97,12 +97,6 @@ class Report {
         "relationship": relationship,
       };
   Map<String, dynamic> toJsonAnonymousReportData() => {
-        "victim_email": email,
-        "victim_full_name": full_name,
-        "victim_phone": phone_number,
-        "victim_gender": gender,
-        "victim_reg_no": reg_no,
-        "victim_college": college,
         "abuse_type": abuse_type,
         "date_and_time": dateTime,
         "location": location,

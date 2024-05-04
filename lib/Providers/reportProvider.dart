@@ -21,15 +21,13 @@ class ReportProvider extends ChangeNotifier {
   Future createReport({required Report report}) async {
     String? token = await LocalStorage.getToken();
     try {
-      var uri = Uri.parse(
-          '$baseUrl/reports/create'); // Replace with your Laravel API endpoint
+      var uri = Uri.parse('$baseUrl/reports/create');
       var request = http.MultipartRequest('POST', uri);
-
-      report.evidence!.forEach((element) async {
+      for (var element in report.evidence!) {
         var file =
             await http.MultipartFile.fromPath('attachment[]', element.path);
         request.files.add(file);
-      });
+      }
 
       report.toJsonReportData().forEach((key, value) {
         request.fields[key] = value;
@@ -38,7 +36,6 @@ class ReportProvider extends ChangeNotifier {
       request.headers['Content-Type'] = 'application/json';
       request.headers['Accept'] = 'application/json';
       request.headers['Authorization'] = 'Bearer $token';
-
       final response = await request.send();
 
       String responseBody = await response.stream.bytesToString();
@@ -52,9 +49,60 @@ class ReportProvider extends ChangeNotifier {
         _isReported = true;
         notifyListeners();
       } else if (response.statusCode == 401) {
+        log(responseBody);
         AuthProvider.refreshToken();
         await createReport(report: report);
       } else {
+        log(responseBody);
+        _isReported = false;
+        notifyListeners();
+        if (kDebugMode) {
+          print(response.statusCode);
+          log(responseBody);
+          print('File upload failed');
+        }
+      }
+    } catch (e) {
+      _isReported = false;
+      notifyListeners();
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+  }
+
+  Future createAnonymousReport({required Report report}) async {
+    log(report.toJsonAnonymousReportData().toString());
+    try {
+      var uri = Uri.parse('$baseUrl/reports/anonymous/create');
+      var request = http.MultipartRequest('POST', uri);
+      for (var element in report.evidence!) {
+        var file =
+            await http.MultipartFile.fromPath('attachment[]', element.path);
+        request.files.add(file);
+      }
+
+      report.toJsonAnonymousReportData().forEach((key, value) {
+        request.fields[key] = value;
+      });
+
+      request.headers['Content-Type'] = 'application/json';
+      request.headers['Accept'] = 'application/json';
+
+      final response = await request.send();
+
+      String responseBody = await response.stream.bytesToString();
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var output = jsonDecode(responseBody);
+        if (kDebugMode) {
+          print('File uploaded successfully');
+        }
+
+        _isReported = true;
+        notifyListeners();
+      } else {
+        log(responseBody);
         _isReported = false;
         notifyListeners();
         if (kDebugMode) {

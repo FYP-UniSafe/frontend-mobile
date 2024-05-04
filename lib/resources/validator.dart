@@ -2,8 +2,10 @@ import 'package:email_validator/email_validator.dart';
 
 class TextFormValidators {
   static String? passwordValidator(String password) {
-    if (password.isEmpty) {
-      return "Password can't be empty";
+    RegExp passwordPattern = RegExp(
+        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$");
+    if (!passwordPattern.hasMatch(password)) {
+      return 'At least one uppercase, one digit and one special character is required';
     }
     return null;
   }

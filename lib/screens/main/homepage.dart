@@ -40,6 +40,9 @@ class _HomePageState extends State<HomePage> {
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
                 Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(0),
+                  ),
                   //elevation: 30.0,
                   clipBehavior: Clip.antiAlias,
                   child: Container(
@@ -93,6 +96,9 @@ class _HomePageState extends State<HomePage> {
                         'https://www.udsm.ac.tz/upload/20191018_030915_sexual%20harassment%20policy.pdf');
                   },
                   child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                     //clipBehavior: Clip.antiAlias,
                     color: Colors.white,
                     //elevation: 10.0,
@@ -143,6 +149,9 @@ class _HomePageState extends State<HomePage> {
                     _launchUrl('https://www.unwomen.org/en');
                   },
                   child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                     //clipBehavior: Clip.antiAlias,
                     color: Colors.white,
                     //elevation: 10.0,
@@ -199,6 +208,9 @@ class _HomePageState extends State<HomePage> {
                     _launchUrl('https://genderdata.worldbank.org/');
                   },
                   child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                     //clipBehavior: Clip.antiAlias,
                     color: Colors.white,
                     //elevation: 10.0,
@@ -256,6 +268,9 @@ class _HomePageState extends State<HomePage> {
                         'https://www.who.int/health-topics/violence-against-women#tab=tab_1');
                   },
                   child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                     //clipBehavior: Clip.antiAlias,
                     color: Colors.white,
                     //elevation: 10.0,
@@ -312,6 +327,9 @@ class _HomePageState extends State<HomePage> {
                     _launchUrl('https://www.amnesty.org/en/');
                   },
                   child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                     //clipBehavior: Clip.antiAlias,
                     color: Colors.white,
                     //elevation: 10.0,
@@ -368,6 +386,9 @@ class _HomePageState extends State<HomePage> {
                     _launchUrl('https://www.hrw.org/');
                   },
                   child: Card(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(5),
+                    ),
                     //clipBehavior: Clip.antiAlias,
                     color: Colors.white,
                     //elevation: 10.0,

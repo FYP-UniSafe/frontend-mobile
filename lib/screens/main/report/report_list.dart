@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
+import 'package:unisafe/screens/main/report/report_details.dart';
 import '../../../resources/formats.dart';
 import '../../../Models/Report.dart';
 import '../../../Providers/reportProvider.dart';
@@ -66,44 +67,76 @@ class _ReportListState extends State<ReportList> {
           },
           color: Color.fromRGBO(8, 100, 175, 1),
           child: ListView.builder(
-              physics: ClampingScrollPhysics(),
-              itemCount: _reports.length,
-              itemBuilder: (context, i) => Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                    child: ListTile(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: BorderSide(color: Colors.grey)),
-                        title: Text(
-                          "Report: ${_reports[i].abuse_type.toString()}",
+            //physics: ClampingScrollPhysics(),
+            itemCount: _reports.length,
+            itemBuilder: (context, i) => Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              child: GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ReportDetails(report: _reports[i]),
+                    ),
+                  );
+                },
+                child: ListTile(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5),
+                    side: BorderSide(color: Colors.grey, width: 1),
+                  ),
+                  title: Text(
+                    "Report: ${_reports[i].abuse_type.toString()}",
+                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Column(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      RichText(
+                        text: TextSpan(
+                          text: 'Status: ',
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: RichText(
-                          text: TextSpan(
-                            text: 'Status: ',
-                            style: TextStyle(fontSize: 14, color: Colors.black),
-                            children: [
-                              TextSpan(
-                                text: _reports[i]
+                              fontFamily: 'Montserrat',
+                              fontSize: 14,
+                              color: Colors.black),
+                          children: [
+                            TextSpan(
+                              text: _reports[i]
+                                  .status
+                                  .toString()
+                                  .capitalizeFirstLetterOfEachWord(),
+                              style: TextStyle(
+                                fontFamily: 'Montserrat',
+                                fontSize: 14,
+                                color: _getStatusColor(_reports[i]
                                     .status
                                     .toString()
-                                    .capitalizeFirstLetterOfEachWord(),
-                                style:
-                                    TextStyle(fontSize: 14, color: _getStatusColor(_reports[i]
-                                        .status
-                                        .toString()
-                                        .capitalizeFirstLetterOfEachWord())),
+                                    .capitalizeFirstLetterOfEachWord()),
                               ),
-                            ],
-                          ),
+                            ),
+                          ],
                         ),
-                        trailing: Text(
-                          _formatDateTime(DateTime.parse(
-                              _reports[i].created_on.toString())),
-                          style: TextStyle(fontSize: 12),
-                        )),
-                  )),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                        _formatDateTime(
+                            DateTime.parse(_reports[i].created_on.toString())),
+                        style: TextStyle(fontSize: 12),
+                      ),
+                    ],
+                  ),
+                  trailing: Padding(
+                    padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+                    child: Icon(
+                      Icons.arrow_forward_ios,
+                      size: 20,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -113,7 +146,7 @@ class _ReportListState extends State<ReportList> {
     final formattedDate = DateFormat('dd/MM/yyyy').format(date);
     final formattedTime = DateFormat('HH:mm').format(date);
 
-    return formattedDate + " at " + formattedTime;
+    return formattedDate + " | " + formattedTime;
   }
 
   Color _getStatusColor(String status) {
@@ -122,7 +155,7 @@ class _ReportListState extends State<ReportList> {
         return Colors.red;
       case 'Pending':
         return Color.fromRGBO(8, 100, 175, 1.0);
-      case 'Verified':
+      case 'Resolved':
         return Colors.green;
       default:
         return Colors.black;

@@ -68,11 +68,10 @@ class _ReportFormState extends State<ReportForm> {
     "Physical Violence",
     "Sexual Violence",
     "Psychological Violence",
-    "Cyber Violence"
+    "Online Harassment"
   ];
   String? college;
   String? gender;
-  String? _otherGender;
   String? _perpetratorGender;
   String selectedOption = '';
   String? abuse;
@@ -199,7 +198,8 @@ class _ReportFormState extends State<ReportForm> {
                           ],
                         ),
                       ),
-                      if (!selectionProvider.isMyselfSelected) ...[
+                      if (selectionProvider.isMyselfSelected != null &&
+                          !selectionProvider.isMyselfSelected!) ...[
                         SizedBox(
                           height: 8.0,
                         ),
@@ -271,14 +271,14 @@ class _ReportFormState extends State<ReportForm> {
                               borderRadius: BorderRadius.circular(5.0),
                             ),
                           ),
-                          value: _otherGender,
+                          value: gender,
                           items: genders
                               .map((e) => DropdownMenuItem<String>(
                                   value: e.toString(), child: Text(e)))
                               .toList(),
                           onChanged: (value) {
                             setState(() {
-                              _otherGender = value;
+                              gender = value;
                             });
                           },
                         ),
@@ -665,26 +665,29 @@ class _ReportFormState extends State<ReportForm> {
                             child: Stack(
                               children: [
                                 ClipRRect(
-                                    borderRadius: BorderRadius.circular(8),
-                                    child: Image.file(
-                                      _evidences[i],
-                                      width: 70,
-                                      height: 70,
-                                      fit: BoxFit.fill,
-                                    )),
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Image.file(
+                                    _evidences[i],
+                                    width: 70,
+                                    height: 70,
+                                    fit: BoxFit.fill,
+                                  ),
+                                ),
                                 Positioned(
-                                    top: 0,
-                                    right: 2,
-                                    child: GestureDetector(
-                                        onTap: () {
-                                          setState(() {
-                                            _evidences.remove(_evidences[i]);
-                                          });
-                                        },
-                                        child: Icon(
-                                          CupertinoIcons.delete_solid,
-                                          color: Colors.red,
-                                        ))),
+                                  top: 0,
+                                  right: 2,
+                                  child: GestureDetector(
+                                    onTap: () {
+                                      setState(() {
+                                        _evidences.remove(_evidences[i]);
+                                      });
+                                    },
+                                    child: Icon(
+                                      CupertinoIcons.delete_solid,
+                                      color: Colors.red,
+                                    ),
+                                  ),
+                                ),
                               ],
                             ),
                           ),
@@ -799,7 +802,7 @@ class _ReportFormState extends State<ReportForm> {
                       height: 4.0,
                     ),
                     Padding(
-                      padding: EdgeInsets.only(left: 38.0),
+                      padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
                       child: Text(
                         'Are you in need of counselling services?',
                         style: TextStyle(
@@ -855,7 +858,7 @@ class _ReportFormState extends State<ReportForm> {
                       )
                     ],
                     SizedBox(
-                      height: 20.0,
+                      height: 10.0,
                     ),
                     SafeArea(
                       bottom: true,
@@ -894,7 +897,7 @@ class _ReportFormState extends State<ReportForm> {
     setState(() {
       reportDate = "$formattedDate$formattedTime";
     });
-    return "${DateFormat('dd/MM/yyyy').format(date)} at $formattedTime";
+    return "${DateFormat('dd/MM/yyyy').format(date)} | $formattedTime";
   }
 
   _report() async {
@@ -909,7 +912,7 @@ class _ReportFormState extends State<ReportForm> {
           _perpetratorRelationship.text.isNotEmpty) {
         showDialog(
             context: context,
-            // barrierDismissible: false,
+            barrierDismissible: false,
             builder: (BuildContext context) {
               return Dialog(
                 backgroundColor: Colors.transparent,
@@ -926,60 +929,65 @@ class _ReportFormState extends State<ReportForm> {
               );
             });
 
-        if (selectionProvider.isMyselfSelected) {
-          await reportProvider.createReport(
-              report: Report(
-                  abuse_type: abuse,
-                  location: location,
-                  gender: storageProvider.user!.gender,
-                  description: _description.text,
-                  perpetrator_fullname: _perpetrator.text,
-                  perpetrator_gender: _perpetratorGender,
-                  full_name: storageProvider.user!.full_name,
-                  reg_no: storageProvider.user!.reg_no,
-                  phone_number: storageProvider.user!.phone_number,
-                  email: storageProvider.user!.email,
-                  college: storageProvider.user!.college,
-                  dateTime: reportDate,
-                  relationship: _perpetratorRelationship.text,
-                  evidence: _evidences,
-                  report_for: "Self"));
-        } else {
-          if (_fullName.text.isNotEmpty &&
-              _phone.text.isNotEmpty &&
-              _otherGender != null &&
-              _registration.text.isNotEmpty &&
-              college != null &&
-              _email.text.isNotEmpty) {
+        if (storageProvider.user != null) {
+          if (selectionProvider.isMyselfSelected != null &&
+              selectionProvider.isMyselfSelected!) {
             await reportProvider.createReport(
                 report: Report(
                     abuse_type: abuse,
                     location: location,
+                    gender: storageProvider.user!.gender,
                     description: _description.text,
                     perpetrator_fullname: _perpetrator.text,
                     perpetrator_gender: _perpetratorGender,
-                    full_name: _fullName.text,
-                    phone_number: _phone.text,
-                    reg_no: _registration.text,
-                    email: _email.text,
-                    college: college,
+                    full_name: storageProvider.user!.full_name,
+                    reg_no: storageProvider.user!.reg_no,
+                    phone_number: storageProvider.user!.phone_number,
+                    email: storageProvider.user!.email,
+                    college: storageProvider.user!.college,
                     dateTime: reportDate,
                     relationship: _perpetratorRelationship.text,
                     evidence: _evidences,
-                    report_for: "Else"));
+                    report_for: "Self"));
           } else {
-            await reportProvider.createReport(
-                report: Report(
-                    abuse_type: abuse,
-                    location: location,
-                    description: _description.text,
-                    perpetrator_fullname: _perpetrator.text,
-                    perpetrator_gender: _perpetratorGender,
-                    dateTime: reportDate,
-                    relationship: _perpetratorRelationship.text,
-                    evidence: _evidences));
+            if (_fullName.text.isNotEmpty &&
+                _phone.text.isNotEmpty &&
+                gender != null &&
+                _registration.text.isNotEmpty &&
+                college != null &&
+                _email.text.isNotEmpty) {
+              await reportProvider.createReport(
+                  report: Report(
+                      abuse_type: abuse,
+                      location: location,
+                      description: _description.text,
+                      perpetrator_fullname: _perpetrator.text,
+                      perpetrator_gender: _perpetratorGender,
+                      full_name: _fullName.text,
+                      phone_number: _phone.text,
+                      reg_no: _registration.text,
+                      email: _email.text,
+                      college: college,
+                      gender: gender,
+                      dateTime: reportDate,
+                      relationship: _perpetratorRelationship.text,
+                      evidence: _evidences,
+                      report_for: "Else"));
+            }
           }
+        } else {
+          await reportProvider.createAnonymousReport(
+              report: Report(
+                  abuse_type: abuse,
+                  location: location,
+                  description: _description.text,
+                  perpetrator_fullname: _perpetrator.text,
+                  perpetrator_gender: _perpetratorGender,
+                  dateTime: reportDate,
+                  relationship: _perpetratorRelationship.text,
+                  evidence: _evidences));
         }
+
         log(reportProvider.isReported.toString());
         if (reportProvider.isReported != null &&
             reportProvider.isReported == true) {
