@@ -58,83 +58,91 @@ class _ReportListState extends State<ReportList> {
               fontSize: 20.0, fontWeight: FontWeight.bold, color: Colors.white),
         ),
       ),
-      body: SizedBox(
-        width: MediaQuery.of(context).size.width,
-        height: MediaQuery.of(context).size.height,
-        child: RefreshIndicator(
-          onRefresh: () async {
-            await _reportProvider.getReports();
-          },
-          color: Color.fromRGBO(8, 100, 175, 1),
-          child: ListView.builder(
-            //physics: ClampingScrollPhysics(),
-            itemCount: _reports.length,
-            itemBuilder: (context, i) => Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-              child: GestureDetector(
-                onTap: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ReportDetails(report: _reports[i]),
+      body: Padding(
+        padding: EdgeInsets.all(8.0),
+        child: SizedBox(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              await _reportProvider.getReports();
+            },
+            color: Color.fromRGBO(8, 100, 175, 1),
+            child: ListView.separated(
+              itemCount: _reports.length,
+              itemBuilder: (context, i) {
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) =>
+                            ReportDetails(report: _reports[i]),
+                      ),
+                    );
+                  },
+                  child: ListTile(
+                    title: Text(
+                      "Report: ${_reports[i].abuse_type.toString()}",
+                      style:
+                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
                     ),
-                  );
-                },
-                child: ListTile(
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(5),
-                    side: BorderSide(color: Colors.grey, width: 1),
-                  ),
-                  title: Text(
-                    "Report: ${_reports[i].abuse_type.toString()}",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  subtitle: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      RichText(
-                        text: TextSpan(
-                          text: 'Status: ',
-                          style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 14,
-                              color: Colors.black),
-                          children: [
-                            TextSpan(
-                              text: _reports[i]
-                                  .status
-                                  .toString()
-                                  .capitalizeFirstLetterOfEachWord(),
-                              style: TextStyle(
+                    subtitle: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        RichText(
+                          text: TextSpan(
+                            text: 'Status: ',
+                            style: TextStyle(
                                 fontFamily: 'Montserrat',
                                 fontSize: 14,
-                                color: _getStatusColor(_reports[i]
+                                color: Colors.black),
+                            children: [
+                              TextSpan(
+                                text: _reports[i]
                                     .status
                                     .toString()
-                                    .capitalizeFirstLetterOfEachWord()),
+                                    .capitalizeFirstLetterOfEachWord(),
+                                style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 14,
+                                  color: _getStatusColor(_reports[i]
+                                      .status
+                                      .toString()
+                                      .capitalizeFirstLetterOfEachWord()),
+                                ),
                               ),
-                            ),
-                          ],
+                            ],
+                          ),
                         ),
+                        SizedBox(height: 8),
+                        Text(
+                          _formatDateTime(DateTime.parse(
+                              _reports[i].created_on.toString())),
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      ],
+                    ),
+                    trailing: Padding(
+                      padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+                      child: Icon(
+                        Icons.arrow_forward_ios,
+                        size: 18,
                       ),
-                      SizedBox(height: 8),
-                      Text(
-                        _formatDateTime(
-                            DateTime.parse(_reports[i].created_on.toString())),
-                        style: TextStyle(fontSize: 12),
-                      ),
-                    ],
-                  ),
-                  trailing: Padding(
-                    padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
-                    child: Icon(
-                      Icons.arrow_forward_ios,
-                      size: 20,
                     ),
                   ),
-                ),
-              ),
+                );
+              },
+              separatorBuilder: (context, index) {
+                return Padding(
+                  padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                  child: Divider(
+                    height: 0.0,
+                    color: Color.fromRGBO(8, 100, 175, 1.0),
+                  ),
+                );
+              },
             ),
           ),
         ),

@@ -217,7 +217,7 @@ class _ReportPageState extends State<ReportPage> {
                           ),
                           Icon(
                             Icons.arrow_forward_ios,
-                            size: 20.0,
+                            size: 18.0,
                           ),
                         ],
                       ),

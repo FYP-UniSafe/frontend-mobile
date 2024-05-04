@@ -71,282 +71,319 @@ class _ReportDetailsState extends State<ReportDetails> {
           ),
         ),
       ),
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: EdgeInsets.all(8.0),
-          child: Card(
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(0),
-            ),
-            elevation: 5,
-            color: Colors.white,
-            child: Padding(
-              padding: EdgeInsets.all(8.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                //mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Align(
-                    alignment: Alignment.center,
-                    child: Text(
-                      '${report.abuse_type}',
-                      style:
-                          TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-                    ),
-                  ),
-                  Divider(
-                    height: 16.0,
-                    color: Color.fromRGBO(8, 100, 175, 1.0),
-                  ),
-                  Row(
-                    children: [
-                      Text(
-                        'Description: ',
-                        style: TextStyle(
-                          fontSize: 16,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        report.description.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'Date and Time: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        _formatDateTime(
-                            DateTime.parse(report.date_and_time.toString())),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'Location: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        report.location.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Victim's Details",
-                    style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(8, 100, 175, 1)),
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'Full Name: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        report.victim_full_name.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'Phone Number: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        report.victim_phone.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'Gender: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        report.victim_gender.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'Email: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        report.victim_email.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'Registration Number: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        report.victim_reg_no.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'College: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        report.victim_college.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    "Perpetrator's Details",
-                    style: TextStyle(
-                        fontSize: 17,
-                        fontWeight: FontWeight.bold,
-                        color: Color.fromRGBO(8, 100, 175, 1)),
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'Full Name: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        report.perpetrator_fullname.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'Gender: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        report.perpetrator_gender.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Row(
-                    children: [
-                      Text(
-                        'Relationship: ',
-                        style: TextStyle(
-                            fontWeight: FontWeight.bold, fontSize: 16),
-                      ),
-                      Text(
-                        report.relationship.toString(),
-                        style: TextStyle(fontSize: 16),
-                      ),
-                    ],
-                  ),
-                  Divider(
-                    height: 16.0,
-                    color: Color.fromRGBO(8, 100, 175, 1.0),
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        'Report ID',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        'Created On',
-                        style: TextStyle(
-                            fontSize: 16, fontWeight: FontWeight.bold),
-                      ),
-                    ],
-                  ),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        report.report_id.toString(),
-                        style: TextStyle(
-                          fontSize: 14,
-                        ),
-                      ),
-                      Text(
-                        _formatDateTime(
-                            DateTime.parse(report.created_on.toString())),
-                        style: TextStyle(fontSize: 14),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 8),
-                  Text(
-                    'Status',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                  ),
-                  Text(
-                    report.status.toString().capitalizeFirstLetterOfEachWord(),
-                    style: TextStyle(
-                      fontFamily: 'Montserrat',
-                      fontSize: 16,
-                      color: _getStatusColor(report.status
-                          .toString()
-                          .capitalizeFirstLetterOfEachWord()),
-                    ),
-                  ),
-                  if (report.status
-                          .toString()
-                          .capitalizeFirstLetterOfEachWord() ==
-                      'Rejected') ...[
-                    Column(
+      body: SizedBox(
+        height: MediaQuery.of(context).size.height * 0.99,
+        width: double.maxFinite,
+        child: SingleChildScrollView(
+          child: Padding(
+            padding: EdgeInsets.all(12.0),
+            child: Column(
+              children: [
+                Container(
+                  width: double.maxFinite,
+                  height: MediaQuery.of(context).size.height * 0.22,
+                  color: _getStatusColor(report.status
+                      .toString()
+                      .capitalizeFirstLetterOfEachWord()),
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Column(
                       children: [
-                        Text('Rejection Reason'),
-                        Text(report.rejection_reason.toString())
+                        Text(
+                          'REPORT SUMMARY',
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.white),
+                        ),
+                        Divider(
+                          height: 12.0,
+                          color: Colors.white,
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'STATUS: ',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                            Text(
+                              report.status.toString().toUpperCase(),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        if (report.status
+                                .toString()
+                                .capitalizeFirstLetterOfEachWord() ==
+                            'Rejected') ...[
+                          Row(
+                            children: [
+                              Text(
+                                'REASON: ',
+                                style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.white),
+                              ),
+                              Text(
+                                report.rejection_reason.toString(),
+                                style: TextStyle(
+                                    fontSize: 16, color: Colors.white),
+                              )
+                            ],
+                          )
+                        ],
+                        Row(
+                          children: [
+                            Text(
+                              'REPORT ID: ',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                            Text(
+                              report.report_id.toString(),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'DATE CREATED: ',
+                              style: TextStyle(
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.bold,
+                                  color: Colors.white),
+                            ),
+                            Text(
+                              _formatDateTime(
+                                  DateTime.parse(report.created_on.toString())),
+                              style:
+                                  TextStyle(fontSize: 16, color: Colors.white),
+                            ),
+                          ],
+                        ),
                       ],
-                    )
-                  ]
-                ],
-              ),
+                    ),
+                  ),
+                ),
+                Container(
+                  color: Color.fromRGBO(239, 238, 246, 1),
+                  child: Padding(
+                    padding: EdgeInsets.all(12.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          report.abuse_type.toString(),
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(8, 100, 175, 1)),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text(
+                              'Description: ',
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            Text(
+                              report.description.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 3),
+                        Row(
+                          children: [
+                            Text(
+                              'Date and Time: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              _formatDateTime(DateTime.parse(
+                                  report.date_and_time.toString())),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 3),
+                        Row(
+                          children: [
+                            Text(
+                              'Location: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              report.location.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        Divider(
+                          height: 24.0,
+                          color: Color.fromRGBO(8, 100, 175, 1.0),
+                        ),
+                        Text(
+                          "Victim's Details",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(8, 100, 175, 1)),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text(
+                              'Full Name: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              report.victim_full_name.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 3),
+                        Row(
+                          children: [
+                            Text(
+                              'Phone Number: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              report.victim_phone.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 3),
+                        Row(
+                          children: [
+                            Text(
+                              'Gender: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              report.victim_gender.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 3),
+                        Row(
+                          children: [
+                            Text(
+                              'Email: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              report.victim_email.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 3),
+                        Row(
+                          children: [
+                            Text(
+                              'Registration Number: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              report.victim_reg_no.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 3),
+                        Row(
+                          children: [
+                            Text(
+                              'College: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              report.victim_college.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        Divider(
+                          height: 24.0,
+                          color: Color.fromRGBO(8, 100, 175, 1.0),
+                        ),
+                        Text(
+                          "Perpetrator's Details",
+                          style: TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.bold,
+                              color: Color.fromRGBO(8, 100, 175, 1)),
+                        ),
+                        SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Text(
+                              'Full Name: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              report.perpetrator_fullname.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Gender: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              report.perpetrator_gender.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                        Row(
+                          children: [
+                            Text(
+                              'Relationship: ',
+                              style: TextStyle(
+                                  fontWeight: FontWeight.bold, fontSize: 16),
+                            ),
+                            Text(
+                              report.relationship.toString(),
+                              style: TextStyle(fontSize: 16),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ),
