@@ -498,8 +498,8 @@ class _ReportDetailsState extends State<ReportDetails> {
   }
 
   String _formatDateTime(DateTime date) {
-    final formattedDate = DateFormat('dd/MM/yyyy').format(date);
-    final formattedTime = DateFormat('HH:mm').format(date);
+    final formattedDate = DateFormat('dd/MM/yyyy').format(date.toLocal());
+    final formattedTime = DateFormat('HH:mm').format(date.toLocal());
 
     return formattedDate + " | " + formattedTime;
   }

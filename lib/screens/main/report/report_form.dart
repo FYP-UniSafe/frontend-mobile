@@ -989,7 +989,9 @@ class _ReportFormState extends State<ReportForm> {
           await reportProvider.createAnonymousReport(
               report: Report(
                   abuse_type: abuse,
-                  location: location,
+                  location: location == 'Other'
+                      ? other_location.text.toString()
+                      : location,
                   //other_location: other_location.text,
                   description: _description.text,
                   perpetrator_fullname: _perpetrator.text,
