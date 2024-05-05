@@ -189,50 +189,91 @@ class _ReportDetailsState extends State<ReportDetails> {
                               color: Color.fromRGBO(8, 100, 175, 1)),
                         ),
                         SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Text(
-                              'Description: ',
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: 'Description: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.description.toString(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: 'Date and Time: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: _formatDateTime(DateTime.parse(
+                                    report.date_and_time.toString())),
+                              ),
+                            ],
+                          ),
+                        ),
+                        SizedBox(height: 6),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: 'Location: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.location.toString(),
+                              ),
+                            ],
+                          ),
+                        ),
+                        if (report.location.toString() == 'Other') ...[
+                          RichText(
+                            text: TextSpan(
                               style: TextStyle(
                                 fontSize: 16,
-                                fontWeight: FontWeight.bold,
+                                fontFamily: 'Montserrat',
+                                color: Colors.black,
                               ),
+                              children: [
+                                TextSpan(
+                                  text: 'Location: ',
+                                  style: TextStyle(
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                TextSpan(
+                                  text: report.other_location.toString(),
+                                ),
+                              ],
                             ),
-                            Text(
-                              report.description.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 3),
-                        Row(
-                          children: [
-                            Text(
-                              'Date and Time: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            Text(
-                              _formatDateTime(DateTime.parse(
-                                  report.date_and_time.toString())),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 3),
-                        Row(
-                          children: [
-                            Text(
-                              'Location: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
-                            ),
-                            Text(
-                              report.location.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
-                        ),
+                          ),
+                        ],
                         Divider(
                           height: 24.0,
                           color: Color.fromRGBO(8, 100, 175, 1.0),
@@ -245,88 +286,130 @@ class _ReportDetailsState extends State<ReportDetails> {
                               color: Color.fromRGBO(8, 100, 175, 1)),
                         ),
                         SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Text(
-                              'Full Name: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
                             ),
-                            Text(
-                              report.victim_full_name.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                            children: [
+                              TextSpan(
+                                text: 'Full Name: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.victim_full_name.toString(),
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 3),
-                        Row(
-                          children: [
-                            Text(
-                              'Phone Number: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                        SizedBox(height: 6),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
                             ),
-                            Text(
-                              report.victim_phone.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                            children: [
+                              TextSpan(
+                                text: 'Phone Number: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.victim_phone.toString(),
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 3),
-                        Row(
-                          children: [
-                            Text(
-                              'Gender: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                        SizedBox(height: 6),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
                             ),
-                            Text(
-                              report.victim_gender.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                            children: [
+                              TextSpan(
+                                text: 'Gender: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.victim_gender.toString(),
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 3),
-                        Row(
-                          children: [
-                            Text(
-                              'Email: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                        SizedBox(height: 6),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
                             ),
-                            Text(
-                              report.victim_email.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                            children: [
+                              TextSpan(
+                                text: 'Email: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.victim_email.toString(),
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 3),
-                        Row(
-                          children: [
-                            Text(
-                              'Registration Number: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                        SizedBox(height: 6),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
                             ),
-                            Text(
-                              report.victim_reg_no.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                            children: [
+                              TextSpan(
+                                text: 'Registration Number: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.victim_reg_no.toString(),
+                              ),
+                            ],
+                          ),
                         ),
-                        SizedBox(height: 3),
-                        Row(
-                          children: [
-                            Text(
-                              'College: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                        SizedBox(height: 6),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
                             ),
-                            Text(
-                              report.victim_college.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                            children: [
+                              TextSpan(
+                                text: 'College: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.victim_college.toString(),
+                              ),
+                            ],
+                          ),
                         ),
                         Divider(
                           height: 24.0,
@@ -340,44 +423,67 @@ class _ReportDetailsState extends State<ReportDetails> {
                               color: Color.fromRGBO(8, 100, 175, 1)),
                         ),
                         SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Text(
-                              'Full Name: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
                             ),
-                            Text(
-                              report.perpetrator_fullname.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                            children: [
+                              TextSpan(
+                                text: 'Full Name: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.perpetrator_fullname.toString(),
+                              ),
+                            ],
+                          ),
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              'Gender: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                        SizedBox(height: 6),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
                             ),
-                            Text(
-                              report.perpetrator_gender.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                            children: [
+                              TextSpan(
+                                text: 'Gender: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.perpetrator_gender.toString(),
+                              ),
+                            ],
+                          ),
                         ),
-                        Row(
-                          children: [
-                            Text(
-                              'Relationship: ',
-                              style: TextStyle(
-                                  fontWeight: FontWeight.bold, fontSize: 16),
+                        SizedBox(height: 6),
+                        RichText(
+                          text: TextSpan(
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontFamily: 'Montserrat',
+                              color: Colors.black,
                             ),
-                            Text(
-                              report.relationship.toString(),
-                              style: TextStyle(fontSize: 16),
-                            ),
-                          ],
+                            children: [
+                              TextSpan(
+                                text: 'Relationship: ',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              TextSpan(
+                                text: report.relationship.toString(),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),

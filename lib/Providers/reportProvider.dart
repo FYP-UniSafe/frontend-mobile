@@ -19,6 +19,7 @@ class ReportProvider extends ChangeNotifier {
   List<Report> get reports => _reports;
 
   Future createReport({required Report report}) async {
+    log(report.toJsonReportData().toString());
     String? token = await LocalStorage.getToken();
     try {
       var uri = Uri.parse('$baseUrl/reports/create');
