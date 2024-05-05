@@ -509,11 +509,11 @@ class _ReportDetailsState extends State<ReportDetails> {
       case 'Rejected':
         return Colors.red;
       case 'Pending':
-        return Color.fromRGBO(8, 100, 175, 1.0);
+        return Colors.orange;
       case 'Resolved':
         return Colors.green;
       default:
-        return Colors.black;
+        return Color.fromRGBO(8, 100, 175, 1.0);
     }
   }
 }

@@ -996,7 +996,7 @@ class _ReportFormState extends State<ReportForm> {
             reportProvider.isReported == true) {
           await Flashbar(
             flashbarPosition: FlashbarPosition.TOP,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(5),
             backgroundColor: Colors.green,
             icon: Icon(
               CupertinoIcons.check_mark_circled,
@@ -1027,7 +1027,7 @@ class _ReportFormState extends State<ReportForm> {
           Navigator.pop(context);
           Flashbar(
             flashbarPosition: FlashbarPosition.TOP,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(5),
             backgroundColor: Colors.red,
             icon: Icon(
               CupertinoIcons.exclamationmark_triangle,

@@ -260,17 +260,17 @@ class _AccountSecurityState extends State<AccountSecurity> {
           Navigator.pop(context);
           Flashbar(
             flashbarPosition: FlashbarPosition.TOP,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(5),
             backgroundColor: Colors.red,
             icon: Icon(
               CupertinoIcons.exclamationmark_triangle,
-              color: Colors.black,
+              color: Colors.white,
               size: 32,
             ),
             titleText: Text(
               'Alert',
               style: TextStyle(
-                  color: Colors.red,
+                  color: Colors.white,
                   fontFamily: 'Poppins',
                   fontSize: 18,
                   fontWeight: FontWeight.w500),
@@ -278,7 +278,7 @@ class _AccountSecurityState extends State<AccountSecurity> {
             messageText: Text(
               'Password Change Failed',
               style: TextStyle(
-                  color: Colors.black,
+                  color: Colors.white,
                   fontFamily: 'Poppins',
                   fontSize: 16,
                   fontWeight: FontWeight.w500),

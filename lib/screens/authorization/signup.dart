@@ -612,7 +612,7 @@ class _SignUpState extends State<SignUp> {
           Navigator.pop(context);
           Flashbar(
             flashbarPosition: FlashbarPosition.TOP,
-            borderRadius: BorderRadius.circular(12),
+            borderRadius: BorderRadius.circular(5),
             backgroundColor: Colors.red,
             icon: Icon(
               CupertinoIcons.exclamationmark_triangle,
