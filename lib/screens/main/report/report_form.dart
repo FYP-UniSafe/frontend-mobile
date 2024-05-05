@@ -905,7 +905,7 @@ class _ReportFormState extends State<ReportForm> {
       if (abuse != null &&
           _timeController.text.isNotEmpty &&
           location != null &&
-          other_location.text.isNotEmpty &&
+          //other_location.text.isNotEmpty &&
           reportDate != null &&
           _description.text.isNotEmpty &&
           _perpetratorGender != null &&
@@ -937,7 +937,7 @@ class _ReportFormState extends State<ReportForm> {
                 report: Report(
                     abuse_type: abuse,
                     location: location,
-                    other_location: other_location.text,
+                    //other_location: other_location.text,
                     gender: storageProvider.user!.gender,
                     description: _description.text,
                     perpetrator_fullname: _perpetrator.text,
@@ -962,7 +962,7 @@ class _ReportFormState extends State<ReportForm> {
                   report: Report(
                       abuse_type: abuse,
                       location: location,
-                      other_location: other_location.text,
+                      //other_location: other_location.text,
                       description: _description.text,
                       perpetrator_fullname: _perpetrator.text,
                       perpetrator_gender: _perpetratorGender,
@@ -983,7 +983,7 @@ class _ReportFormState extends State<ReportForm> {
               report: Report(
                   abuse_type: abuse,
                   location: location,
-                  other_location: other_location.text,
+                  //other_location: other_location.text,
                   description: _description.text,
                   perpetrator_fullname: _perpetrator.text,
                   perpetrator_gender: _perpetratorGender,
