@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Models/Report.dart';
 import 'package:unisafe/resources/formats.dart';
-
 import '../../../Providers/reportProvider.dart';
 import '../../../Services/stateObserver.dart';
 
