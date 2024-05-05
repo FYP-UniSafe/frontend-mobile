@@ -554,6 +554,7 @@ class _ReportFormState extends State<ReportForm> {
                         height: 16.0,
                       ),
                       TextFormField(
+                        controller: other_location,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
@@ -569,6 +570,8 @@ class _ReportFormState extends State<ReportForm> {
                           ),
                           labelText: "If location is 'other', please specify",
                         ),
+                        validator: (text) =>
+                            TextFormValidators.textFieldValidator(text),
                       ),
                     ],
                     SizedBox(
@@ -936,7 +939,9 @@ class _ReportFormState extends State<ReportForm> {
             await reportProvider.createReport(
                 report: Report(
                     abuse_type: abuse,
-                    location: location,
+                    location: location == 'Other'
+                        ? other_location.text.toString()
+                        : location,
                     //other_location: other_location.text,
                     gender: storageProvider.user!.gender,
                     description: _description.text,
@@ -961,7 +966,9 @@ class _ReportFormState extends State<ReportForm> {
               await reportProvider.createReport(
                   report: Report(
                       abuse_type: abuse,
-                      location: location,
+                      location: location == 'Other'
+                          ? other_location.text.toString()
+                          : location,
                       //other_location: other_location.text,
                       description: _description.text,
                       perpetrator_fullname: _perpetrator.text,
