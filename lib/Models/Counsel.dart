@@ -51,6 +51,7 @@ class Counsel {
       student_email: json['student_email'],
       student_reg_no: json['student_reg_no'],
       session_type: json['session_type'],
+      status: json['status']
     );
   }
 }

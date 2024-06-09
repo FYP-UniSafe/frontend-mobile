@@ -64,95 +64,129 @@ class _AllAppointmentsState extends State<AllAppointments> {
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          child: RefreshIndicator(
-            onRefresh: () async {
-              await _counselProvider.getAppointments();
-            },
-            color: Color.fromRGBO(8, 100, 175, 1),
-            child: ListView.separated(
-              itemCount: _appointments.length,
-              itemBuilder: (context, i) {
-                return ListTile(
-                  title: Text(
-                    "${_appointments[i].session_type.toString()} Appointment",
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          child: _appointments.isNotEmpty
+              ? RefreshIndicator(
+                  onRefresh: () async {
+                    await _counselProvider.getAppointments();
+                  },
+                  color: Color.fromRGBO(8, 100, 175, 1),
+                  child: ListView.separated(
+                    itemCount: _appointments.length,
+                    itemBuilder: (context, i) {
+                      return ListTile(
+                        title: Text(
+                          "${_appointments[i].session_type.toString()} Appointment",
+                          style: TextStyle(
+                              fontSize: 16, fontWeight: FontWeight.bold),
+                        ),
+                        subtitle: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            RichText(
+                              text: TextSpan(
+                                text: 'Appointment ID: ',
+                                style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 14,
+                                    color: Colors.black),
+                                children: [
+                                  TextSpan(
+                                    text: _appointments[i]
+                                        .appointment_id
+                                        .toString(),
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 14,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(
+                              height: 2,
+                            ),
+                            RichText(
+                              text: TextSpan(
+                                text: 'Status: ',
+                                style: TextStyle(
+                                    fontFamily: 'Montserrat',
+                                    fontSize: 14,
+                                    color: Colors.black),
+                                children: [
+                                  TextSpan(
+                                    text: _appointments[i]
+                                        .status
+                                        .toString()
+                                        .capitalizeFirstLetterOfEachWord(),
+                                    style: TextStyle(
+                                      fontFamily: 'Montserrat',
+                                      fontSize: 14,
+                                      color: _getStatusColor(_appointments[i]
+                                          .status
+                                          .toString()
+                                          .capitalizeFirstLetterOfEachWord()),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              _formatDateTime(DateTime.parse(
+                                  _appointments[i].created_on.toString())),
+                              style: TextStyle(fontSize: 12),
+                            ),
+                          ],
+                        ),
+                        trailing: Text(
+                          _formatDate(
+                              DateTime.parse(_appointments[i].date.toString())),
+                          style: TextStyle(fontSize: 12),
+                        ),
+                      );
+                    },
+                    separatorBuilder: (context, index) {
+                      return Padding(
+                        padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                        child: Divider(
+                          height: 0.0,
+                          color: Color.fromRGBO(8, 100, 175, 1.0),
+                        ),
+                      );
+                    },
                   ),
-                  subtitle: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                )
+              : RefreshIndicator(
+                  onRefresh: () async {
+                    await _counselProvider.getAppointments();
+                  },
+                  child: ListView(
                     children: [
-                      RichText(
-                        text: TextSpan(
-                          text: 'Appointment ID: ',
-                          style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 14,
-                              color: Colors.black),
-                          children: [
-                            TextSpan(
-                              text: _appointments[i].appointment_id.toString(),
-                              style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 14,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
                       SizedBox(
-                        height: 2,
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          text: 'Status: ',
-                          style: TextStyle(
-                              fontFamily: 'Montserrat',
-                              fontSize: 14,
-                              color: Colors.black),
+                          height: MediaQuery.of(context).size.height * 0.35),
+                      Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            TextSpan(
-                              text: _appointments[i]
-                                  .status
-                                  .toString()
-                                  .capitalizeFirstLetterOfEachWord(),
+                            Icon(
+                              Icons.hourglass_empty,
+                              size: 40,
+                              color: Color.fromRGBO(8, 100, 175, 0.6),
+                            ),
+                            Text(
+                              'No Appointments',
                               style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 14,
-                                color: _getStatusColor(_appointments[i]
-                                    .status
-                                    .toString()
-                                    .capitalizeFirstLetterOfEachWord()),
-                              ),
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color.fromRGBO(8, 100, 175, 1.0)),
                             ),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 8),
-                      Text(
-                        _formatDateTime(DateTime.parse(
-                            _appointments[i].created_on.toString())),
-                        style: TextStyle(fontSize: 12),
                       ),
                     ],
                   ),
-                  trailing: Text(
-                    _formatDate(
-                        DateTime.parse(_appointments[i].date.toString())),
-                    style: TextStyle(fontSize: 12),
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-                  child: Divider(
-                    height: 0.0,
-                    color: Color.fromRGBO(8, 100, 175, 1.0),
-                  ),
-                );
-              },
-            ),
-          ),
+                ),
         ),
       ),
     );

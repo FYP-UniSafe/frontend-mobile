@@ -64,87 +64,113 @@ class _ReportListState extends State<ReportList> {
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
           child: RefreshIndicator(
-            onRefresh: () async {
-              await _reportProvider.getReports();
-            },
-            color: Color.fromRGBO(8, 100, 175, 1),
-            child: ListView.separated(
-              itemCount: _reports.length,
-              itemBuilder: (context, i) {
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) =>
-                            ReportDetails(report: _reports[i]),
-                      ),
-                    );
-                  },
-                  child: ListTile(
-                    title: Text(
-                      "Report: ${_reports[i].abuse_type.toString()}",
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-                    ),
-                    subtitle: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
+              onRefresh: () async {
+                await _reportProvider.getReports();
+              },
+              color: Color.fromRGBO(8, 100, 175, 1),
+              child: _reports.isNotEmpty
+                  ? ListView.separated(
+                      itemCount: _reports.length,
+                      itemBuilder: (context, i) {
+                        return GestureDetector(
+                          onTap: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) =>
+                                    ReportDetails(report: _reports[i]),
+                              ),
+                            );
+                          },
+                          child: ListTile(
+                            title: Text(
+                              "Report: ${_reports[i].abuse_type.toString()}",
+                              style: TextStyle(
+                                  fontSize: 16, fontWeight: FontWeight.bold),
+                            ),
+                            subtitle: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                RichText(
+                                  text: TextSpan(
+                                    text: 'Status: ',
+                                    style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 14,
+                                        color: Colors.black),
+                                    children: [
+                                      TextSpan(
+                                        text: _reports[i]
+                                            .status
+                                            .toString()
+                                            .capitalizeFirstLetterOfEachWord(),
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 14,
+                                          color: _getStatusColor(_reports[i]
+                                              .status
+                                              .toString()
+                                              .capitalizeFirstLetterOfEachWord()),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  _formatDateTime(DateTime.parse(
+                                      _reports[i].created_on.toString())),
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            trailing: Padding(
+                              padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+                              child: Icon(
+                                Icons.arrow_forward_ios,
+                                size: 18,
+                              ),
+                            ),
+                          ),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return Padding(
+                          padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+                          child: Divider(
+                            height: 0.0,
+                            color: Color.fromRGBO(8, 100, 175, 1.0),
+                          ),
+                        );
+                      },
+                    )
+                  : ListView(
                       children: [
-                        RichText(
-                          text: TextSpan(
-                            text: 'Status: ',
-                            style: TextStyle(
-                                fontFamily: 'Montserrat',
-                                fontSize: 14,
-                                color: Colors.black),
+                        SizedBox(
+                            height: MediaQuery.of(context).size.height * 0.35),
+                        Center(
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              TextSpan(
-                                text: _reports[i]
-                                    .status
-                                    .toString()
-                                    .capitalizeFirstLetterOfEachWord(),
+                              Icon(
+                                Icons.hourglass_empty,
+                                size: 40,
+                                color: Color.fromRGBO(8, 100, 175, 0.6),
+                              ),
+                              Text(
+                                'No Reports',
                                 style: TextStyle(
-                                  fontFamily: 'Montserrat',
-                                  fontSize: 14,
-                                  color: _getStatusColor(_reports[i]
-                                      .status
-                                      .toString()
-                                      .capitalizeFirstLetterOfEachWord()),
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w400,
                                 ),
                               ),
                             ],
                           ),
-                        ),
-                        SizedBox(height: 8),
-                        Text(
-                          _formatDateTime(DateTime.parse(
-                              _reports[i].created_on.toString())),
-                          style: TextStyle(fontSize: 12),
-                        ),
+                        )
                       ],
-                    ),
-                    trailing: Padding(
-                      padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
-                      child: Icon(
-                        Icons.arrow_forward_ios,
-                        size: 18,
-                      ),
-                    ),
-                  ),
-                );
-              },
-              separatorBuilder: (context, index) {
-                return Padding(
-                  padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
-                  child: Divider(
-                    height: 0.0,
-                    color: Color.fromRGBO(8, 100, 175, 1.0),
-                  ),
-                );
-              },
-            ),
-          ),
+                    )),
         ),
       ),
     );

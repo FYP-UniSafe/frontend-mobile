@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Providers/authProvider.dart';
+import 'package:unisafe/Providers/counselProvider.dart';
 import 'package:unisafe/Services/storage.dart';
+import 'package:unisafe/main.dart';
 import 'package:unisafe/screens/authorization/forgot_password.dart';
 import 'package:unisafe/screens/authorization/signup.dart';
 
@@ -28,6 +30,8 @@ class _LoginState extends State<Login> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  late ReportProvider reportProvider;
+  late CounselProvider counselProvider;
 
   late AuthProvider _authProvider;
 
@@ -47,6 +51,8 @@ class _LoginState extends State<Login> {
   @override
   void didChangeDependencies() {
     _authProvider = Provider.of<AuthProvider>(context);
+    reportProvider = Provider.of<ReportProvider>(context);
+    counselProvider = Provider.of<CounselProvider>(context);
     super.didChangeDependencies();
   }
 
@@ -247,7 +253,8 @@ class _LoginState extends State<Login> {
         if (_authProvider.isLoggedIn != null &&
             _authProvider.isLoggedIn == true) {
           await Future.wait([
-            Provider.of<ReportProvider>(context, listen: false).getReports(),
+            reportProvider.getReports(),
+            counselProvider.getAppointments(),
             Provider.of<LocalStorageProvider>(context, listen: false)
                 .initialize()
           ]);
