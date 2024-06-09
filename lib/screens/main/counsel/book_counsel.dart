@@ -486,7 +486,7 @@ class _BookCounselState extends State<BookCounsel> {
               fontWeight: FontWeight.w500),
         ),
         messageText: Text(
-          'Report Submitted Successfully',
+          'Appointment Request Successful',
           style: TextStyle(
               color: Colors.white,
               fontFamily: 'Poppins',
@@ -517,7 +517,7 @@ class _BookCounselState extends State<BookCounsel> {
               fontWeight: FontWeight.w500),
         ),
         messageText: Text(
-          'Report Submission Failed',
+          'Appointment Request Failed',
           style: TextStyle(
               color: Colors.white,
               fontFamily: 'Poppins',
