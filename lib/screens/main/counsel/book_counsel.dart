@@ -1,11 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Providers/counselProvider.dart';
+import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/resources/validator.dart';
 
+import '../../../Models/Counsel.dart';
+import '../../../Models/User.dart';
 import '../../../Services/stateObserver.dart';
 import '../../../Widgets/Flashbar/flashbar.dart';
 
@@ -41,9 +46,15 @@ class _BookCounselState extends State<BookCounsel> {
 
   String? college;
   String? gender;
-  String selectedOption = '';
+  String? selectedOption;
   TextEditingController _dateController = TextEditingController();
+  TextEditingController _fullName = TextEditingController();
+  TextEditingController _phone = TextEditingController();
+  TextEditingController _email = TextEditingController();
+  TextEditingController _reg_no = TextEditingController();
   late CounselProvider counselProvider;
+  late LocalStorageProvider storageProvider;
+  late User _user;
 
   final _appStateObserver = AppStateObserver();
   @override
@@ -61,6 +72,28 @@ class _BookCounselState extends State<BookCounsel> {
   @override
   void didChangeDependencies() {
     counselProvider = Provider.of<CounselProvider>(context);
+    storageProvider = Provider.of<LocalStorageProvider>(context);
+    try {
+      _user = storageProvider.user!;
+      if (_user.full_name != null) {
+        _fullName = TextEditingController(text: _user.full_name);
+      }
+      if (_user.phone_number != null) {
+        _phone = TextEditingController(text: _user.phone_number);
+      }
+      if (_user.email != null) {
+        _email = TextEditingController(text: _user.email);
+      }
+      if (_user.reg_no != null) {
+        _reg_no = TextEditingController(text: _user.reg_no);
+      }
+      if (_user.gender != null) {
+        gender = _user.gender;
+      }
+    } catch (e) {
+      log(e.toString());
+    }
+
     super.didChangeDependencies();
   }
 
@@ -109,6 +142,7 @@ class _BookCounselState extends State<BookCounsel> {
                         color: Color.fromRGBO(8, 100, 175, 1.0),
                       ),
                       TextFormField(
+                        controller: _fullName,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
@@ -131,6 +165,7 @@ class _BookCounselState extends State<BookCounsel> {
                         height: 16.0,
                       ),
                       TextFormField(
+                        controller: _phone,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
@@ -189,6 +224,7 @@ class _BookCounselState extends State<BookCounsel> {
                         height: 16.0,
                       ),
                       TextFormField(
+                        controller: _email,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
@@ -211,6 +247,7 @@ class _BookCounselState extends State<BookCounsel> {
                         height: 16.0,
                       ),
                       TextFormField(
+                        controller: _reg_no,
                         autovalidateMode: AutovalidateMode.onUserInteraction,
                         style: TextStyle(color: Colors.black),
                         decoration: InputDecoration(
@@ -356,7 +393,7 @@ class _BookCounselState extends State<BookCounsel> {
                               'Physical',
                               style: TextStyle(fontSize: 18.0),
                             ),
-                            value: 'physical',
+                            value: 'Physical',
                             groupValue: selectedOption,
                             onChanged: (value) {
                               setState(() {
@@ -375,7 +412,7 @@ class _BookCounselState extends State<BookCounsel> {
                               'Online',
                               style: TextStyle(fontSize: 18.0),
                             ),
-                            value: 'online',
+                            value: 'Online',
                             groupValue: selectedOption,
                             onChanged: (value) {
                               setState(() {
@@ -441,8 +478,8 @@ class _BookCounselState extends State<BookCounsel> {
   }
 
   String _selectDate(DateTime date) {
-    DateFormat('yyyy-MM-ddT').format(date);
-    return "${DateFormat('dd/MM/yyyy').format(date)}";
+    DateFormat('YYYY-MM-DD').format(date);
+    return "${DateFormat('yyyy-MM-dd').format(date)}";
   }
 
   _book() async {
@@ -465,67 +502,85 @@ class _BookCounselState extends State<BookCounsel> {
               ),
             );
           });
-    }
-    if (counselProvider.isRequested != null &&
-        counselProvider.isRequested == true) {
-      await Flashbar(
-        flashbarPosition: FlashbarPosition.TOP,
-        borderRadius: BorderRadius.circular(5),
-        backgroundColor: Colors.green,
-        icon: Icon(
-          CupertinoIcons.check_mark_circled,
-          color: Colors.white,
-          size: 32,
-        ),
-        titleText: Text(
-          'Success',
-          style: TextStyle(
+      if (selectedOption != null &&
+          gender != null &&
+          _phone.text.isNotEmpty &&
+          _email.text.isNotEmpty &&
+          _reg_no.text.isNotEmpty &&
+          _fullName.text.isNotEmpty &&
+          _dateController.text.isNotEmpty) {
+        await counselProvider.requestAppointment(
+            appointment: Counsel(
+          student_full_name: _fullName.text,
+          student_phone: _phone.text,
+          student_email: _email.text,
+          student_reg_no: _reg_no.text,
+          student_gender: gender,
+          date: _dateController.text,
+          session_type: selectedOption,
+        ));
+        if (counselProvider.isRequested != null &&
+            counselProvider.isRequested == true) {
+          await Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.green,
+            icon: Icon(
+              CupertinoIcons.check_mark_circled,
               color: Colors.white,
-              fontFamily: 'Poppins',
-              fontSize: 18,
-              fontWeight: FontWeight.w500),
-        ),
-        messageText: Text(
-          'Appointment Request Successful',
-          style: TextStyle(
+              size: 32,
+            ),
+            titleText: Text(
+              'Success',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Appointment Request Successful',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+          Navigator.pop(context);
+          Navigator.pop(context);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.red,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
               color: Colors.white,
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: FontWeight.w500),
-        ),
-        duration: Duration(seconds: 3),
-      ).show(context);
-      Navigator.pop(context);
-      Navigator.pop(context);
-    } else {
-      Navigator.pop(context);
-      Flashbar(
-        flashbarPosition: FlashbarPosition.TOP,
-        borderRadius: BorderRadius.circular(5),
-        backgroundColor: Colors.red,
-        icon: Icon(
-          CupertinoIcons.exclamationmark_triangle,
-          color: Colors.white,
-          size: 32,
-        ),
-        titleText: Text(
-          'Alert',
-          style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Poppins',
-              fontSize: 18,
-              fontWeight: FontWeight.w500),
-        ),
-        messageText: Text(
-          'Appointment Request Failed',
-          style: TextStyle(
-              color: Colors.white,
-              fontFamily: 'Poppins',
-              fontSize: 16,
-              fontWeight: FontWeight.w500),
-        ),
-        duration: Duration(seconds: 3),
-      ).show(context);
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Appointment Request Failed',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
     }
   }
 }

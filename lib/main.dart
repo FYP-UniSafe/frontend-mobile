@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -44,8 +45,10 @@ Future<void> initializeApp() async {
       if (session) {
         try {
           await AuthProvider.refreshToken();
-          await reportProvider.getReports();
-        } catch (e) {}
+           reportProvider.getReports();
+        } catch (e) {
+          log(e.toString());
+        }
       }
       _landingPage = const MainScreen();
       // } else {
@@ -53,6 +56,7 @@ Future<void> initializeApp() async {
       // }
     }
   } catch (e) {
+    log(e.toString());
     _landingPage = Login();
   }
 }
@@ -104,7 +108,7 @@ class UniSafe extends StatelessWidget {
       routes: {
         '/option1Page': (context) => MainScreen(),
       },
-      home: _landingPage,
+      home: _landingPage
     );
   }
 }

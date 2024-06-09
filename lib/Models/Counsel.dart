@@ -33,6 +33,7 @@ class Counsel {
       'student_gender': student_gender,
       //'college': college,
       'date': date,
+      "student_phone":student_phone,
       'student_email': student_email,
       'student_reg_no': student_reg_no,
       'session_type': session_type,

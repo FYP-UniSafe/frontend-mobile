@@ -23,10 +23,11 @@ class TextFormValidators {
   }
 
   static String? phoneValidator(String phone) {
-    RegExp phoneNumberPattern = RegExp(r'^\d{10,}$');
+    RegExp phoneNumberPattern1 = RegExp(r'^\d{10,}$');
+    RegExp phoneNumberPattern = RegExp(r'^\+\d{1,3}\d{9,}$');
     if (phone.isEmpty) {
       return 'Phone Number is required';
-    } else if (!phoneNumberPattern.hasMatch(phone)) {
+    } else if (!phoneNumberPattern.hasMatch(phone)&&!phoneNumberPattern1.hasMatch(phone)){
       return 'At least 10 digits required';
     }
     return null;

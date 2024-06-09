@@ -47,7 +47,7 @@ class _HomePageState extends State<HomePage> {
                   clipBehavior: Clip.antiAlias,
                   child: Container(
                     width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.23,
+                    height: MediaQuery.of(context).size.height * 0.24,
                     decoration: BoxDecoration(
                       color: Colors.white,
                       /*image: DecorationImage(
