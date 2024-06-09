@@ -132,8 +132,9 @@ class ReportProvider extends ChangeNotifier {
       });
 
       if (response.statusCode == 200) {
-        List<dynamic> output = jsonDecode(response.body);
+        List output = jsonDecode(response.body);
         _reports = output.map((data) => Report.fromJson(data)).toList();
+        _reports.sort();
 
         notifyListeners();
       } else if (response.statusCode == 401) {

@@ -9,6 +9,7 @@ import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 import 'package:unisafe/screens/main/onboarding.dart';
 import 'Providers/authProvider.dart';
+import 'Providers/counselProvider.dart';
 import 'Providers/reportProvider.dart';
 import 'Providers/selectionProvider.dart';
 import 'Services/storage.dart';
@@ -17,6 +18,7 @@ Widget? _landingPage;
 
 final storageProvider = LocalStorageProvider();
 final reportProvider = ReportProvider();
+final counselProvider = CounselProvider();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -28,6 +30,7 @@ void main() async {
     ChangeNotifierProvider(create: (context) => SelectionProvider()),
     ChangeNotifierProvider.value(value: storageProvider),
     ChangeNotifierProvider.value(value: reportProvider),
+    ChangeNotifierProvider.value(value: counselProvider),
   ], child: UniSafe()));
 }
 

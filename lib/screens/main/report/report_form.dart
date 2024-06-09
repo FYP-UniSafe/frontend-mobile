@@ -939,10 +939,10 @@ class _ReportFormState extends State<ReportForm> {
             await reportProvider.createReport(
                 report: Report(
                     abuse_type: abuse,
-                    location: location == 'Other'
+                    location: location,
+                    other_location: location == 'Other'
                         ? other_location.text.toString()
                         : location,
-                    //other_location: other_location.text,
                     gender: storageProvider.user!.gender,
                     description: _description.text,
                     perpetrator_fullname: _perpetrator.text,
@@ -966,10 +966,10 @@ class _ReportFormState extends State<ReportForm> {
               await reportProvider.createReport(
                   report: Report(
                       abuse_type: abuse,
-                      location: location == 'Other'
+                      location: location,
+                      other_location: location == 'Other'
                           ? other_location.text.toString()
                           : location,
-                      //other_location: other_location.text,
                       description: _description.text,
                       perpetrator_fullname: _perpetrator.text,
                       perpetrator_gender: _perpetratorGender,
@@ -989,10 +989,10 @@ class _ReportFormState extends State<ReportForm> {
           await reportProvider.createAnonymousReport(
               report: Report(
                   abuse_type: abuse,
-                  location: location == 'Other'
+                  location: location,
+                  other_location: location == 'Other'
                       ? other_location.text.toString()
                       : location,
-                  //other_location: other_location.text,
                   description: _description.text,
                   perpetrator_fullname: _perpetrator.text,
                   perpetrator_gender: _perpetratorGender,

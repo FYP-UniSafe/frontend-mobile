@@ -151,8 +151,8 @@ class _ReportListState extends State<ReportList> {
   }
 
   String _formatDateTime(DateTime date) {
-    final formattedDate = DateFormat('dd/MM/yyyy').format(date);
-    final formattedTime = DateFormat('HH:mm').format(date);
+    final formattedDate = DateFormat('dd/MM/yyyy').format(date.toLocal());
+    final formattedTime = DateFormat('HH:mm').format(date.toLocal());
 
     return formattedDate + " | " + formattedTime;
   }

@@ -245,34 +245,17 @@ class _ReportDetailsState extends State<ReportDetails> {
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              TextSpan(
-                                text: report.location.toString(),
-                              ),
-                            ],
-                          ),
-                        ),
-                        if (report.location.toString() == 'Other') ...[
-                          RichText(
-                            text: TextSpan(
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontFamily: 'Montserrat',
-                                color: Colors.black,
-                              ),
-                              children: [
+                              if (report.location.toString() != 'Other')
                                 TextSpan(
-                                  text: 'Location: ',
-                                  style: TextStyle(
-                                    fontWeight: FontWeight.bold,
-                                  ),
+                                  text: report.location.toString(),
                                 ),
+                              if (report.location.toString() == 'Other')
                                 TextSpan(
                                   text: report.other_location.toString(),
                                 ),
-                              ],
-                            ),
+                            ],
                           ),
-                        ],
+                        ),
                         Divider(
                           height: 24.0,
                           color: Color.fromRGBO(8, 100, 175, 1.0),

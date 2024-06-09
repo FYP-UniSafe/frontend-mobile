@@ -1,6 +1,6 @@
 import 'dart:io';
 
-class Report {
+class Report implements Comparable<Report> {
   String? report_for;
   String? email;
   String? full_name;
@@ -91,7 +91,7 @@ class Report {
         "abuse_type": abuse_type,
         "date_and_time": dateTime,
         "location": location,
-        //"other_location": other_location,
+        "other_location": other_location,
         "description": description,
         "perpetrator_fullname": perpetrator_fullname,
         "perpetrator_gender": perpetrator_gender,
@@ -101,7 +101,7 @@ class Report {
         "abuse_type": abuse_type,
         "date_and_time": dateTime,
         "location": location,
-        //"other_location": other_location,
+        "other_location": other_location,
         "description": description,
         "perpetrator_fullname": perpetrator_fullname,
         "perpetrator_gender": perpetrator_gender,
@@ -141,4 +141,7 @@ class Report {
       assigned_officer: json["assigned_officer"],
     );
   }
+
+  @override
+  int compareTo(Report other) => other.created_on!.compareTo(created_on!);
 }

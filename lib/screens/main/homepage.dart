@@ -47,15 +47,15 @@ class _HomePageState extends State<HomePage> {
                   clipBehavior: Clip.antiAlias,
                   child: Container(
                     width: double.infinity,
-                    height: MediaQuery.of(context).size.height * 0.3,
+                    height: MediaQuery.of(context).size.height * 0.23,
                     decoration: BoxDecoration(
                       color: Colors.white,
-                      image: DecorationImage(
+                      /*image: DecorationImage(
                         image: AssetImage('assets/images/logo_ud.png'),
                         fit: BoxFit.fitHeight,
                         colorFilter: ColorFilter.mode(
                             Colors.white.withOpacity(0.5), BlendMode.dstATop),
-                      ),
+                      ),*/
                     ),
                     child: Column(
                       children: [
