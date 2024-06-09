@@ -75,8 +75,8 @@ class CounselProvider extends ChangeNotifier {
           headers: {
             "Accept": "application/json",
             "Authorization": "Bearer $token"
-          },body: appointment.toJsonCounselData()
-            );
+          },
+          body: appointment.toJsonCounselData());
       var responseBody = response.body;
       // log("Response body: $responseBody");
 
@@ -114,8 +114,8 @@ class CounselProvider extends ChangeNotifier {
   Future getAppointments() async {
     String? token = await LocalStorage.getToken();
     try {
-      http.Response response =
-          await http.get(Uri.parse("$baseUrl/appointments/create"), headers: {
+      http.Response response = await http
+          .get(Uri.parse("$baseUrl/appointments/list/requested"), headers: {
         "Content-Type": "application/json",
         "Accept": "application/json",
         "Authorization": "Bearer $token",

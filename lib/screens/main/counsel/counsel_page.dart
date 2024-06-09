@@ -143,7 +143,11 @@ class _CounselPageState extends State<CounselPage> {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => AllAppointments(),
+                      ),
+                    ),
                     style: ElevatedButton.styleFrom(
                       elevation: 3,
                       backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),

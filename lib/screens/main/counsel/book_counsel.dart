@@ -421,29 +421,6 @@ class _BookCounselState extends State<BookCounsel> {
                             }),
                       ),
                       SizedBox(
-                        height: 16.0,
-                      ),
-                      TextFormField(
-                        minLines: 6,
-                        maxLines: 10,
-                        //textAlign: TextAlign.start,
-                        style: TextStyle(color: Colors.black),
-                        decoration: InputDecoration(
-                          alignLabelWithHint: true,
-                          contentPadding: EdgeInsets.symmetric(
-                              horizontal: 12.0, vertical: 12.0),
-                          labelText: 'Comments (if any)',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(5.0),
-                            borderSide:
-                                BorderSide(color: Colors.black, width: 1.1),
-                          ),
-                        ),
-                      ),
-                      SizedBox(
                         height: 20.0,
                       ),
                       SafeArea(

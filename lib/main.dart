@@ -45,7 +45,8 @@ Future<void> initializeApp() async {
       if (session) {
         try {
           await AuthProvider.refreshToken();
-           reportProvider.getReports();
+          reportProvider.getReports();
+          counselProvider.getAppointments();
         } catch (e) {
           log(e.toString());
         }
@@ -71,44 +72,43 @@ class UniSafe extends StatelessWidget {
       DeviceOrientation.portraitDown,
     ]);
     return MaterialApp(
-      title: 'UniSafe',
-      debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        primaryColor: Color.fromRGBO(8, 100, 175, 1.0),
-        appBarTheme: AppBarTheme(
-          color: Color.fromRGBO(8, 100, 175, 1.0),
-          centerTitle: true,
-          /*titleTextStyle: TextStyle(
+        title: 'UniSafe',
+        debugShowCheckedModeBanner: false,
+        theme: ThemeData(
+          primaryColor: Color.fromRGBO(8, 100, 175, 1.0),
+          appBarTheme: AppBarTheme(
+            color: Color.fromRGBO(8, 100, 175, 1.0),
+            centerTitle: true,
+            /*titleTextStyle: TextStyle(
               color: Colors.black,
               fontFamily: 'Montserrat',
               fontSize: 28,
               fontWeight: FontWeight.w100),*/
-        ),
-        fontFamily: 'Montserrat',
-        iconTheme: IconThemeData(color: Colors.grey[600]),
-        textSelectionTheme: TextSelectionThemeData(
-          cursorColor: Colors.black,
-        ),
-        inputDecorationTheme: InputDecorationTheme(
-          focusedBorder: OutlineInputBorder(
-            borderSide: BorderSide(
-              color: Colors.black,
+          ),
+          fontFamily: 'Montserrat',
+          iconTheme: IconThemeData(color: Colors.grey[600]),
+          textSelectionTheme: TextSelectionThemeData(
+            cursorColor: Colors.black,
+          ),
+          inputDecorationTheme: InputDecorationTheme(
+            focusedBorder: OutlineInputBorder(
+              borderSide: BorderSide(
+                color: Colors.black,
+              ),
             ),
+            enabledBorder: OutlineInputBorder(
+              borderSide: BorderSide(color: Colors.black),
+            ),
+            floatingLabelBehavior: FloatingLabelBehavior.never,
           ),
-          enabledBorder: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.black),
+          primarySwatch: Colors.blue,
+          listTileTheme: ListTileThemeData(
+            horizontalTitleGap: 4,
           ),
-          floatingLabelBehavior: FloatingLabelBehavior.never,
         ),
-        primarySwatch: Colors.blue,
-        listTileTheme: ListTileThemeData(
-          horizontalTitleGap: 4,
-        ),
-      ),
-      routes: {
-        '/option1Page': (context) => MainScreen(),
-      },
-      home: _landingPage
-    );
+        routes: {
+          '/option1Page': (context) => MainScreen(),
+        },
+        home: _landingPage);
   }
 }
