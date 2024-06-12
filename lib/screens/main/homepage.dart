@@ -450,13 +450,13 @@ class _HomePageState extends State<HomePage> {
           FloatingActionButton(
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => Chatbot()),
+              MaterialPageRoute(builder: (context) => MapPage()),
             ),
             backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             child: Icon(
-              CupertinoIcons.chat_bubble_fill,
+              CupertinoIcons.map_fill,
               color: Colors.white,
             ),
           ),
@@ -466,13 +466,13 @@ class _HomePageState extends State<HomePage> {
           FloatingActionButton(
             onPressed: () => Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => MapPage()),
+              MaterialPageRoute(builder: (context) => Chatbot()),
             ),
             backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
             shape:
                 RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
             child: Icon(
-              CupertinoIcons.map_fill,
+              CupertinoIcons.chat_bubble_fill,
               color: Colors.white,
             ),
           ),
