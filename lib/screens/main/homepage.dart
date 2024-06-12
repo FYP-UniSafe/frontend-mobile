@@ -2,6 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import 'package:cupertino_icons/cupertino_icons.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:unisafe/screens/main/map_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Services/stateObserver.dart';
 import '../chatbot.dart';
@@ -442,17 +444,39 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () => Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Chatbot()),
-        ),
-        backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
-        child: Icon(
-          CupertinoIcons.chat_bubble_fill,
-          color: Colors.white,
-        ),
+      floatingActionButton: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          FloatingActionButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => Chatbot()),
+            ),
+            backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            child: Icon(
+              CupertinoIcons.chat_bubble_fill,
+              color: Colors.white,
+            ),
+          ),
+          SizedBox(
+            height: 8,
+          ),
+          FloatingActionButton(
+            onPressed: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => MapPage()),
+            ),
+            backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+            shape:
+                RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+            child: Icon(
+              CupertinoIcons.map_fill,
+              color: Colors.white,
+            ),
+          ),
+        ],
       ),
     );
   }

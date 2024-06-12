@@ -126,8 +126,6 @@ class CounselProvider extends ChangeNotifier {
         _appointments = output.map((data) => Counsel.fromJson(data)).toList();
         _appointments.sort;
 
-        log(response.body);
-
         notifyListeners();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken();
