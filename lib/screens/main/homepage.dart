@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import 'package:cupertino_icons/cupertino_icons.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:unisafe/screens/main/map_page.dart';
+import 'package:unisafe/screens/main/map/map_page.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Services/stateObserver.dart';
 import '../chatbot.dart';
@@ -448,6 +448,7 @@ class _HomePageState extends State<HomePage> {
         mainAxisAlignment: MainAxisAlignment.end,
         children: [
           FloatingActionButton(
+            heroTag: 'button 2',
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => MapPage()),
@@ -464,6 +465,7 @@ class _HomePageState extends State<HomePage> {
             height: 8,
           ),
           FloatingActionButton(
+            heroTag: 'button 1',
             onPressed: () => Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => Chatbot()),

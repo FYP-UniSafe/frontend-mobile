@@ -11,6 +11,7 @@ import 'package:unisafe/screens/main/main_screen.dart';
 import 'package:unisafe/screens/main/onboarding.dart';
 import 'Providers/authProvider.dart';
 import 'Providers/counselProvider.dart';
+import 'Providers/locationProvider.dart';
 import 'Providers/reportProvider.dart';
 import 'Providers/selectionProvider.dart';
 import 'Services/storage.dart';
@@ -29,6 +30,7 @@ void main() async {
     ChangeNotifierProvider(create: (context) => AuthProvider()),
     ChangeNotifierProvider(create: (context) => ProfileTypeProvider()),
     ChangeNotifierProvider(create: (context) => SelectionProvider()),
+    ChangeNotifierProvider(create: (_) => LocationProvider()),
     ChangeNotifierProvider.value(value: storageProvider),
     ChangeNotifierProvider.value(value: reportProvider),
     ChangeNotifierProvider.value(value: counselProvider),

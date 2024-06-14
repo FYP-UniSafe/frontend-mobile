@@ -17,7 +17,7 @@ class _ChatbotState extends State<Chatbot> {
 
   static const apiKey = "AIzaSyCmo0AfJPbR6hlCPkvzhOlpSi4xaToU5IY";
 
-  final model = GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
+  final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
 
   final List<Message> _messages = [];
 
