@@ -42,7 +42,7 @@ class _MapPageState extends State<MapPage> {
         LocationProvider locationProvider) async {
       Set<Marker> heatmapMarkers = {};
 
-      for (ReportLocation report in locationProvider.reportLocations) {
+      await Future.wait(locationProvider.reportLocations.map((report) async {
         if (report.cases > 0) {
           double radius = report.cases.toDouble() * 100;
           final Uint8List markerIcon =
@@ -62,7 +62,29 @@ class _MapPageState extends State<MapPage> {
             ),
           );
         }
-      }
+      }).toList());
+
+      // for (ReportLocation report in locationProvider.reportLocations) {
+      //   if (report.cases > 0) {
+      //     double radius = report.cases.toDouble() * 100;
+      //     final Uint8List markerIcon =
+      //         await createCustomMarkerBitmapWithReportCount(
+      //             report.cases.toString(), radius);
+      //
+      //     heatmapMarkers.add(
+      //       Marker(
+      //         markerId: MarkerId(report.name),
+      //         position: LatLng(report.latitude, report.longitude),
+      //         icon: BitmapDescriptor.fromBytes(markerIcon),
+      //         infoWindow: InfoWindow(
+      //           title: report.name,
+      //           snippet:
+      //               '${report.cases} ${report.cases == 1 ? "case" : "cases"}',
+      //         ),
+      //       ),
+      //     );
+      //   }
+      // }
 
       return heatmapMarkers;
     }
@@ -71,7 +93,7 @@ class _MapPageState extends State<MapPage> {
         LocationProvider locationProvider) async {
       Set<Marker> markers = {};
 
-      for (PolicePost post in locationProvider.policePosts) {
+      await Future.wait(locationProvider.policePosts.map((post) async {
         final Uint8List markerIcon =
             await createCustomMarkerBitmapWithText(post.name);
         markers.add(
@@ -81,7 +103,19 @@ class _MapPageState extends State<MapPage> {
             icon: BitmapDescriptor.fromBytes(markerIcon),
           ),
         );
-      }
+      }).toList());
+
+      // for (PolicePost post in locationProvider.policePosts) {
+      //   final Uint8List markerIcon =
+      //       await createCustomMarkerBitmapWithText(post.name);
+      //   markers.add(
+      //     Marker(
+      //       markerId: MarkerId(post.name),
+      //       position: LatLng(post.latitude, post.longitude),
+      //       icon: BitmapDescriptor.fromBytes(markerIcon),
+      //     ),
+      //   );
+      // }
 
       return markers;
     }
@@ -132,11 +166,15 @@ class _MapPageState extends State<MapPage> {
                       target: _initialPosition,
                       zoom: 16,
                     ),
+                    zoomControlsEnabled: true,
+                    zoomGesturesEnabled: true,
                     mapType: MapType.satellite,
                     markers: snapshot.data!,
                     circles: {},
                     onMapCreated: (GoogleMapController controller) {
-                      _controller.complete(controller);
+                      try {
+                        _controller.complete(controller);
+                      } catch (e) {}
                     },
                   );
                 }
