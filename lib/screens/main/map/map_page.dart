@@ -166,8 +166,6 @@ class _MapPageState extends State<MapPage> {
                       target: _initialPosition,
                       zoom: 16,
                     ),
-                    zoomControlsEnabled: true,
-                    zoomGesturesEnabled: true,
                     mapType: MapType.satellite,
                     markers: snapshot.data!,
                     circles: {},
