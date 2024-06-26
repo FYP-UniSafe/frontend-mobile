@@ -487,9 +487,12 @@ class _SignUpState extends State<SignUp> {
                               if (profileType == 'student') {
                                 _studentSignup();
                               } else if (profileType == 'counselling_unit') {
+                                _consultantSignup();
                               } else if (profileType == 'gender_desk') {
                                 _genderDeskSignup();
-                              } else if (profileType == 'police') {}
+                              } else if (profileType == 'police') {
+                                _policeSignup();
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -668,6 +671,166 @@ class _SignUpState extends State<SignUp> {
                 phone_number: phoneNumber['e164'],
                 staff_no: _staffID.text,
                 office: _office.text));
+
+        if (_authProvider.isLoggedIn != null &&
+            _authProvider.isLoggedIn == true) {
+          await Provider.of<LocalStorageProvider>(context, listen: false)
+              .initialize();
+          Navigator.pop(context);
+
+          Navigator.pushAndRemoveUntil(context,
+              MaterialPageRoute(builder: (context) => Otp()), (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.red,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.white,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Signup Failed',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
+  }
+
+  _consultantSignup() async {
+    if (_formKey.currentState!.validate()) {
+      if (_email.text.isNotEmpty &&
+          _password.text.isNotEmpty &&
+          _fullName.text.isNotEmpty &&
+          _staffID.text.isNotEmpty &&
+          _office.text.isNotEmpty) {
+        Map<String, dynamic> phoneNumber =
+            await parse(_phone.text, region: 'TZ');
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.registerConsultant(
+            user: User(
+                email: _email.text,
+                password: _password.text,
+                full_name: _fullName.text,
+                gender: gender,
+                phone_number: phoneNumber['e164'],
+                staff_no: _staffID.text,
+                office: _office.text));
+
+        if (_authProvider.isLoggedIn != null &&
+            _authProvider.isLoggedIn == true) {
+          await Provider.of<LocalStorageProvider>(context, listen: false)
+              .initialize();
+          Navigator.pop(context);
+
+          Navigator.pushAndRemoveUntil(context,
+              MaterialPageRoute(builder: (context) => Otp()), (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.red,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.white,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Signup Failed',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
+  }
+
+  _policeSignup() async {
+    if (_formKey.currentState!.validate()) {
+      if (_email.text.isNotEmpty &&
+          _password.text.isNotEmpty &&
+          _fullName.text.isNotEmpty &&
+          _policeID.text.isNotEmpty &&
+          _policeStation.text.isNotEmpty) {
+        Map<String, dynamic> phoneNumber =
+            await parse(_phone.text, region: 'TZ');
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.registerPolice(
+            user: User(
+                email: _email.text,
+                password: _password.text,
+                full_name: _fullName.text,
+                gender: gender,
+                phone_number: phoneNumber['e164'],
+                police_no: _policeID.text,
+                station: _policeStation.text));
 
         if (_authProvider.isLoggedIn != null &&
             _authProvider.isLoggedIn == true) {

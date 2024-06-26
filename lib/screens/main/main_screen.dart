@@ -3,8 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/screens/main/counsel/counsel_page.dart';
-import 'package:unisafe/screens/main/dashboard.dart';
+import 'package:unisafe/screens/main/cu_dashboard.dart';
+import 'package:unisafe/screens/main/gd_dashboard.dart';
 import 'package:unisafe/screens/main/homepage.dart';
+import 'package:unisafe/screens/main/pf_dashboard.dart';
 import 'package:unisafe/screens/profile/profile_page.dart';
 import 'package:unisafe/screens/main/report/report_page.dart';
 
@@ -59,7 +61,7 @@ class _MainScreenState extends State<MainScreen> {
     final user = _storageProvider.user;
     if (user?.is_genderdesk == true) {
       _pages = [
-        Dashboard(),
+        GDDashboard(),
         ProfilePage(),
       ];
 
@@ -70,6 +72,24 @@ class _MainScreenState extends State<MainScreen> {
       if (currentSelectedIndex > _pages.length) {
         currentSelectedIndex = 0;
       }
+    } else if (user?.is_consultant == true) {
+      _pages = [
+        CUDashboard(),
+        ProfilePage(),
+      ];
+      _titles = [
+        'UniSafe',
+        'Profile',
+      ];
+    } else if (user?.is_police == true) {
+      _pages = [
+        PFDashboard(),
+        ProfilePage(),
+      ];
+      _titles = [
+        'UniSafe',
+        'Profile',
+      ];
     } else {
       _pages = [
         HomePage(),
@@ -115,14 +135,14 @@ class _MainScreenState extends State<MainScreen> {
                 size: 26.0,
               ),
               label: 'Home'),
-          if (!_isGenderDesk()!)
+          if (!_isGenderDesk()! || !_isConsultant()! || !_isPolice()!)
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.report,
                   size: 26.0,
                 ),
                 label: 'Report a GBV'),
-          if (!_isGenderDesk()!)
+          if (!_isGenderDesk()! || !_isConsultant()! || !_isPolice()!)
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.assistant,
@@ -144,6 +164,22 @@ class _MainScreenState extends State<MainScreen> {
     final user = _storageProvider.user;
     if (user != null) {
       return user.is_genderdesk;
+    }
+    return false;
+  }
+
+  bool? _isConsultant() {
+    final user = _storageProvider.user;
+    if (user != null) {
+      return user.is_consultant;
+    }
+    return false;
+  }
+
+  bool? _isPolice() {
+    final user = _storageProvider.user;
+    if (user != null) {
+      return user.is_police;
     }
     return false;
   }

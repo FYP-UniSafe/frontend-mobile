@@ -95,6 +95,26 @@ class User {
         "staff_no": staff_no
       };
 
+  Map<String, dynamic> toConsultantSignupJson() => {
+        "email": email,
+        "full_name": full_name,
+        "phone_number": phone_number,
+        "gender": gender,
+        "password": password,
+        "office": office,
+        "staff_no": staff_no
+      };
+
+  Map<String, dynamic> toPoliceSignupJson() => {
+        "email": email,
+        "full_name": full_name,
+        "phone_number": phone_number,
+        "gender": gender,
+        "password": password,
+        "station": station,
+        "police_no": police_no
+      };
+
   Map<String, dynamic> toJsonStorage() => {
         "id": id,
         "email": email,

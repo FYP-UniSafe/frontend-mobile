@@ -1,10 +1,13 @@
 import 'dart:developer';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:unisafe/Models/ReportDataPerYear.dart';
+import 'package:unisafe/resources/formats.dart';
 
 import '../../Models/AbuseReport.dart';
 import '../../Models/Report.dart';
@@ -12,26 +15,25 @@ import '../../Providers/abuseReportProvider.dart';
 import '../../Providers/reportProvider.dart';
 import '../../Providers/reportDataPerYearProvider.dart';
 import '../../Services/stateObserver.dart';
-import '../../main.dart';
 
-class Dashboard extends StatefulWidget {
-  const Dashboard({super.key});
+class GDDashboard extends StatefulWidget {
+  const GDDashboard({super.key});
 
   @override
-  State<Dashboard> createState() => _DashboardState();
+  State<GDDashboard> createState() => _GDDashboardState();
 }
 
-class _DashboardState extends State<Dashboard> {
+class _GDDashboardState extends State<GDDashboard> {
   final _appStateObserver = AppStateObserver();
   int? touchedIndex;
 
   List<Report> _reports = [];
+  List<Report> _anonymousReports = [];
   late ReportProvider _reportProvider;
   @override
   void didChangeDependencies() {
-    _reportProvider = Provider.of<ReportProvider>(context);
-    _reports = _reportProvider.reports;
     super.didChangeDependencies();
+    _reportProvider = Provider.of<ReportProvider>(context);
   }
 
   @override
@@ -76,41 +78,200 @@ class _DashboardState extends State<Dashboard> {
                   height: 30.0,
                   color: Color.fromRGBO(8, 100, 175, 1.0),
                 ),
-                FutureBuilder(
-                  future: Provider.of<ReportProvider>(context, listen: false)
-                      .fetchReports(),
-                  builder: (ctx, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
-                      return Center(
-                        child: Center(
-                          child: SizedBox(
-                            width: 80,
-                            height: 80,
-                            child: LoadingIndicator(
-                              indicatorType: Indicator.ballPulseRise,
-                              colors: [Color.fromRGBO(8, 100, 175, 1.0)],
-                            ),
+                SizedBox(
+                  width: MediaQuery.of(context).size.width,
+                  height: MediaQuery.of(context).size.height,
+                  child: RefreshIndicator(
+                    onRefresh: _reportProvider.fetchReports,
+                    color: Color.fromRGBO(8, 100, 175, 1),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        Expanded(
+                          child: ListView(
+                            children: [
+                              Text('All Reports',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                              _reports.isNotEmpty
+                                  ? ListView.separated(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: _reports.length,
+                                      itemBuilder: (context, i) {
+                                        return GestureDetector(
+                                          onTap: () {},
+                                          child: ListTile(
+                                            title: Text(
+                                              "Report: ${_reports[i].abuse_type.toString()}",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            subtitle: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                RichText(
+                                                  text: TextSpan(
+                                                    text: 'Status: ',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'Montserrat',
+                                                        fontSize: 14,
+                                                        color: Colors.black),
+                                                    children: [
+                                                      TextSpan(
+                                                        text: _reports[i]
+                                                            .status
+                                                            .toString()
+                                                            .capitalizeFirstLetterOfEachWord(),
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Montserrat',
+                                                          fontSize: 14,
+                                                          color: _getStatusColor(
+                                                              _reports[i]
+                                                                  .status
+                                                                  .toString()
+                                                                  .capitalizeFirstLetterOfEachWord()),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(height: 8),
+                                                Text(
+                                                  _formatDateTime(
+                                                      DateTime.parse(_reports[i]
+                                                          .created_on
+                                                          .toString())),
+                                                  style:
+                                                      TextStyle(fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
+                                            trailing: Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  16, 0, 0, 0),
+                                              child: Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  size: 18),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      separatorBuilder: (context, index) {
+                                        return Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              8.0, 0.0, 8.0, 0.0),
+                                          child: Divider(
+                                              height: 0.0,
+                                              color: Color.fromRGBO(
+                                                  8, 100, 175, 1.0)),
+                                        );
+                                      },
+                                    )
+                                  : _buildNoReportsView(),
+                              SizedBox(height: 20),
+                              Text('Anonymous Reports',
+                                  style: TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.bold)),
+                              _anonymousReports.isNotEmpty
+                                  ? ListView.separated(
+                                      shrinkWrap: true,
+                                      physics: NeverScrollableScrollPhysics(),
+                                      itemCount: _anonymousReports.length,
+                                      itemBuilder: (context, i) {
+                                        return GestureDetector(
+                                          onTap: () {},
+                                          child: ListTile(
+                                            title: Text(
+                                              "Report: ${_anonymousReports[i].abuse_type.toString()}",
+                                              style: TextStyle(
+                                                  fontSize: 16,
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            subtitle: Column(
+                                              mainAxisAlignment:
+                                                  MainAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
+                                              children: [
+                                                RichText(
+                                                  text: TextSpan(
+                                                    text: 'Status: ',
+                                                    style: TextStyle(
+                                                        fontFamily:
+                                                            'Montserrat',
+                                                        fontSize: 14,
+                                                        color: Colors.black),
+                                                    children: [
+                                                      TextSpan(
+                                                        text: _anonymousReports[
+                                                                i]
+                                                            .status
+                                                            .toString()
+                                                            .capitalizeFirstLetterOfEachWord(),
+                                                        style: TextStyle(
+                                                          fontFamily:
+                                                              'Montserrat',
+                                                          fontSize: 14,
+                                                          color: _getStatusColor(
+                                                              _anonymousReports[
+                                                                      i]
+                                                                  .status
+                                                                  .toString()
+                                                                  .capitalizeFirstLetterOfEachWord()),
+                                                        ),
+                                                      ),
+                                                    ],
+                                                  ),
+                                                ),
+                                                SizedBox(height: 8),
+                                                Text(
+                                                  _formatDateTime(
+                                                      DateTime.parse(
+                                                          _anonymousReports[i]
+                                                              .created_on
+                                                              .toString())),
+                                                  style:
+                                                      TextStyle(fontSize: 12),
+                                                ),
+                                              ],
+                                            ),
+                                            trailing: Padding(
+                                              padding: EdgeInsets.fromLTRB(
+                                                  16, 0, 0, 0),
+                                              child: Icon(
+                                                  Icons.arrow_forward_ios,
+                                                  size: 18),
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      separatorBuilder: (context, index) {
+                                        return Padding(
+                                          padding: EdgeInsets.fromLTRB(
+                                              8.0, 0.0, 8.0, 0.0),
+                                          child: Divider(
+                                              height: 0.0,
+                                              color: Color.fromRGBO(
+                                                  8, 100, 175, 1.0)),
+                                        );
+                                      },
+                                    )
+                                  : _buildNoReportsView(),
+                            ],
                           ),
                         ),
-                      );
-                    } else if (snapshot.error != null) {
-                      log('response: ');
-                      return Center(child: Text('An error occurred!'));
-                    } else {
-                      return Consumer<ReportProvider>(
-                        builder: (ctx, reportProvider, _) => ListView.builder(
-                          itemCount: _reportProvider.reports.length,
-                          itemBuilder: (ctx, index) {
-                            final report = _reportProvider.reports[index];
-                            return ListTile(
-                              title: Text(report.report_id.toString()),
-                              subtitle: Text(report.status.toString()),
-                            );
-                          },
-                        ),
-                      );
-                    }
-                  },
+                      ],
+                    ),
+                  ),
                 ),
                 SizedBox(
                   height: 20,
@@ -411,5 +572,50 @@ class _DashboardState extends State<Dashboard> {
       default:
         return Color.fromRGBO(8, 100, 175, 1.0);
     }
+  }
+
+  String _formatDateTime(DateTime date) {
+    final formattedDate = DateFormat('dd/MM/yyyy').format(date.toLocal());
+    final formattedTime = DateFormat('HH:mm').format(date.toLocal());
+
+    return '$formattedDate | $formattedTime';
+  }
+
+  Color _getStatusColor(String status) {
+    switch (status) {
+      case 'Rejected':
+        return Colors.red;
+      case 'Pending':
+        return Colors.orange;
+      case 'Resolved':
+        return Colors.green;
+      default:
+        return Color.fromRGBO(8, 100, 175, 1.0);
+    }
+  }
+
+  Widget _buildNoReportsView() {
+    return ListView(
+      shrinkWrap: true,
+      children: [
+        SizedBox(height: MediaQuery.of(context).size.height * 0.35),
+        Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(Icons.hourglass_empty,
+                  size: 40, color: Color.fromRGBO(8, 100, 175, 0.6)),
+              Text(
+                'No Reports',
+                style: TextStyle(
+                    fontSize: 18,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w400),
+              ),
+            ],
+          ),
+        )
+      ],
+    );
   }
 }

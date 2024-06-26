@@ -15,8 +15,10 @@ class ReportProvider extends ChangeNotifier {
 
   bool? get isReported => _isReported;
   List<Report> _reports = [];
+  List<Report> _anonymousReports = [];
 
   List<Report> get reports => _reports;
+  List<Report> get anonymousReports => _anonymousReports;
 
   Future createReport({required Report report}) async {
     log(report.toJsonReportData().toString());
@@ -151,15 +153,38 @@ class ReportProvider extends ChangeNotifier {
   }
 
   Future<void> fetchReports() async {
+    String? token = await LocalStorage.getToken();
     final url = '$baseUrl/reports/list';
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http
+          .get(Uri.parse(url), headers: {"Authorization": "Bearer $token"});
+      log(response.body);
       if (response.statusCode == 200) {
         final List<dynamic> reportData = json.decode(response.body);
         _reports = reportData.map((data) => Report.fromJson(data)).toList();
         notifyListeners();
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken();
+        await fetchReports();
       } else {
         throw Exception('Failed to load reports');
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  Future<void> fetchAnonymousReports() async {
+    final url = '$baseUrl/reports/anonymous/list';
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final List<dynamic> anonymousReportData = json.decode(response.body);
+        _anonymousReports =
+            anonymousReportData.map((data) => Report.fromJson(data)).toList();
+        notifyListeners();
+      } else {
+        throw Exception('Failed to load anonymous reports');
       }
     } catch (error) {
       throw error;
