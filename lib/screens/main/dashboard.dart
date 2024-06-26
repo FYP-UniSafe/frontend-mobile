@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
@@ -5,7 +7,9 @@ import 'package:fl_chart/fl_chart.dart';
 import 'package:unisafe/Models/ReportDataPerYear.dart';
 
 import '../../Models/AbuseReport.dart';
+import '../../Models/Report.dart';
 import '../../Providers/abuseReportProvider.dart';
+import '../../Providers/reportProvider.dart';
 import '../../Providers/reportDataPerYearProvider.dart';
 import '../../Services/stateObserver.dart';
 import '../../main.dart';
@@ -20,6 +24,15 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   final _appStateObserver = AppStateObserver();
   int? touchedIndex;
+
+  List<Report> _reports = [];
+  late ReportProvider _reportProvider;
+  @override
+  void didChangeDependencies() {
+    _reportProvider = Provider.of<ReportProvider>(context);
+    _reports = _reportProvider.reports;
+    super.didChangeDependencies();
+  }
 
   @override
   void initState() {
@@ -55,6 +68,53 @@ class _DashboardState extends State<Dashboard> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                Text(
+                  'REPORTS',
+                  style: TextStyle(fontSize: 18.0),
+                ),
+                Divider(
+                  height: 30.0,
+                  color: Color.fromRGBO(8, 100, 175, 1.0),
+                ),
+                FutureBuilder(
+                  future: Provider.of<ReportProvider>(context, listen: false)
+                      .fetchReports(),
+                  builder: (ctx, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      return Center(
+                        child: Center(
+                          child: SizedBox(
+                            width: 80,
+                            height: 80,
+                            child: LoadingIndicator(
+                              indicatorType: Indicator.ballPulseRise,
+                              colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                            ),
+                          ),
+                        ),
+                      );
+                    } else if (snapshot.error != null) {
+                      log('response: ');
+                      return Center(child: Text('An error occurred!'));
+                    } else {
+                      return Consumer<ReportProvider>(
+                        builder: (ctx, reportProvider, _) => ListView.builder(
+                          itemCount: _reportProvider.reports.length,
+                          itemBuilder: (ctx, index) {
+                            final report = _reportProvider.reports[index];
+                            return ListTile(
+                              title: Text(report.report_id.toString()),
+                              subtitle: Text(report.status.toString()),
+                            );
+                          },
+                        ),
+                      );
+                    }
+                  },
+                ),
+                SizedBox(
+                  height: 20,
+                ),
                 Text(
                   'STATISTICS',
                   style: TextStyle(fontSize: 18.0),

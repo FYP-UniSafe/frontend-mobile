@@ -149,4 +149,20 @@ class ReportProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Future<void> fetchReports() async {
+    final url = '$baseUrl/reports/list';
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode == 200) {
+        final List<dynamic> reportData = json.decode(response.body);
+        _reports = reportData.map((data) => Report.fromJson(data)).toList();
+        notifyListeners();
+      } else {
+        throw Exception('Failed to load reports');
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
 }
