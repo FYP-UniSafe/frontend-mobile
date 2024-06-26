@@ -7,7 +7,9 @@ import 'package:http/http.dart' as http;
 import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/Services/storage.dart';
 
+import '../Models/AbuseReport.dart';
 import '../Models/Report.dart';
+import '../Models/ReportDataPerYear.dart';
 import '../resources/constants.dart';
 
 class ReportProvider extends ChangeNotifier {
@@ -19,6 +21,13 @@ class ReportProvider extends ChangeNotifier {
 
   List<Report> get reports => _reports;
   List<Report> get anonymousReports => _anonymousReports;
+  List<AbuseReport> _abuses = [];
+
+  List<AbuseReport> get abuses => _abuses;
+
+  List<ReportDataPerYear> _reportsPerYear = [];
+
+  List<ReportDataPerYear> get reportsPerYear => _reportsPerYear;
 
   Future createReport({required Report report}) async {
     log(report.toJsonReportData().toString());
@@ -158,7 +167,6 @@ class ReportProvider extends ChangeNotifier {
     try {
       final response = await http
           .get(Uri.parse(url), headers: {"Authorization": "Bearer $token"});
-      log(response.body);
       if (response.statusCode == 200) {
         final List<dynamic> reportData = json.decode(response.body);
         _reports = reportData.map((data) => Report.fromJson(data)).toList();
@@ -180,14 +188,60 @@ class ReportProvider extends ChangeNotifier {
       final response = await http.get(Uri.parse(url));
       if (response.statusCode == 200) {
         final List<dynamic> anonymousReportData = json.decode(response.body);
+
         _anonymousReports =
             anonymousReportData.map((data) => Report.fromJson(data)).toList();
+
         notifyListeners();
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken();
+        await fetchReports();
       } else {
         throw Exception('Failed to load anonymous reports');
       }
     } catch (error) {
       throw error;
     }
+  }
+
+  Future<void> fetchAbuses() async {
+    final response =
+        await http.get(Uri.parse('$baseUrl/statistics/per/abusetype'));
+    if (response.statusCode == 200) {
+      List<dynamic> data = json.decode(response.body);
+      _abuses = data.map((item) => AbuseReport.fromJson(item)).toList();
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await fetchReports();
+    } else {
+      throw Exception('Failed to load reports');
+    }
+  }
+
+  Future<void> fetchReportsPerYear() async {
+    final response = await http.get(Uri.parse('$baseUrl/statistics/per/year'));
+    if (response.statusCode == 200) {
+      final List data = json.decode(response.body);
+
+      _reportsPerYear =
+          data.map((item) => ReportDataPerYear.fromJson(item)).toList();
+
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await fetchReports();
+    } else {
+      throw Exception('Failed to load reports');
+    }
+  }
+
+  Future<void> getGenderDeskReports() async {
+    await Future.wait([
+      fetchReportsPerYear(),
+      fetchAbuses(),
+      fetchAnonymousReports(),
+      fetchReports()
+    ]);
   }
 }

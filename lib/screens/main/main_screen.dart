@@ -10,6 +10,7 @@ import 'package:unisafe/screens/main/pf_dashboard.dart';
 import 'package:unisafe/screens/profile/profile_page.dart';
 import 'package:unisafe/screens/main/report/report_page.dart';
 
+import '../../Models/User.dart';
 import '../../Services/stateObserver.dart';
 import '../../Services/storage.dart';
 
@@ -24,6 +25,7 @@ class _MainScreenState extends State<MainScreen> {
   List _pages = [];
   List _titles = [];
 
+  User? user;
   int currentSelectedIndex = 0;
   late LocalStorageProvider _storageProvider;
 
@@ -58,7 +60,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _initializePages() async {
-    final user = _storageProvider.user;
+     user = _storageProvider.user;
     if (user?.is_genderdesk == true) {
       _pages = [
         GDDashboard(),
@@ -135,14 +137,14 @@ class _MainScreenState extends State<MainScreen> {
                 size: 26.0,
               ),
               label: 'Home'),
-          if (!_isGenderDesk()! || !_isConsultant()! || !_isPolice()!)
+          if ((user!.is_student??false))
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.report,
                   size: 26.0,
                 ),
                 label: 'Report a GBV'),
-          if (!_isGenderDesk()! || !_isConsultant()! || !_isPolice()!)
+          if ((user!.is_student??false))
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.assistant,

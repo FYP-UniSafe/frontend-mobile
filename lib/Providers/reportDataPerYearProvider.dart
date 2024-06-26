@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
@@ -14,7 +16,9 @@ class ReportDataPerYearProvider with ChangeNotifier {
     final response = await http.get(Uri.parse('$baseUrl/statistics/per/year'));
     if (response.statusCode == 200) {
       final List data = json.decode(response.body);
+
       _reports = data.map((item) => ReportDataPerYear.fromJson(item)).toList();
+
       notifyListeners();
     } else {
       throw Exception('Failed to load reports');

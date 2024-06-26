@@ -1,9 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:unisafe/Models/ReportDataPerYear.dart';
@@ -29,24 +26,29 @@ class _GDDashboardState extends State<GDDashboard> {
 
   List<Report> _reports = [];
   List<Report> _anonymousReports = [];
+  List<ReportDataPerYear> _perYear = [];
+
+  List<AbuseReport> _abuses = [];
   late ReportProvider _reportProvider;
+
+
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
     _reportProvider = Provider.of<ReportProvider>(context);
+
+    _abuses = _reportProvider.abuses;
+    _perYear = _reportProvider.reportsPerYear;
+    _reports = _reportProvider.reports;
   }
 
   @override
   void initState() {
     WidgetsBinding.instance.addObserver(_appStateObserver);
     super.initState();
-
     Future.microtask(() =>
-        Provider.of<ReportDataPerYearProvider>(context, listen: false)
-            .fetchReports());
-    Future.microtask(() =>
-        Provider.of<AbuseReportProvider>(context, listen: false)
-            .fetchReports());
+        Provider.of<ReportProvider>(context, listen: false)
+            .getGenderDeskReports());
   }
 
   @override
@@ -57,399 +59,247 @@ class _GDDashboardState extends State<GDDashboard> {
 
   @override
   Widget build(BuildContext context) {
-    final reportDataPerYearProvider =
-        Provider.of<ReportDataPerYearProvider>(context);
-    final abuseReportProvider = Provider.of<AbuseReportProvider>(context);
-
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.all(16.0),
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.99,
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Text(
-                  'REPORTS',
-                  style: TextStyle(fontSize: 18.0),
-                ),
-                Divider(
-                  height: 30.0,
-                  color: Color.fromRGBO(8, 100, 175, 1.0),
-                ),
-                SizedBox(
-                  width: MediaQuery.of(context).size.width,
-                  height: MediaQuery.of(context).size.height,
-                  child: RefreshIndicator(
-                    onRefresh: _reportProvider.fetchReports,
-                    color: Color.fromRGBO(8, 100, 175, 1),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          child: ListView(
-                            children: [
-                              Text('All Reports',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
-                              _reports.isNotEmpty
-                                  ? ListView.separated(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: _reports.length,
-                                      itemBuilder: (context, i) {
-                                        return GestureDetector(
-                                          onTap: () {},
-                                          child: ListTile(
-                                            title: Text(
-                                              "Report: ${_reports[i].abuse_type.toString()}",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            subtitle: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                RichText(
-                                                  text: TextSpan(
-                                                    text: 'Status: ',
-                                                    style: TextStyle(
-                                                        fontFamily:
-                                                            'Montserrat',
-                                                        fontSize: 14,
-                                                        color: Colors.black),
-                                                    children: [
-                                                      TextSpan(
-                                                        text: _reports[i]
-                                                            .status
-                                                            .toString()
-                                                            .capitalizeFirstLetterOfEachWord(),
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Montserrat',
-                                                          fontSize: 14,
-                                                          color: _getStatusColor(
-                                                              _reports[i]
-                                                                  .status
-                                                                  .toString()
-                                                                  .capitalizeFirstLetterOfEachWord()),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: 8),
-                                                Text(
-                                                  _formatDateTime(
-                                                      DateTime.parse(_reports[i]
-                                                          .created_on
-                                                          .toString())),
-                                                  style:
-                                                      TextStyle(fontSize: 12),
-                                                ),
-                                              ],
-                                            ),
-                                            trailing: Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  16, 0, 0, 0),
-                                              child: Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  size: 18),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      separatorBuilder: (context, index) {
-                                        return Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              8.0, 0.0, 8.0, 0.0),
-                                          child: Divider(
-                                              height: 0.0,
-                                              color: Color.fromRGBO(
-                                                  8, 100, 175, 1.0)),
-                                        );
-                                      },
-                                    )
-                                  : _buildNoReportsView(),
-                              SizedBox(height: 20),
-                              Text('Anonymous Reports',
-                                  style: TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.bold)),
-                              _anonymousReports.isNotEmpty
-                                  ? ListView.separated(
-                                      shrinkWrap: true,
-                                      physics: NeverScrollableScrollPhysics(),
-                                      itemCount: _anonymousReports.length,
-                                      itemBuilder: (context, i) {
-                                        return GestureDetector(
-                                          onTap: () {},
-                                          child: ListTile(
-                                            title: Text(
-                                              "Report: ${_anonymousReports[i].abuse_type.toString()}",
-                                              style: TextStyle(
-                                                  fontSize: 16,
-                                                  fontWeight: FontWeight.bold),
-                                            ),
-                                            subtitle: Column(
-                                              mainAxisAlignment:
-                                                  MainAxisAlignment.start,
-                                              crossAxisAlignment:
-                                                  CrossAxisAlignment.start,
-                                              children: [
-                                                RichText(
-                                                  text: TextSpan(
-                                                    text: 'Status: ',
-                                                    style: TextStyle(
-                                                        fontFamily:
-                                                            'Montserrat',
-                                                        fontSize: 14,
-                                                        color: Colors.black),
-                                                    children: [
-                                                      TextSpan(
-                                                        text: _anonymousReports[
-                                                                i]
-                                                            .status
-                                                            .toString()
-                                                            .capitalizeFirstLetterOfEachWord(),
-                                                        style: TextStyle(
-                                                          fontFamily:
-                                                              'Montserrat',
-                                                          fontSize: 14,
-                                                          color: _getStatusColor(
-                                                              _anonymousReports[
-                                                                      i]
-                                                                  .status
-                                                                  .toString()
-                                                                  .capitalizeFirstLetterOfEachWord()),
-                                                        ),
-                                                      ),
-                                                    ],
-                                                  ),
-                                                ),
-                                                SizedBox(height: 8),
-                                                Text(
-                                                  _formatDateTime(
-                                                      DateTime.parse(
-                                                          _anonymousReports[i]
-                                                              .created_on
-                                                              .toString())),
-                                                  style:
-                                                      TextStyle(fontSize: 12),
-                                                ),
-                                              ],
-                                            ),
-                                            trailing: Padding(
-                                              padding: EdgeInsets.fromLTRB(
-                                                  16, 0, 0, 0),
-                                              child: Icon(
-                                                  Icons.arrow_forward_ios,
-                                                  size: 18),
-                                            ),
-                                          ),
-                                        );
-                                      },
-                                      separatorBuilder: (context, index) {
-                                        return Padding(
-                                          padding: EdgeInsets.fromLTRB(
-                                              8.0, 0.0, 8.0, 0.0),
-                                          child: Divider(
-                                              height: 0.0,
-                                              color: Color.fromRGBO(
-                                                  8, 100, 175, 1.0)),
-                                        );
-                                      },
-                                    )
-                                  : _buildNoReportsView(),
-                            ],
-                          ),
-                        ),
-                      ],
-                    ),
+          child: RefreshIndicator(
+            onRefresh: _reportProvider.getGenderDeskReports,
+            child: SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(
+                    'REPORTS',
+                    style: TextStyle(fontSize: 18.0),
                   ),
-                ),
-                SizedBox(
-                  height: 20,
-                ),
-                Text(
-                  'STATISTICS',
-                  style: TextStyle(fontSize: 18.0),
-                ),
-                Divider(
-                  height: 30.0,
-                  color: Color.fromRGBO(8, 100, 175, 1.0),
-                ),
-                Text(
-                  'Reports per Year of Study',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                ),
-                if (reportDataPerYearProvider.reports.isEmpty)
+                  Divider(
+                    height: 30.0,
+                    color: Color.fromRGBO(8, 100, 175, 1.0),
+                  ),
+                  Text('All Reports',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  _reports.isNotEmpty
+                      ? Column(children: _reports.map((report) => _reportsTile(report: report)).toList(),)
+                      : _buildNoReportsView(),
+                  SizedBox(height: 20),
+                  Text('Anonymous Reports',
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold)),
+                  _anonymousReports.isNotEmpty
+                      ? Column(children: _anonymousReports.map((report) => _reportsTile(report: report)).toList(),)
+                      : _buildNoReportsView(),
                   SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.45,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: BarChart(
-                        BarChartData(
-                          barGroups: _getEmptyBarGroups(),
-                          titlesData: FlTitlesData(
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
+                    height: 20,
+                  ),
+                  Text(
+                    'STATISTICS',
+                    style: TextStyle(fontSize: 18.0),
+                  ),
+                  Divider(
+                    height: 30.0,
+                    color: Color.fromRGBO(8, 100, 175, 1.0),
+                  ),
+                  Text(
+                    'Reports per Year of Study',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  if (_perYear.isEmpty)
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.45,
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: BarChart(
+                          BarChartData(
+                            barGroups: _getEmptyBarGroups(),
+                            titlesData: FlTitlesData(
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              topTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              rightTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
                             ),
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
+                            borderData: FlBorderData(show: false),
+                            gridData: FlGridData(show: false),
+                            backgroundColor: Colors.grey[300],
                           ),
-                          borderData: FlBorderData(show: false),
-                          gridData: FlGridData(show: false),
-                          backgroundColor: Colors.grey[300],
                         ),
                       ),
                     ),
-                  ),
-                if (reportDataPerYearProvider.reports.isNotEmpty)
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height * 0.45,
-                    child: Padding(
-                      padding: EdgeInsets.all(8.0),
-                      child: BarChart(
-                        BarChartData(
-                          barGroups: reportDataPerYearProvider.reports
-                              .asMap()
-                              .entries
-                              .map((entry) {
-                            int index = entry.key;
-                            ReportDataPerYear data = entry.value;
-                            return BarChartGroupData(
-                              x: index,
-                              barRods: [
-                                BarChartRodData(
-                                  toY: data.count.toDouble(),
-                                  color: Color.fromRGBO(8, 100, 175, 1.0),
-                                  width: 20,
-                                  borderRadius: BorderRadius.circular(0),
-                                  rodStackItems: [
-                                    BarChartRodStackItem(
-                                      0,
-                                      data.count.toDouble() * 0.5,
-                                      Color.fromRGBO(8, 100, 175, 1.0),
-                                    ),
-                                    BarChartRodStackItem(
-                                      data.count.toDouble() * 0.5,
-                                      data.count.toDouble(),
-                                      Color.fromRGBO(8, 100, 175, 0.5),
-                                    ),
-                                  ],
-                                  backDrawRodData: BackgroundBarChartRodData(
-                                    show: true,
+                  if (_perYear.isNotEmpty)
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.45,
+                      child: Padding(
+                        padding: EdgeInsets.all(8.0),
+                        child: BarChart(
+                          BarChartData(
+                            barGroups: _perYear
+                                .asMap()
+                                .entries
+                                .map((entry) {
+                              int index = entry.key;
+                              ReportDataPerYear data = entry.value;
+                              return BarChartGroupData(
+                                x: index,
+                                barRods: [
+                                  BarChartRodData(
                                     toY: data.count.toDouble(),
-                                    color: Colors.grey.withOpacity(
-                                        0.2), // Background bar color
+                                    color: Color.fromRGBO(8, 100, 175, 1.0),
+                                    width: 20,
+                                    borderRadius: BorderRadius.circular(0),
+                                    rodStackItems: [
+                                      BarChartRodStackItem(
+                                        0,
+                                        data.count.toDouble() * 0.5,
+                                        Color.fromRGBO(8, 100, 175, 1.0),
+                                      ),
+                                      BarChartRodStackItem(
+                                        data.count.toDouble() * 0.5,
+                                        data.count.toDouble(),
+                                        Color.fromRGBO(8, 100, 175, 0.5),
+                                      ),
+                                    ],
+                                    backDrawRodData: BackgroundBarChartRodData(
+                                      show: true,
+                                      toY: data.count.toDouble(),
+                                      color: Colors.grey.withOpacity(
+                                          0.2), // Background bar color
+                                    ),
                                   ),
-                                ),
-                              ],
-                            );
-                          }).toList(),
-                          titlesData: FlTitlesData(
-                            leftTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                interval: 1,
-                                getTitlesWidget:
-                                    (double value, TitleMeta meta) {
-                                  if (value % 1 == 0) {
-                                    return Text(
-                                      value.toInt().toString(),
-                                      style: TextStyle(color: Colors.black),
-                                    );
-                                  }
-                                  return Container();
-                                },
-                              ),
-                            ),
-                            rightTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                            bottomTitles: AxisTitles(
-                              sideTitles: SideTitles(
-                                showTitles: true,
-                                interval: 2,
-                                getTitlesWidget:
-                                    (double value, TitleMeta meta) {
-                                  int index = value.toInt();
-                                  if (index % 2 == 0 &&
-                                      index >= 0 &&
-                                      index <
-                                          reportDataPerYearProvider
-                                              .reports.length) {
-                                    return Text(
-                                      reportDataPerYearProvider
-                                          .reports[index].year,
-                                      style: TextStyle(color: Colors.black),
-                                    );
-                                  }
-                                  return Container();
-                                },
-                              ),
-                            ),
-                            topTitles: AxisTitles(
-                              sideTitles: SideTitles(showTitles: false),
-                            ),
-                          ),
-                          gridData: FlGridData(
-                            show: true,
-                            drawHorizontalLine: true,
-                            drawVerticalLine: false,
-                            getDrawingHorizontalLine: (value) {
-                              return FlLine(
-                                color: Colors.blue,
-                                strokeWidth: 1,
-                                dashArray: [8, 8],
+                                ],
                               );
-                            },
+                            }).toList(),
+                            titlesData: FlTitlesData(
+                              leftTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  interval: 1,
+                                  getTitlesWidget:
+                                      (double value, TitleMeta meta) {
+                                    if (value % 1 == 0) {
+                                      return Text(
+                                        value.toInt().toString(),
+                                        style: TextStyle(color: Colors.black),
+                                      );
+                                    }
+                                    return Container();
+                                  },
+                                ),
+                              ),
+                              rightTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                              bottomTitles: AxisTitles(
+                                sideTitles: SideTitles(
+                                  showTitles: true,
+                                  interval: 2,
+                                  getTitlesWidget:
+                                      (double value, TitleMeta meta) {
+                                    int index = value.toInt();
+                                    if (index % 2 == 0 &&
+                                        index >= 0 &&
+                                        index <
+                                            _perYear.length) {
+                                      return Text(
+                                        _perYear[index].year,
+                                        style: TextStyle(color: Colors.black),
+                                      );
+                                    }
+                                    return Container();
+                                  },
+                                ),
+                              ),
+                              topTitles: AxisTitles(
+                                sideTitles: SideTitles(showTitles: false),
+                              ),
+                            ),
+                            gridData: FlGridData(
+                              show: true,
+                              drawHorizontalLine: true,
+                              drawVerticalLine: false,
+                              getDrawingHorizontalLine: (value) {
+                                return FlLine(
+                                  color: Colors.blue,
+                                  strokeWidth: 1,
+                                  dashArray: [8, 8],
+                                );
+                              },
+                            ),
+                            backgroundColor: Colors.grey[350],
+                            extraLinesData: ExtraLinesData(horizontalLines: []),
                           ),
-                          backgroundColor: Colors.grey[350],
-                          extraLinesData: ExtraLinesData(horizontalLines: []),
                         ),
                       ),
                     ),
+                  SizedBox(
+                    height: 10,
                   ),
-                SizedBox(
-                  height: 10,
-                ),
-                Text(
-                  'Reports per GBV Type',
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold),
-                ),
-                if (abuseReportProvider.reports.isEmpty)
+                  Text(
+                    'Reports per GBV Type',
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold),
+                  ),
+                  if (_abuses.isEmpty)
+                    SizedBox(
+                      height: MediaQuery.of(context).size.height * 0.45,
+                      child: Padding(
+                        padding: EdgeInsets.all(16.0),
+                        child: PieChart(
+                          PieChartData(
+                            sections: _getEmptySections(),
+                            startDegreeOffset: 0,
+                            sectionsSpace: 2,
+                            pieTouchData: PieTouchData(
+                              touchCallback:
+                                  (FlTouchEvent event, pieTouchResponse) {},
+                            ),
+                          ),
+                          swapAnimationDuration: Duration(milliseconds: 800),
+                          swapAnimationCurve: Curves.easeInOut,
+                        ),
+                      ),
+                    ),
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.45,
                     child: Padding(
                       padding: EdgeInsets.all(16.0),
                       child: PieChart(
                         PieChartData(
-                          sections: _getEmptySections(),
+                          sections: _getSections(_abuses),
                           startDegreeOffset: 0,
                           sectionsSpace: 2,
                           pieTouchData: PieTouchData(
                             touchCallback:
-                                (FlTouchEvent event, pieTouchResponse) {},
+                                (FlTouchEvent event, pieTouchResponse) {
+                              setState(() {
+                                if (!event.isInterestedForInteractions ||
+                                    pieTouchResponse == null ||
+                                    pieTouchResponse.touchedSection == null) {
+                                  touchedIndex = -1;
+                                  return;
+                                }
+                                final newIndex = pieTouchResponse
+                                    .touchedSection!.touchedSectionIndex;
+                                touchedIndex =
+                                    touchedIndex == newIndex ? -1 : newIndex;
+                              });
+                            },
                           ),
                         ),
                         swapAnimationDuration: Duration(milliseconds: 800),
@@ -457,39 +307,8 @@ class _GDDashboardState extends State<GDDashboard> {
                       ),
                     ),
                   ),
-                SizedBox(
-                  height: MediaQuery.of(context).size.height * 0.45,
-                  child: Padding(
-                    padding: EdgeInsets.all(16.0),
-                    child: PieChart(
-                      PieChartData(
-                        sections: _getSections(abuseReportProvider.reports),
-                        startDegreeOffset: 0,
-                        sectionsSpace: 2,
-                        pieTouchData: PieTouchData(
-                          touchCallback:
-                              (FlTouchEvent event, pieTouchResponse) {
-                            setState(() {
-                              if (!event.isInterestedForInteractions ||
-                                  pieTouchResponse == null ||
-                                  pieTouchResponse.touchedSection == null) {
-                                touchedIndex = -1;
-                                return;
-                              }
-                              final newIndex = pieTouchResponse
-                                  .touchedSection!.touchedSectionIndex;
-                              touchedIndex =
-                                  touchedIndex == newIndex ? -1 : newIndex;
-                            });
-                          },
-                        ),
-                      ),
-                      swapAnimationDuration: Duration(milliseconds: 800),
-                      swapAnimationCurve: Curves.easeInOut,
-                    ),
-                  ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -598,7 +417,7 @@ class _GDDashboardState extends State<GDDashboard> {
     return ListView(
       shrinkWrap: true,
       children: [
-        SizedBox(height: MediaQuery.of(context).size.height * 0.35),
+        // SizedBox(height: MediaQuery.of(context).size.height * 0.35),
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -618,4 +437,66 @@ class _GDDashboardState extends State<GDDashboard> {
       ],
     );
   }
+
+  Widget _reportsTile({required Report report}) => Column(
+        children: [
+          GestureDetector(
+            onTap: () {},
+            child: ListTile(
+              title: Text(
+                "Report: ${report.abuse_type.toString()}",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              subtitle: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  RichText(
+                    text: TextSpan(
+                      text: 'Status: ',
+                      style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 14,
+                          color: Colors.black),
+                      children: [
+                        TextSpan(
+                          text: report.status
+                              .toString()
+                              .capitalizeFirstLetterOfEachWord(),
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 14,
+                            color: _getStatusColor(report.status
+                                .toString()
+                                .capitalizeFirstLetterOfEachWord()),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  Text(
+                    _formatDateTime(
+                        DateTime.parse(report.created_on.toString())),
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
+              trailing: Padding(
+                padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+                child: Icon(Icons.arrow_forward_ios, size: 18),
+              ),
+            ),
+          ),
+          Padding(
+            padding: EdgeInsets.fromLTRB(
+                8.0, 0.0, 8.0, 0.0),
+            child: Divider(
+                height: 0.0,
+                color: Color.fromRGBO(
+                    8, 100, 175, 1.0)),
+          )
+        ],
+      );
+
 }
