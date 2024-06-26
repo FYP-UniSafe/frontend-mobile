@@ -226,41 +226,43 @@ class _EditProfileState extends State<EditProfile> {
                               TextFormValidators.emailValidator(text!),
                         ),
                         SizedBox(height: 20.0),
-                        DropdownButtonFormField(
-                          //alignment: Alignment.bottomCenter,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          borderRadius: BorderRadius.circular(5.0),
-                          icon: Icon(Icons.arrow_drop_down),
-                          hint: Text('College / School'),
-                          validator: (text) =>
-                              TextFormValidators.chooseItems(text),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 12.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
+                        if (storageProvider.user?.is_student == true)
+                          DropdownButtonFormField(
+                            //alignment: Alignment.bottomCenter,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            borderRadius: BorderRadius.circular(5.0),
+                            icon: Icon(Icons.arrow_drop_down),
+                            hint: Text('College / School'),
+                            validator: (text) =>
+                                TextFormValidators.chooseItems(text),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 12.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1.3),
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 1.3),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
+                            value: college,
+                            items: colleges
+                                .map((e) => DropdownMenuItem<String>(
+                                    value: e.toString(), child: Text(e)))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                college = value;
+                              });
+                            },
                           ),
-                          value: college,
-                          items: colleges
-                              .map((e) => DropdownMenuItem<String>(
-                                  value: e.toString(), child: Text(e)))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              college = value;
-                            });
-                          },
-                        ),
-                        SizedBox(height: 30.0),
+                        SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {}

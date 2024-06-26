@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:unisafe/Models/ReportDataPerYear.dart';
@@ -18,7 +19,7 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   final _appStateObserver = AppStateObserver();
-  int? touchedIndex = 0;
+  int? touchedIndex;
 
   @override
   void initState() {
@@ -69,6 +70,35 @@ class _DashboardState extends State<Dashboard> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
+                if (reportDataPerYearProvider.reports.isEmpty)
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    child: Padding(
+                      padding: EdgeInsets.all(8.0),
+                      child: BarChart(
+                        BarChartData(
+                          barGroups: _getEmptyBarGroups(),
+                          titlesData: FlTitlesData(
+                            leftTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            bottomTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            topTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                            rightTitles: AxisTitles(
+                              sideTitles: SideTitles(showTitles: false),
+                            ),
+                          ),
+                          borderData: FlBorderData(show: false),
+                          gridData: FlGridData(show: false),
+                          backgroundColor: Colors.grey[300],
+                        ),
+                      ),
+                    ),
+                  ),
                 if (reportDataPerYearProvider.reports.isNotEmpty)
                   SizedBox(
                     height: MediaQuery.of(context).size.height * 0.45,
@@ -186,6 +216,26 @@ class _DashboardState extends State<Dashboard> {
                       fontSize: 16,
                       fontWeight: FontWeight.bold),
                 ),
+                if (abuseReportProvider.reports.isEmpty)
+                  SizedBox(
+                    height: MediaQuery.of(context).size.height * 0.45,
+                    child: Padding(
+                      padding: EdgeInsets.all(16.0),
+                      child: PieChart(
+                        PieChartData(
+                          sections: _getEmptySections(),
+                          startDegreeOffset: 0,
+                          sectionsSpace: 2,
+                          pieTouchData: PieTouchData(
+                            touchCallback:
+                                (FlTouchEvent event, pieTouchResponse) {},
+                          ),
+                        ),
+                        swapAnimationDuration: Duration(milliseconds: 800),
+                        swapAnimationCurve: Curves.easeInOut,
+                      ),
+                    ),
+                  ),
                 SizedBox(
                   height: MediaQuery.of(context).size.height * 0.45,
                   child: Padding(
@@ -249,6 +299,41 @@ class _DashboardState extends State<Dashboard> {
         ),
       );
     }).toList();
+  }
+
+  List<BarChartGroupData> _getEmptyBarGroups() {
+    return [
+      BarChartGroupData(
+        x: 0,
+        barRods: [
+          BarChartRodData(
+            toY: 0,
+            color: Colors.grey,
+            width: 20,
+            backDrawRodData: BackgroundBarChartRodData(
+              show: true,
+              toY: 1,
+              color: Colors.grey.withOpacity(0.2),
+            ),
+          ),
+        ],
+      ),
+    ];
+  }
+
+  List<PieChartSectionData> _getEmptySections() {
+    return [
+      PieChartSectionData(
+        value: 1,
+        title: 'No Data',
+        color: Colors.grey[300],
+        radius: 100,
+        titleStyle: TextStyle(
+          fontSize: 18,
+          color: Colors.black,
+        ),
+      ),
+    ];
   }
 
   Color _getColor(String abuseType) {
