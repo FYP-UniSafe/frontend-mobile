@@ -60,9 +60,7 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _initializePages() async {
-
-
-    try{
+    try {
       user = _storageProvider.user;
       if (user?.is_genderdesk == true) {
         _pages = [
@@ -112,7 +110,7 @@ class _MainScreenState extends State<MainScreen> {
           currentSelectedIndex = 0;
         }
       }
-    }catch(e){
+    } catch (e) {
       _pages = [
         HomePage(),
         ReportPage(),
@@ -157,14 +155,14 @@ class _MainScreenState extends State<MainScreen> {
                 size: 26.0,
               ),
               label: 'Home'),
-          if (user!=null?(user!.is_student??false):true)
+          if (user != null ? (user!.is_student ?? false) : true)
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.report,
                   size: 26.0,
                 ),
                 label: 'Report a GBV'),
-          if (user!=null?(user!.is_student??false):true)
+          if (user != null ? (user!.is_student ?? false) : true)
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.assistant,
