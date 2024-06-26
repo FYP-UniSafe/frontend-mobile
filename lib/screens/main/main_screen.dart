@@ -60,39 +60,59 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   Future<void> _initializePages() async {
-     user = _storageProvider.user;
-    if (user?.is_genderdesk == true) {
-      _pages = [
-        GDDashboard(),
-        ProfilePage(),
-      ];
 
-      _titles = [
-        'UniSafe',
-        'Profile',
-      ];
-      if (currentSelectedIndex > _pages.length) {
-        currentSelectedIndex = 0;
+
+    try{
+      user = _storageProvider.user;
+      if (user?.is_genderdesk == true) {
+        _pages = [
+          GDDashboard(),
+          ProfilePage(),
+        ];
+
+        _titles = [
+          'UniSafe',
+          'Profile',
+        ];
+        if (currentSelectedIndex > _pages.length) {
+          currentSelectedIndex = 0;
+        }
+      } else if (user?.is_consultant == true) {
+        _pages = [
+          CUDashboard(),
+          ProfilePage(),
+        ];
+        _titles = [
+          'UniSafe',
+          'Profile',
+        ];
+      } else if (user?.is_police == true) {
+        _pages = [
+          PFDashboard(),
+          ProfilePage(),
+        ];
+        _titles = [
+          'UniSafe',
+          'Profile',
+        ];
+      } else {
+        _pages = [
+          HomePage(),
+          ReportPage(),
+          CounselPage(),
+          ProfilePage(),
+        ];
+        _titles = [
+          'UniSafe',
+          'Report a GBV',
+          'Seek Counsel',
+          'Profile',
+        ];
+        if (currentSelectedIndex > _pages.length) {
+          currentSelectedIndex = 0;
+        }
       }
-    } else if (user?.is_consultant == true) {
-      _pages = [
-        CUDashboard(),
-        ProfilePage(),
-      ];
-      _titles = [
-        'UniSafe',
-        'Profile',
-      ];
-    } else if (user?.is_police == true) {
-      _pages = [
-        PFDashboard(),
-        ProfilePage(),
-      ];
-      _titles = [
-        'UniSafe',
-        'Profile',
-      ];
-    } else {
+    }catch(e){
       _pages = [
         HomePage(),
         ReportPage(),
@@ -137,14 +157,14 @@ class _MainScreenState extends State<MainScreen> {
                 size: 26.0,
               ),
               label: 'Home'),
-          if ((user!.is_student??false))
+          if (user!=null?(user!.is_student??false):true)
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.report,
                   size: 26.0,
                 ),
                 label: 'Report a GBV'),
-          if ((user!.is_student??false))
+          if (user!=null?(user!.is_student??false):true)
             BottomNavigationBarItem(
                 icon: Icon(
                   Icons.assistant,
@@ -160,29 +180,5 @@ class _MainScreenState extends State<MainScreen> {
         ],
       ),
     );
-  }
-
-  bool? _isGenderDesk() {
-    final user = _storageProvider.user;
-    if (user != null) {
-      return user.is_genderdesk;
-    }
-    return false;
-  }
-
-  bool? _isConsultant() {
-    final user = _storageProvider.user;
-    if (user != null) {
-      return user.is_consultant;
-    }
-    return false;
-  }
-
-  bool? _isPolice() {
-    final user = _storageProvider.user;
-    if (user != null) {
-      return user.is_police;
-    }
-    return false;
   }
 }
