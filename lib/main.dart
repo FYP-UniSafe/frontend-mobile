@@ -5,13 +5,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:provider/provider.dart';
+import 'package:unisafe/Models/AbuseReport.dart';
+import 'package:unisafe/Models/ReportDataPerYear.dart';
 import 'package:unisafe/Providers/profileProvider.dart';
 import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 import 'package:unisafe/screens/main/onboarding.dart';
+import 'Providers/abuseReportProvider.dart';
 import 'Providers/authProvider.dart';
 import 'Providers/counselProvider.dart';
 import 'Providers/locationProvider.dart';
+import 'Providers/reportDataPerYearProvider.dart';
 import 'Providers/reportProvider.dart';
 import 'Providers/selectionProvider.dart';
 import 'Services/storage.dart';
@@ -20,6 +24,8 @@ Widget? _landingPage;
 
 final storageProvider = LocalStorageProvider();
 final reportProvider = ReportProvider();
+final reportDataPerYearProvider = ReportDataPerYearProvider();
+final abuseReportProvider = AbuseReportProvider();
 final counselProvider = CounselProvider();
 
 void main() async {
@@ -33,6 +39,8 @@ void main() async {
     ChangeNotifierProvider(create: (_) => LocationProvider()),
     ChangeNotifierProvider.value(value: storageProvider),
     ChangeNotifierProvider.value(value: reportProvider),
+    ChangeNotifierProvider.value(value: reportDataPerYearProvider),
+    ChangeNotifierProvider.value(value: abuseReportProvider),
     ChangeNotifierProvider.value(value: counselProvider),
   ], child: UniSafe()));
 }

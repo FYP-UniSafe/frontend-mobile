@@ -6,8 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
-import '../../../Models/police_post.dart';
-import '../../../Models/report_location.dart';
+import '../../../Models/PolicePost.dart';
+import '../../../Models/ReportLocation.dart';
 import '../../../Providers/locationProvider.dart';
 import 'custom_police_marker.dart';
 import 'custom_report_marker.dart';
@@ -150,8 +150,8 @@ class _MapPageState extends State<MapPage> {
                 if (snapshot.connectionState == ConnectionState.waiting) {
                   return Center(
                     child: SizedBox(
-                      width: 100,
-                      height: 100,
+                      width: 80,
+                      height: 80,
                       child: LoadingIndicator(
                         indicatorType: Indicator.ballPulseRise,
                         colors: [Color.fromRGBO(8, 100, 175, 1.0)],

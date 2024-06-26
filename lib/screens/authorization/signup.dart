@@ -66,6 +66,7 @@ class _SignUpState extends State<SignUp> {
   final _phone = TextEditingController();
   final _registration = TextEditingController();
   final _staffID = TextEditingController();
+  final _office = TextEditingController();
   final _policeStation = TextEditingController();
 
   String? college;
@@ -401,16 +402,13 @@ class _SignUpState extends State<SignUp> {
                             ),
                           ),
                           SizedBox(height: 16.0),
-                          DropdownButtonFormField(
-                            //alignment: Alignment.bottomCenter,
-                            autovalidateMode:
-                                AutovalidateMode.onUserInteraction,
-                            borderRadius: BorderRadius.circular(5.0),
-                            icon: Icon(Icons.arrow_drop_down),
-                            hint: Text('College / School'),
-                            validator: (text) =>
-                                TextFormValidators.chooseItems(text),
+                          TextFormField(
+                            controller: _office,
+                            onChanged: (value) {
+                              profileTypeProvider.setStaffID(value);
+                            },
                             decoration: InputDecoration(
+                              labelText: 'Office',
                               contentPadding: EdgeInsets.symmetric(
                                   horizontal: 12.0, vertical: 12.0),
                               border: OutlineInputBorder(
@@ -425,16 +423,6 @@ class _SignUpState extends State<SignUp> {
                                 borderRadius: BorderRadius.circular(5.0),
                               ),
                             ),
-                            value: college,
-                            items: colleges
-                                .map((e) => DropdownMenuItem<String>(
-                                    value: e.toString(), child: Text(e)))
-                                .toList(),
-                            onChanged: (value) {
-                              setState(() {
-                                college = value;
-                              });
-                            },
                           ),
                         ],
                         if (profileTypeProvider.selectedProfileType ==
@@ -500,6 +488,7 @@ class _SignUpState extends State<SignUp> {
                                 _studentSignup();
                               } else if (profileType == 'counselling_unit') {
                               } else if (profileType == 'gender_desk') {
+                                _genderDeskSignup();
                               } else if (profileType == 'police') {}
                             }
                           },
@@ -599,6 +588,86 @@ class _SignUpState extends State<SignUp> {
                 college: college,
                 phone_number: phoneNumber['e164'],
                 reg_no: _registration.text));
+
+        if (_authProvider.isLoggedIn != null &&
+            _authProvider.isLoggedIn == true) {
+          await Provider.of<LocalStorageProvider>(context, listen: false)
+              .initialize();
+          Navigator.pop(context);
+
+          Navigator.pushAndRemoveUntil(context,
+              MaterialPageRoute(builder: (context) => Otp()), (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.red,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.white,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Signup Failed',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
+  }
+
+  _genderDeskSignup() async {
+    if (_formKey.currentState!.validate()) {
+      if (_email.text.isNotEmpty &&
+          _password.text.isNotEmpty &&
+          _fullName.text.isNotEmpty &&
+          _staffID.text.isNotEmpty &&
+          _office.text.isNotEmpty) {
+        Map<String, dynamic> phoneNumber =
+            await parse(_phone.text, region: 'TZ');
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.registerGenderDesk(
+            user: User(
+                email: _email.text,
+                password: _password.text,
+                full_name: _fullName.text,
+                gender: gender,
+                phone_number: phoneNumber['e164'],
+                staff_no: _staffID.text,
+                office: _office.text));
 
         if (_authProvider.isLoggedIn != null &&
             _authProvider.isLoggedIn == true) {

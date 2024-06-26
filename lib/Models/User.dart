@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 class User {
   String? id;
   String? full_name;
@@ -83,6 +85,16 @@ class User {
         "password": password,
       };
 
+  Map<String, dynamic> toGenderDeskSignupJson() => {
+        "email": email,
+        "full_name": full_name,
+        "phone_number": phone_number,
+        "gender": gender,
+        "password": password,
+        "office": office,
+        "staff_no": staff_no
+      };
+
   Map<String, dynamic> toJsonStorage() => {
         "id": id,
         "email": email,
@@ -92,6 +104,9 @@ class User {
         "is_active": is_active,
         "is_staff": is_staff,
         "is_student": is_student,
+        "is_genderdesk": is_genderdesk,
+        "is_consultant": is_consultant,
+        "is_police": is_police,
         "date_joined": date_joined,
         "last_login": last_login,
         "token": token,

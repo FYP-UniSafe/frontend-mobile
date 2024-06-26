@@ -555,12 +555,21 @@ class _OtpState extends State<Otp> {
 
         if (_authProvider.otpVerifed != null &&
             _authProvider.otpVerifed == true) {
-          Navigator.pop(context);
+          if (_authProvider.currentUser!.is_genderdesk == true) {
+            Navigator.pop(context);
 
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => MainScreen()),
-              (route) => false);
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => MainScreen()),
+                (route) => false);
+          } else {
+            Navigator.pop(context);
+
+            Navigator.pushAndRemoveUntil(
+                context,
+                MaterialPageRoute(builder: (context) => MainScreen()),
+                (route) => false);
+          }
         } else {
           Navigator.pop(context);
           Flashbar(

@@ -68,7 +68,8 @@ class _ReportFormState extends State<ReportForm> {
     "Physical Violence",
     "Sexual Violence",
     "Psychological Violence",
-    "Online Harassment"
+    "Online Harassment",
+    "Societal Violence"
   ];
   String? college;
   String? gender;

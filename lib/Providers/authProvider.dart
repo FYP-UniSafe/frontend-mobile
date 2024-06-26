@@ -108,6 +108,43 @@ class AuthProvider extends ChangeNotifier {
     } catch (e) {}
   }
 
+  Future registerGenderDesk({required User user}) async {
+    try {
+      http.Response response = await http.post(
+          Uri.parse('$baseUrl/users/signup/genderdesk'),
+          headers: {
+            'Accept': 'application/json',
+            'Content-Type': 'application/json'
+          },
+          body: json.encode(user.toGenderDeskSignupJson()));
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        Map<String, dynamic> output = jsonDecode(response.body);
+        log(output.toString());
+
+        try {
+          _currentUser = User.fromJson(output);
+          _currentUser!.password = user.password;
+          await LocalStorage.storeToken(token: output['tokens']['access']);
+          await LocalStorage.storeUserData(user: _currentUser!);
+          _isLoggedIn = true;
+          notifyListeners();
+        } catch (e) {
+          print(e.toString());
+          _isLoggedIn = false;
+          notifyListeners();
+        }
+      } else {
+        if (kDebugMode) {
+          log(response.body);
+        }
+
+        throw HttpException('${response.statusCode}: ${response.reasonPhrase}',
+            uri: Uri.parse('$baseUrl/users/signup/genderdesk'));
+      }
+    } catch (e) {}
+  }
+
   Future verifyOtp({required User user}) async {
     try {
       http.Response response = await http.post(
