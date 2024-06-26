@@ -183,15 +183,16 @@ class ReportProvider extends ChangeNotifier {
   }
 
   Future<void> fetchAnonymousReports() async {
+    String? token = await LocalStorage.getToken();
     final url = '$baseUrl/reports/anonymous/list';
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http
+          .get(Uri.parse(url), headers: {"Authorization": "Bearer $token"});
       if (response.statusCode == 200) {
         final List<dynamic> anonymousReportData = json.decode(response.body);
 
         _anonymousReports =
             anonymousReportData.map((data) => Report.fromJson(data)).toList();
-
         notifyListeners();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken();
@@ -199,7 +200,8 @@ class ReportProvider extends ChangeNotifier {
       } else {
         throw Exception('Failed to load anonymous reports');
       }
-    } catch (error) {
+    } catch (error, stackTrace) {
+      log(error.toString(), stackTrace: stackTrace, name: "AnonymousCatch");
       throw error;
     }
   }

@@ -40,6 +40,7 @@ class _GDDashboardState extends State<GDDashboard> {
     _abuses = _reportProvider.abuses;
     _perYear = _reportProvider.reportsPerYear;
     _reports = _reportProvider.reports;
+    _anonymousReports = _reportProvider.anonymousReports;
   }
 
   @override
