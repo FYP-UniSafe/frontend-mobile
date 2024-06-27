@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
@@ -15,27 +17,48 @@ class Chatbot extends StatefulWidget {
 class _ChatbotState extends State<Chatbot> {
   final TextEditingController _userMessage = TextEditingController();
 
-  static const apiKey = "AIzaSyCmo0AfJPbR6hlCPkvzhOlpSi4xaToU5IY";
+  static const apiKey = "AIzaSyD3sr9dj9MhXRI7QaklXF34PRam3g73oTA";
 
-  final model = GenerativeModel(model: 'gemini-1.5-flash', apiKey: apiKey);
+  final model = GenerativeModel(
+    model: 'gemini-1.5-pro',
+    apiKey: apiKey,
+  );
 
   final List<Message> _messages = [];
 
   Future<void> sendMessage() async {
     final message = _userMessage.text;
     _userMessage.clear();
-
     setState(() {
       _messages
           .add(Message(isUser: true, message: message, date: DateTime.now()));
     });
 
     final content = [Content.text(message)];
-    final response = await model.generateContent(content);
-    setState(() {
-      _messages.add(Message(
-          isUser: false, message: response.text ?? "", date: DateTime.now()));
-    });
+    try {
+      final response = await model.generateContent(
+        content,
+        safetySettings: [
+          SafetySetting(
+            HarmCategory.unspecified,
+            HarmBlockThreshold.none,
+          ),
+        ],
+      );
+
+      setState(() {
+        _messages.add(Message(
+            isUser: false, message: response.text ?? "", date: DateTime.now()));
+      });
+    } catch (e) {
+      log('Error: $e');
+      /*setState(() {
+        _messages.add(Message(
+            isUser: false,
+            message: "Error: Unable to generate response.",
+            date: DateTime.now()));
+      });*/
+    }
   }
 
   final _appStateObserver = AppStateObserver();
@@ -126,14 +149,13 @@ class _ChatbotState extends State<Chatbot> {
                       iconSize: 22.0,
                       style: ButtonStyle(
                         backgroundColor:
-                            MaterialStateProperty.resolveWith((states) {
-                          if (states.contains(MaterialState.pressed)) {
+                            WidgetStateProperty.resolveWith((states) {
+                          if (states.contains(WidgetState.pressed)) {
                             return Color.fromRGBO(8, 100, 175, 1.0);
                           }
                           return Color.fromRGBO(8, 100, 175, 1.0);
                         }),
-                        foregroundColor:
-                            MaterialStateProperty.all(Colors.white),
+                        foregroundColor: WidgetStateProperty.all(Colors.white),
                       ),
                       onPressed: () {
                         sendMessage();
