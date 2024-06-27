@@ -34,13 +34,16 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       //resizeToAvoidBottomInset: true,
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(left: 16.0, right: 16.0),
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.99,
           child: SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
+                SizedBox(
+                  height: 10,
+                ),
                 Card(
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(0),

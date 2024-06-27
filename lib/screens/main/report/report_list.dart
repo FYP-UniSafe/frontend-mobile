@@ -59,7 +59,7 @@ class _ReportListState extends State<ReportList> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(8.0),
+        padding: EdgeInsets.only(left: 8.0, right: 8.0),
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,

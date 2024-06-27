@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:unisafe/Services/storage.dart';
-import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/main/main_screen.dart';
 
 import '../../Services/stateObserver.dart';

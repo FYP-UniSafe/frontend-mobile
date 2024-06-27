@@ -31,7 +31,6 @@ class _GDDashboardState extends State<GDDashboard> {
   List<AbuseReport> _abuses = [];
   late ReportProvider _reportProvider;
 
-
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -47,9 +46,8 @@ class _GDDashboardState extends State<GDDashboard> {
   void initState() {
     WidgetsBinding.instance.addObserver(_appStateObserver);
     super.initState();
-    Future.microtask(() =>
-        Provider.of<ReportProvider>(context, listen: false)
-            .getGenderDeskReports());
+    Future.microtask(() => Provider.of<ReportProvider>(context, listen: false)
+        .getGenderDeskReports());
   }
 
   @override
@@ -62,15 +60,19 @@ class _GDDashboardState extends State<GDDashboard> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(left: 16.0, right: 16.0),
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.99,
           child: RefreshIndicator(
             onRefresh: _reportProvider.getGenderDeskReports,
+            color: Color.fromRGBO(8, 100, 175, 1),
             child: SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    height: 10,
+                  ),
                   Text(
                     'REPORTS',
                     style: TextStyle(fontSize: 18.0),
@@ -79,20 +81,34 @@ class _GDDashboardState extends State<GDDashboard> {
                     height: 30.0,
                     color: Color.fromRGBO(8, 100, 175, 1.0),
                   ),
-                  Text('All Reports',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
+                  Text(
+                    'All Reports',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   _reports.isNotEmpty
-                      ? Column(children: _reports.map((report) => _reportsTile(report: report)).toList(),)
+                      ? Column(
+                          children: _reports
+                              .map((report) => _reportsTile(report: report))
+                              .toList(),
+                        )
                       : _buildNoReportsView(),
                   SizedBox(height: 20),
-                  Text('Anonymous Reports',
-                      style: TextStyle(
-                          fontSize: 18,
-                          fontWeight: FontWeight.bold)),
+                  Text(
+                    'Anonymous Reports',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
                   _anonymousReports.isNotEmpty
-                      ? Column(children: _anonymousReports.map((report) => _reportsTile(report: report)).toList(),)
+                      ? Column(
+                          children: _anonymousReports
+                              .map((report) => _reportsTile(report: report))
+                              .toList(),
+                        )
                       : _buildNoReportsView(),
                   SizedBox(
                     height: 20,
@@ -148,10 +164,7 @@ class _GDDashboardState extends State<GDDashboard> {
                         padding: EdgeInsets.all(8.0),
                         child: BarChart(
                           BarChartData(
-                            barGroups: _perYear
-                                .asMap()
-                                .entries
-                                .map((entry) {
+                            barGroups: _perYear.asMap().entries.map((entry) {
                               int index = entry.key;
                               ReportDataPerYear data = entry.value;
                               return BarChartGroupData(
@@ -213,8 +226,7 @@ class _GDDashboardState extends State<GDDashboard> {
                                     int index = value.toInt();
                                     if (index % 2 == 0 &&
                                         index >= 0 &&
-                                        index <
-                                            _perYear.length) {
+                                        index < _perYear.length) {
                                       return Text(
                                         _perYear[index].year,
                                         style: TextStyle(color: Colors.black),
@@ -283,7 +295,7 @@ class _GDDashboardState extends State<GDDashboard> {
                       child: PieChart(
                         PieChartData(
                           sections: _getSections(_abuses),
-                          startDegreeOffset: 0,
+                          startDegreeOffset: 20,
                           sectionsSpace: 2,
                           pieTouchData: PieTouchData(
                             touchCallback:
@@ -418,7 +430,6 @@ class _GDDashboardState extends State<GDDashboard> {
     return ListView(
       shrinkWrap: true,
       children: [
-        // SizedBox(height: MediaQuery.of(context).size.height * 0.35),
         Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -446,7 +457,9 @@ class _GDDashboardState extends State<GDDashboard> {
             child: ListTile(
               title: Text(
                 "Report: ${report.abuse_type.toString()}",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                style: TextStyle(
+                  fontSize: 16,
+                ),
               ),
               subtitle: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -490,14 +503,12 @@ class _GDDashboardState extends State<GDDashboard> {
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(
-                8.0, 0.0, 8.0, 0.0),
+            padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
             child: Divider(
-                height: 0.0,
-                color: Color.fromRGBO(
-                    8, 100, 175, 1.0)),
+              height: 0.0,
+              color: Colors.grey,
+            ),
           )
         ],
       );
-
 }

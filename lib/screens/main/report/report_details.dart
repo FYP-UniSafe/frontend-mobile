@@ -2,10 +2,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:intl/intl.dart';
-import 'package:provider/provider.dart';
 import 'package:unisafe/Models/Report.dart';
 import 'package:unisafe/resources/formats.dart';
-import '../../../Providers/reportProvider.dart';
 import '../../../Services/stateObserver.dart';
 
 class ReportDetails extends StatefulWidget {
@@ -18,11 +16,9 @@ class ReportDetails extends StatefulWidget {
 
 class _ReportDetailsState extends State<ReportDetails> {
   final _appStateObserver = AppStateObserver();
-  late ReportProvider _reportProvider;
 
   @override
   void didChangeDependencies() {
-    _reportProvider = Provider.of<ReportProvider>(context);
     super.didChangeDependencies();
   }
 

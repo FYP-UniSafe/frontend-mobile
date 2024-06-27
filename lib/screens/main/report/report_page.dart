@@ -41,11 +41,14 @@ class _ReportPageState extends State<ReportPage> {
     return Scaffold(
       resizeToAvoidBottomInset: true,
       body: Padding(
-        padding: EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 8.0),
+        padding: EdgeInsets.only(left: 16.0, right: 16.0),
         child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
+              SizedBox(
+                height: 10,
+              ),
               Container(
                 color: Color.fromRGBO(242, 242, 228, 1.0),
                 child: Image.asset(

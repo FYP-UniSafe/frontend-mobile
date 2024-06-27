@@ -136,10 +136,13 @@ class _ReportFormState extends State<ReportForm> {
         ),
       ),
       body: Padding(
-        padding: EdgeInsets.all(16.0),
+        padding: EdgeInsets.only(left: 16.0, right: 16.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              height: 10,
+            ),
             Expanded(
               child: Form(
                 key: _formKey,

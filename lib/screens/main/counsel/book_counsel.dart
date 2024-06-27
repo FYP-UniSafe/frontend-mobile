@@ -121,9 +121,12 @@ class _BookCounselState extends State<BookCounsel> {
       body: SizedBox(
         height: MediaQuery.of(context).size.height * 0.98,
         child: Padding(
-          padding: EdgeInsets.all(16.0),
+          padding: EdgeInsets.only(left: 16.0, right: 16.0),
           child: Column(
             children: [
+              SizedBox(
+                height: 10,
+              ),
               Expanded(
                 child: Form(
                   key: _formKey,
