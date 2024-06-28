@@ -15,6 +15,7 @@ import 'Providers/abuseReportProvider.dart';
 import 'Providers/authProvider.dart';
 import 'Providers/counselProvider.dart';
 import 'Providers/locationProvider.dart';
+import 'Providers/reportActionsProvider.dart';
 import 'Providers/reportDataPerYearProvider.dart';
 import 'Providers/reportProvider.dart';
 import 'Providers/selectionProvider.dart';
@@ -37,6 +38,7 @@ void main() async {
     ChangeNotifierProvider(create: (context) => ProfileTypeProvider()),
     ChangeNotifierProvider(create: (context) => SelectionProvider()),
     ChangeNotifierProvider(create: (_) => LocationProvider()),
+    ChangeNotifierProvider(create: (_) => ReportActionsProvider()),
     ChangeNotifierProvider.value(value: storageProvider),
     ChangeNotifierProvider.value(value: reportProvider),
     ChangeNotifierProvider.value(value: reportDataPerYearProvider),

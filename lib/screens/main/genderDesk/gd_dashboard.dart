@@ -5,13 +5,14 @@ import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:unisafe/Models/ReportDataPerYear.dart';
 import 'package:unisafe/resources/formats.dart';
+import 'package:unisafe/screens/main/genderDesk/report_actions.dart';
 
-import '../../Models/AbuseReport.dart';
-import '../../Models/Report.dart';
-import '../../Providers/abuseReportProvider.dart';
-import '../../Providers/reportProvider.dart';
-import '../../Providers/reportDataPerYearProvider.dart';
-import '../../Services/stateObserver.dart';
+import '../../../Models/AbuseReport.dart';
+import '../../../Models/Report.dart';
+import '../../../Providers/abuseReportProvider.dart';
+import '../../../Providers/reportProvider.dart';
+import '../../../Providers/reportDataPerYearProvider.dart';
+import '../../../Services/stateObserver.dart';
 
 class GDDashboard extends StatefulWidget {
   const GDDashboard({super.key});
@@ -58,6 +59,26 @@ class _GDDashboardState extends State<GDDashboard> {
 
   @override
   Widget build(BuildContext context) {
+    Map<String, List<Report>> groupedReports = {};
+    Map<String, List<Report>> groupedAnonymousReports = {};
+
+    _reports.forEach((report) {
+      String status =
+          report.status.toString().capitalizeFirstLetterOfEachWord();
+      if (!groupedReports.containsKey(status)) {
+        groupedReports[status] = [];
+      }
+      groupedReports[status]!.add(report);
+    });
+
+    _anonymousReports.forEach((report) {
+      String status =
+          report.status.toString().capitalizeFirstLetterOfEachWord();
+      if (!groupedAnonymousReports.containsKey(status)) {
+        groupedAnonymousReports[status] = [];
+      }
+      groupedAnonymousReports[status]!.add(report);
+    });
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.only(left: 16.0, right: 16.0),
@@ -88,13 +109,33 @@ class _GDDashboardState extends State<GDDashboard> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  _reports.isNotEmpty
-                      ? Column(
-                          children: _reports
-                              .map((report) => _reportsTile(report: report))
-                              .toList(),
-                        )
-                      : _buildNoReportsView(),
+                  groupedReports.isEmpty
+                      ? _buildNoReportsView()
+                      : Column(
+                          children: groupedReports.entries.map((entry) {
+                            String status = entry.key;
+                            List<Report> reports = entry.value;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 10),
+                                Text(
+                                  status,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Column(
+                                  children: reports
+                                      .map((report) =>
+                                          _reportsTile(report: report))
+                                      .toList(),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
                   SizedBox(height: 20),
                   Text(
                     'Anonymous Reports',
@@ -103,13 +144,35 @@ class _GDDashboardState extends State<GDDashboard> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                  _anonymousReports.isNotEmpty
-                      ? Column(
-                          children: _anonymousReports
-                              .map((report) => _reportsTile(report: report))
-                              .toList(),
-                        )
-                      : _buildNoReportsView(),
+                  groupedAnonymousReports.isEmpty
+                      ? _buildNoReportsView()
+                      : Column(
+                          // Display grouped anonymous reports
+                          children:
+                              groupedAnonymousReports.entries.map((entry) {
+                            String status = entry.key;
+                            List<Report> reports = entry.value;
+                            return Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(height: 10),
+                                Text(
+                                  status,
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                                Column(
+                                  children: reports
+                                      .map((report) =>
+                                          _reportsTile(report: report))
+                                      .toList(),
+                                ),
+                              ],
+                            );
+                          }).toList(),
+                        ),
                   SizedBox(
                     height: 20,
                   ),
@@ -434,8 +497,11 @@ class _GDDashboardState extends State<GDDashboard> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.hourglass_empty,
-                  size: 40, color: Color.fromRGBO(8, 100, 175, 0.6)),
+              Icon(
+                Icons.hourglass_empty,
+                size: 32,
+                color: Color.fromRGBO(8, 100, 175, 0.6),
+              ),
               Text(
                 'No Reports',
                 style: TextStyle(
@@ -453,7 +519,14 @@ class _GDDashboardState extends State<GDDashboard> {
   Widget _reportsTile({required Report report}) => Column(
         children: [
           GestureDetector(
-            onTap: () {},
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => ReportActions(report: report),
+                ),
+              );
+            },
             child: ListTile(
               title: Text(
                 "Report: ${report.abuse_type.toString()}",
