@@ -263,9 +263,10 @@ class _ReportDetailsState extends State<ReportActions> {
                         Text(
                           "Victim's Details",
                           style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Color.fromRGBO(8, 100, 175, 1)),
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(8, 100, 175, 1),
+                          ),
                         ),
                         SizedBox(height: 8),
                         RichText(

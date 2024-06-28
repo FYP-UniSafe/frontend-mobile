@@ -147,7 +147,6 @@ class _GDDashboardState extends State<GDDashboard> {
                   groupedAnonymousReports.isEmpty
                       ? _buildNoReportsView()
                       : Column(
-                          // Display grouped anonymous reports
                           children:
                               groupedAnonymousReports.entries.map((entry) {
                             String status = entry.key;
@@ -538,6 +537,30 @@ class _GDDashboardState extends State<GDDashboard> {
                 mainAxisAlignment: MainAxisAlignment.start,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  SizedBox(
+                    height: 4.0,
+                  ),
+                  RichText(
+                    text: TextSpan(
+                      text: 'ID: ',
+                      style: TextStyle(
+                          fontFamily: 'Montserrat',
+                          fontSize: 14,
+                          color: Colors.black),
+                      children: [
+                        TextSpan(
+                          text: report.report_id.toString(),
+                          style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
+                    height: 4.0,
+                  ),
                   RichText(
                     text: TextSpan(
                       text: 'Status: ',
