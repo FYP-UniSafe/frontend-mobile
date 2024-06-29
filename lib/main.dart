@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:developer';
 
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -16,6 +17,7 @@ import 'Providers/locationProvider.dart';
 
 import 'Providers/reportProvider.dart';
 import 'Providers/selectionProvider.dart';
+import 'Services/firebase_options.dart';
 import 'Services/storage.dart';
 
 Widget? _landingPage;
@@ -29,6 +31,9 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   dotenv.load(fileName: ".env");
   await Future.wait([initializeApp(), storageProvider.initialize()]);
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => AuthProvider()),
     ChangeNotifierProvider(create: (context) => ProfileTypeProvider()),
