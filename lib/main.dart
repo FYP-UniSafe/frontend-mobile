@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:developer';
+import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
@@ -26,7 +27,6 @@ import 'Services/storage.dart';
 //
 // }
 
-
 Widget? _landingPage;
 
 final storageProvider = LocalStorageProvider();
@@ -37,10 +37,18 @@ final counselProvider = CounselProvider();
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   dotenv.load(fileName: ".env");
-  await Future.wait([initializeApp(), storageProvider.initialize(),Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  )]);
-  await firebaseApi.initNotifications();
+  await Future.wait([
+    initializeApp(),
+    storageProvider.initialize(),
+    if (Platform.isAndroid) ...[
+      Firebase.initializeApp(
+        options: DefaultFirebaseOptions.currentPlatform,
+      )
+    ]
+  ]);
+  if (Platform.isAndroid) {
+    await firebaseApi.initNotifications();
+  }
   // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => AuthProvider()),
@@ -50,7 +58,7 @@ void main() async {
     ChangeNotifierProvider.value(value: storageProvider),
     ChangeNotifierProvider.value(value: reportProvider),
     ChangeNotifierProvider.value(value: counselProvider),
-    ChangeNotifierProvider.value(value: firebaseApi),
+   if(Platform.isAndroid) ChangeNotifierProvider.value(value: firebaseApi),
   ], child: UniSafe()));
 }
 
