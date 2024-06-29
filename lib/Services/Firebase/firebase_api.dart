@@ -243,10 +243,10 @@ class FirebaseApi extends ChangeNotifier {
       String? group,
       payload}) async {
     AndroidNotificationDetails androidNotificationDetails =
-        AndroidNotificationDetails('simbamoney001', 'Simba Money',
+        AndroidNotificationDetails('unisafe001', 'UniSafe',
             groupKey: group,
             channelDescription:
-                'Channel to display notifications from the Simba Money App',
+                'Channel to display notifications from the UniSafe App',
             importance: Importance.max,
             priority: Priority.high,
             ticker: 'ticker');

@@ -22,9 +22,9 @@ import 'Services/Firebase/firebase_api.dart';
 import 'Services/Firebase/firebase_options.dart';
 import 'Services/storage.dart';
 
-Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-
-}
+// Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+//
+// }
 
 
 Widget? _landingPage;
@@ -41,7 +41,7 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   )]);
   await firebaseApi.initNotifications();
-  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
+  // FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => AuthProvider()),
     ChangeNotifierProvider(create: (context) => ProfileTypeProvider()),
