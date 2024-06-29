@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 
@@ -245,5 +246,232 @@ class ReportProvider extends ChangeNotifier {
       fetchAnonymousReports(),
       fetchReports()
     ]);
+  }
+
+  Future<void> acceptReport(String report_id) async {
+    String? token = await LocalStorage.getToken();
+
+    final url = Uri.parse('$baseUrl/reports/accept');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'report_id': report_id,
+      },
+    );
+    if (response.statusCode == 200) {
+      print('Accept Report Response: ${jsonDecode(response.body)}');
+      getGenderDeskReports();
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await acceptReport(report_id);
+    } else {
+      print('Failed to accept report: ${response.statusCode}');
+      throw Exception('Failed to accept report');
+    }
+  }
+
+  Future<void> acceptAnonymousReport(String report_id) async {
+    String? token = await LocalStorage.getToken();
+
+    final url = Uri.parse('$baseUrl/reports/anonymous/accept');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'report_id': report_id,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Accept Report Response: ${jsonDecode(response.body)}');
+      getGenderDeskReports();
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await acceptAnonymousReport(report_id);
+    } else {
+      print('Failed to accept report: ${response.statusCode}');
+      throw Exception(response.body);
+    }
+  }
+
+  Future<void> rejectReport(
+      String report_id, String rejection_reason, String status) async {
+    String? token = await LocalStorage.getToken();
+
+    final url = Uri.parse('$baseUrl/reports/reject');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'report_id': report_id,
+        'rejection_reason': rejection_reason,
+        'status': status,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Reject Report Response: ${jsonDecode(response.body)}');
+      getGenderDeskReports();
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await rejectReport(report_id, rejection_reason, status);
+    } else {
+      print('Failed to reject report: ${response.statusCode}');
+      throw Exception('Failed to reject report');
+    }
+  }
+
+  Future<void> rejectAnonymousReport(
+      String report_id, String rejection_reason, String status) async {
+    String? token = await LocalStorage.getToken();
+
+    final url = Uri.parse('$baseUrl/reports/anonymous/reject');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'report_id': report_id,
+        'rejection_reason': rejection_reason,
+        'status': status,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Reject Report Response: ${jsonDecode(response.body)}');
+      getGenderDeskReports();
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await rejectAnonymousReport(report_id, rejection_reason, status);
+    } else {
+      print('Failed to reject report: ${response.statusCode}');
+      throw Exception('Failed to reject report');
+    }
+  }
+
+  Future<void> closeReport(String report_id) async {
+    String? token = await LocalStorage.getToken();
+
+    final url = Uri.parse('$baseUrl/reports/close');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'report_id': report_id,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Close Report Response: ${jsonDecode(response.body)}');
+      getGenderDeskReports();
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await closeReport(report_id);
+    } else {
+      print('Failed to close report: ${response.statusCode}');
+      throw Exception('Failed to close report');
+    }
+  }
+
+  Future<void> closeAnonymousReport(String report_id) async {
+    String? token = await LocalStorage.getToken();
+
+    final url = Uri.parse('$baseUrl/reports/anonymous/close');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'report_id': report_id,
+      },
+    );
+
+    if (response.statusCode == 200) {
+      print('Close Report Response: ${jsonDecode(response.body)}');
+      getGenderDeskReports();
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await closeAnonymousReport(report_id);
+    } else {
+      print('Failed to close report: ${response.statusCode}');
+      throw Exception('Failed to close report');
+    }
+  }
+
+  Future<void> forwardReport(String report_id) async {
+    String? token = await LocalStorage.getToken();
+
+    final url = Uri.parse('$baseUrl/reports/forward');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'report_id': report_id,
+      },
+    );
+    log(response.body);
+    if (response.statusCode == 200) {
+      print('Forward Report Response: ${jsonDecode(response.body)}');
+      getGenderDeskReports();
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await forwardReport(report_id);
+    } else {
+      print('Failed to forward report: ${response.statusCode}');
+      throw Exception('Failed to forward report');
+    }
+  }
+
+  Future<void> forwardAnonymousReport(String report_id) async {
+    String? token = await LocalStorage.getToken();
+
+    final url = Uri.parse('$baseUrl/reports/anonymous/forward');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'report_id': report_id,
+      },
+    );
+    log(response.body);
+    if (response.statusCode == 200) {
+      print('Forward Report Response: ${jsonDecode(response.body)}');
+      getGenderDeskReports();
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await forwardAnonymousReport(report_id);
+    } else {
+      print('Failed to forward report: ${response.statusCode}');
+      throw Exception('Failed to forward report');
+    }
+  }
+
+  List<Report> getReportsForwardedToPolice() {
+    return _reports
+        .where((report) => report.status == 'forwarded to police')
+        .toList();
   }
 }

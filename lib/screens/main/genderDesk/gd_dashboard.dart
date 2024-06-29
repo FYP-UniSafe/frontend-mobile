@@ -128,8 +128,8 @@ class _GDDashboardState extends State<GDDashboard> {
                                 ),
                                 Column(
                                   children: reports
-                                      .map((report) =>
-                                          _reportsTile(report: report))
+                                      .map((report) => _reportsTile(
+                                          report: report, isAnonymous: false))
                                       .toList(),
                                 ),
                               ],
@@ -164,8 +164,8 @@ class _GDDashboardState extends State<GDDashboard> {
                                 ),
                                 Column(
                                   children: reports
-                                      .map((report) =>
-                                          _reportsTile(report: report))
+                                      .map((report) => _reportsTile(
+                                          report: report, isAnonymous: true))
                                       .toList(),
                                 ),
                               ],
@@ -515,14 +515,16 @@ class _GDDashboardState extends State<GDDashboard> {
     );
   }
 
-  Widget _reportsTile({required Report report}) => Column(
+  Widget _reportsTile({required Report report, required bool isAnonymous}) =>
+      Column(
         children: [
           GestureDetector(
             onTap: () {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ReportActions(report: report),
+                  builder: (context) =>
+                      ReportActions(report: report, isAnonymous: isAnonymous),
                 ),
               );
             },
