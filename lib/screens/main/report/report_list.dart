@@ -191,6 +191,8 @@ class _ReportListState extends State<ReportList> {
         return Colors.orange;
       case 'Resolved':
         return Colors.green;
+      case 'In Progress':
+        return Colors.grey;
       default:
         return Color.fromRGBO(8, 100, 175, 1.0);
     }

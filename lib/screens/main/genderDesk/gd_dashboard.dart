@@ -1,4 +1,3 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -9,9 +8,9 @@ import 'package:unisafe/screens/main/genderDesk/report_actions.dart';
 
 import '../../../Models/AbuseReport.dart';
 import '../../../Models/Report.dart';
-import '../../../Providers/abuseReportProvider.dart';
+
 import '../../../Providers/reportProvider.dart';
-import '../../../Providers/reportDataPerYearProvider.dart';
+
 import '../../../Services/stateObserver.dart';
 
 class GDDashboard extends StatefulWidget {
@@ -483,6 +482,8 @@ class _GDDashboardState extends State<GDDashboard> {
         return Colors.orange;
       case 'Resolved':
         return Colors.green;
+      case 'In Progress':
+        return Colors.grey;
       default:
         return Color.fromRGBO(8, 100, 175, 1.0);
     }
