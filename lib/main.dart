@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -17,23 +18,30 @@ import 'Providers/locationProvider.dart';
 
 import 'Providers/reportProvider.dart';
 import 'Providers/selectionProvider.dart';
-import 'Services/firebase_options.dart';
+import 'Services/Firebase/firebase_api.dart';
+import 'Services/Firebase/firebase_options.dart';
 import 'Services/storage.dart';
+
+Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+
+}
+
 
 Widget? _landingPage;
 
 final storageProvider = LocalStorageProvider();
 final reportProvider = ReportProvider();
-
+final firebaseApi = FirebaseApi();
 final counselProvider = CounselProvider();
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   dotenv.load(fileName: ".env");
-  await Future.wait([initializeApp(), storageProvider.initialize()]);
-  await Firebase.initializeApp(
+  await Future.wait([initializeApp(), storageProvider.initialize(),Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
-  );
+  )]);
+  await firebaseApi.initNotifications();
+  FirebaseMessaging.onBackgroundMessage(_firebaseMessagingBackgroundHandler);
   runApp(MultiProvider(providers: [
     ChangeNotifierProvider(create: (context) => AuthProvider()),
     ChangeNotifierProvider(create: (context) => ProfileTypeProvider()),
@@ -42,6 +50,7 @@ void main() async {
     ChangeNotifierProvider.value(value: storageProvider),
     ChangeNotifierProvider.value(value: reportProvider),
     ChangeNotifierProvider.value(value: counselProvider),
+    ChangeNotifierProvider.value(value: firebaseApi),
   ], child: UniSafe()));
 }
 
