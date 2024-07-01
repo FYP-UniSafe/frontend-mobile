@@ -175,6 +175,7 @@ class ReportProvider extends ChangeNotifier {
         AuthProvider.refreshToken();
         await fetchReports();
       } else {
+        log(response.body);
         throw Exception('Failed to load reports');
       }
     } catch (error) {
@@ -465,6 +466,30 @@ class ReportProvider extends ChangeNotifier {
     } else {
       print('Failed to forward report: ${response.statusCode}');
       throw Exception('Failed to forward report');
+    }
+  }
+
+  Future<void> fetchForwardedReports() async {
+    String? token = await LocalStorage.getToken();
+    final url = '$baseUrl/reports/list/forwarded';
+    try {
+      final response = await http.get(Uri.parse(url), headers: {
+        "Authorization": "Bearer $token",
+      });
+      if (response.statusCode == 200) {
+        log(response.body);
+        final List<dynamic> reportData = json.decode(response.body);
+        _reports = reportData.map((data) => Report.fromJson(data)).toList();
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken();
+        await fetchReports();
+      } else {
+        log(response.body);
+        throw Exception('Failed to load reports');
+      }
+    } catch (error) {
+      throw error;
     }
   }
 

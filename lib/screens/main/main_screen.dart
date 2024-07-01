@@ -84,6 +84,9 @@ class _MainScreenState extends State<MainScreen> {
           'UniSafe',
           'Profile',
         ];
+        if (currentSelectedIndex > _pages.length) {
+          currentSelectedIndex = 0;
+        }
       } else if (user?.is_police == true) {
         _pages = [
           PFDashboard(),
@@ -93,6 +96,9 @@ class _MainScreenState extends State<MainScreen> {
           'UniSafe',
           'Profile',
         ];
+        if (currentSelectedIndex > _pages.length) {
+          currentSelectedIndex = 0;
+        }
       } else {
         _pages = [
           HomePage(),
