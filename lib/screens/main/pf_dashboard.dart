@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/resources/formats.dart';
+import '../../Models/Report.dart';
 import '../../Providers/reportProvider.dart';
 
 class PFDashboard extends StatefulWidget {
@@ -12,6 +13,9 @@ class PFDashboard extends StatefulWidget {
 }
 
 class _PFDashboardState extends State<PFDashboard> {
+  late ReportProvider _reportProvider;
+  List<Report> _policeReports = [];
+
   @override
   void initState() {
     super.initState();
@@ -19,16 +23,20 @@ class _PFDashboardState extends State<PFDashboard> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final reportProvider = Provider.of<ReportProvider>(context);
-    final policeReports = reportProvider.getReportsForwardedToPolice();
+  void didChangeDependencies() {
+    _reportProvider = Provider.of<ReportProvider>(context);
+    _policeReports = _reportProvider.getReportsForwardedToPolice();
+    super.didChangeDependencies();
+  }
 
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
-      body: policeReports.isEmpty
-          ? Padding(
-              padding: EdgeInsets.symmetric(horizontal: 16.0),
+      body: _policeReports.isEmpty
+          ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Icon(
                     Icons.hourglass_empty,
@@ -39,86 +47,91 @@ class _PFDashboardState extends State<PFDashboard> {
                 ],
               ),
             )
-          : SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: policeReports.map((report) {
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 16.0),
-                      child: Card(
-                        child: ListTile(
-                          title: Text(
-                            "Report: ${report.abuse_type.toString()}",
-                            style: TextStyle(
-                              fontSize: 16,
+          : RefreshIndicator(
+              onRefresh: () async {
+                _reportProvider.fetchForwardedReports();
+              },
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: _policeReports.map((report) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16.0),
+                        child: Card(
+                          child: ListTile(
+                            title: Text(
+                              "Report: ${report.abuse_type.toString()}",
+                              style: TextStyle(
+                                fontSize: 16,
+                              ),
                             ),
-                          ),
-                          subtitle: Column(
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 4.0,
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: 'ID: ',
-                                  style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 14,
-                                      color: Colors.black),
-                                  children: [
-                                    TextSpan(
-                                      text: report.report_id.toString(),
-                                      style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontSize: 14,
-                                      ),
-                                    ),
-                                  ],
+                            subtitle: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                SizedBox(
+                                  height: 4.0,
                                 ),
-                              ),
-                              SizedBox(
-                                height: 4.0,
-                              ),
-                              RichText(
-                                text: TextSpan(
-                                  text: 'Status: ',
-                                  style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 14,
-                                      color: Colors.black),
-                                  children: [
-                                    TextSpan(
-                                      text: report.status
-                                          .toString()
-                                          .capitalizeFirstLetterOfEachWord(),
-                                      style: TextStyle(
+                                RichText(
+                                  text: TextSpan(
+                                    text: 'ID: ',
+                                    style: TextStyle(
                                         fontFamily: 'Montserrat',
                                         fontSize: 14,
-                                        color: _getStatusColor(report.status
+                                        color: Colors.black),
+                                    children: [
+                                      TextSpan(
+                                        text: report.report_id.toString(),
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                SizedBox(
+                                  height: 4.0,
+                                ),
+                                RichText(
+                                  text: TextSpan(
+                                    text: 'Status: ',
+                                    style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 14,
+                                        color: Colors.black),
+                                    children: [
+                                      TextSpan(
+                                        text: report.status
                                             .toString()
-                                            .capitalizeFirstLetterOfEachWord()),
+                                            .capitalizeFirstLetterOfEachWord(),
+                                        style: TextStyle(
+                                          fontFamily: 'Montserrat',
+                                          fontSize: 14,
+                                          color: _getStatusColor(report.status
+                                              .toString()
+                                              .capitalizeFirstLetterOfEachWord()),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              SizedBox(height: 8),
-                              Text(
-                                _formatDateTime(DateTime.parse(
-                                    report.created_on.toString())),
-                                style: TextStyle(fontSize: 12),
-                              ),
-                            ],
+                                SizedBox(height: 8),
+                                Text(
+                                  _formatDateTime(DateTime.parse(
+                                      report.created_on.toString())),
+                                  style: TextStyle(fontSize: 12),
+                                ),
+                              ],
+                            ),
+                            onTap: () {},
                           ),
-                          onTap: () {},
                         ),
-                      ),
-                    );
-                  }).toList(),
+                      );
+                    }).toList(),
+                  ),
                 ),
               ),
             ),

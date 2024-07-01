@@ -477,7 +477,6 @@ class ReportProvider extends ChangeNotifier {
         "Authorization": "Bearer $token",
       });
       if (response.statusCode == 200) {
-        log(response.body);
         final List<dynamic> reportData = json.decode(response.body);
         _reports = reportData.map((data) => Report.fromJson(data)).toList();
         notifyListeners();
@@ -493,9 +492,7 @@ class ReportProvider extends ChangeNotifier {
     }
   }
 
-  List<Report> getReportsForwardedToPolice() {
-    return _reports
-        .where((report) => report.status == 'forwarded to police')
-        .toList();
-  }
+  List<Report> getReportsForwardedToPolice() => _reports
+      .where((report) => report.status.toString().toLowerCase() == 'forwarded to police')
+      .toList();
 }
