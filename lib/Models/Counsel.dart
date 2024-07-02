@@ -13,6 +13,17 @@ class Counsel {
   String? created_on;
   String? status;
 
+  String? startTime;
+  String? endTime;
+  String? timeSlot;
+  String? physicalLocation;
+
+  String? consultantPhone;
+  String? consultantOffice;
+  String? reportId;
+  String? client;
+  String? consultant;
+
   Counsel({
     this.student_email,
     this.session_type,
@@ -25,6 +36,15 @@ class Counsel {
     this.appointment_id,
     this.created_on,
     this.status,
+    this.client,
+    this.reportId,
+    this.consultant,
+    this.consultantOffice,
+    this.consultantPhone,
+    this.endTime,
+    this.physicalLocation,
+    this.startTime,
+    this.timeSlot,
   });
 
   Map<String, dynamic> toJsonCounselData() {
@@ -37,6 +57,15 @@ class Counsel {
       'student_email': student_email,
       'student_reg_no': student_reg_no,
       'session_type': session_type,
+      'client': client,
+      'consultantPhone': consultantPhone,
+      'endTime': endTime,
+      'physicalLocation': physicalLocation,
+      'startTime': startTime,
+      'timeSlot': timeSlot,
+      'reportId': reportId,
+      'consultant': consultant,
+      'consultantOffice': consultantOffice
     };
   }
 
@@ -51,7 +80,16 @@ class Counsel {
       student_email: json['student_email'],
       student_reg_no: json['student_reg_no'],
       session_type: json['session_type'],
-      status: json['status']
+      status: json['status'],
+      client: json['client'],
+      consultant: json['consultant'],
+      consultantOffice: json['consultantOffice'],
+      consultantPhone: json['consultantPhone'],
+      timeSlot: json['timeSlot'],
+      reportId: json['reportId'],
+      physicalLocation: json['physicalLocation'],
+      startTime: json['startTime'],
+      endTime: json['endTime'],
     );
   }
 }

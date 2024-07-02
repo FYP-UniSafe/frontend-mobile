@@ -80,7 +80,8 @@ class _GDDashboardState extends State<GDDashboard> {
     });
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.only(left: 16.0, right: 16.0),
+        padding:
+            EdgeInsets.only(left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
         child: SizedBox(
           height: MediaQuery.of(context).size.height * 0.99,
           child: RefreshIndicator(
@@ -102,7 +103,7 @@ class _GDDashboardState extends State<GDDashboard> {
                     color: Color.fromRGBO(8, 100, 175, 1.0),
                   ),
                   Text(
-                    'All Reports',
+                    'Named Reports',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,

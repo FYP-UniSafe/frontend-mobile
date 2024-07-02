@@ -15,24 +15,28 @@ class PFDashboard extends StatefulWidget {
 class _PFDashboardState extends State<PFDashboard> {
   late ReportProvider _reportProvider;
   List<Report> _policeReports = [];
-
+  List<Report> _anonymousPoliceReports = [];
   @override
   void initState() {
     super.initState();
     Provider.of<ReportProvider>(context, listen: false).fetchForwardedReports();
+    Provider.of<ReportProvider>(context, listen: false)
+        .fetchAnonymousForwardedReports();
   }
 
-  @override
   void didChangeDependencies() {
     _reportProvider = Provider.of<ReportProvider>(context);
     _policeReports = _reportProvider.getReportsForwardedToPolice();
+    super.didChangeDependencies();
+    _anonymousPoliceReports =
+        _reportProvider.getAnonymousReportsForwardedToPolice();
     super.didChangeDependencies();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _policeReports.isEmpty
+      body: _policeReports.isEmpty && _anonymousPoliceReports.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -43,98 +47,160 @@ class _PFDashboardState extends State<PFDashboard> {
                     size: 32,
                     color: Color.fromRGBO(8, 100, 175, 0.6),
                   ),
-                  Text('No reports'),
+                  Text(
+                    'No Reports',
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: Colors.grey,
+                        fontWeight: FontWeight.w400),
+                  ),
                 ],
               ),
             )
           : RefreshIndicator(
               onRefresh: () async {
-                _reportProvider.fetchForwardedReports();
+                await _reportProvider.fetchForwardedReports();
+                await _reportProvider.fetchAnonymousForwardedReports();
               },
+              color: Color.fromRGBO(8, 100, 175, 1),
               child: SingleChildScrollView(
                 child: Padding(
-                  padding: const EdgeInsets.all(16.0),
+                  padding: EdgeInsets.only(
+                      left: 16.0, right: 16.0, top: 8.0, bottom: 8.0),
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: _policeReports.map((report) {
-                      return Padding(
-                        padding: const EdgeInsets.only(bottom: 16.0),
-                        child: Card(
-                          child: ListTile(
-                            title: Text(
-                              "Report: ${report.abuse_type.toString()}",
-                              style: TextStyle(
-                                fontSize: 16,
-                              ),
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        'REPORTS',
+                        style: TextStyle(fontSize: 18.0),
+                      ),
+                      Divider(
+                        height: 30.0,
+                        color: Color.fromRGBO(8, 100, 175, 1.0),
+                      ),
+                      if (_policeReports.isNotEmpty) ...[
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Named Reports',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
                             ),
-                            subtitle: Column(
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                SizedBox(
-                                  height: 4.0,
-                                ),
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'ID: ',
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontSize: 14,
-                                        color: Colors.black),
-                                    children: [
-                                      TextSpan(
-                                        text: report.report_id.toString(),
-                                        style: TextStyle(
-                                          fontFamily: 'Montserrat',
-                                          fontSize: 14,
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(
-                                  height: 4.0,
-                                ),
-                                RichText(
-                                  text: TextSpan(
-                                    text: 'Status: ',
-                                    style: TextStyle(
-                                        fontFamily: 'Montserrat',
-                                        fontSize: 14,
-                                        color: Colors.black),
-                                    children: [
-                                      TextSpan(
-                                        text: report.status
-                                            .toString()
-                                            .capitalizeFirstLetterOfEachWord(),
-                                        style: TextStyle(
-                                          fontFamily: 'Montserrat',
-                                          fontSize: 14,
-                                          color: _getStatusColor(report.status
-                                              .toString()
-                                              .capitalizeFirstLetterOfEachWord()),
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                                SizedBox(height: 8),
-                                Text(
-                                  _formatDateTime(DateTime.parse(
-                                      report.created_on.toString())),
-                                  style: TextStyle(fontSize: 12),
-                                ),
-                              ],
-                            ),
-                            onTap: () {},
                           ),
                         ),
-                      );
-                    }).toList(),
+                        _buildReportSection(_policeReports),
+                      ],
+                      if (_anonymousPoliceReports.isNotEmpty) ...[
+                        SizedBox(height: 16),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: Text(
+                            'Anonymous Reports',
+                            style: TextStyle(
+                              fontSize: 16,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        _buildReportSection(_anonymousPoliceReports),
+                      ],
+                    ],
                   ),
                 ),
               ),
             ),
+    );
+  }
+
+  Widget _buildReportSection(List<Report> reports) {
+    return Column(
+      children: reports.map((report) {
+        return Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            GestureDetector(
+              onTap: () {},
+              child: ListTile(
+                title: Text(
+                  "Report: ${report.abuse_type.toString()}",
+                  style: TextStyle(
+                    fontSize: 16,
+                  ),
+                ),
+                subtitle: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    SizedBox(
+                      height: 4.0,
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        text: 'ID: ',
+                        style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 14,
+                            color: Colors.black),
+                        children: [
+                          TextSpan(
+                            text: report.report_id.toString(),
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 4.0,
+                    ),
+                    RichText(
+                      text: TextSpan(
+                        text: 'Status: ',
+                        style: TextStyle(
+                            fontFamily: 'Montserrat',
+                            fontSize: 14,
+                            color: Colors.black),
+                        children: [
+                          TextSpan(
+                            text: report.status
+                                .toString()
+                                .capitalizeFirstLetterOfEachWord(),
+                            style: TextStyle(
+                              fontFamily: 'Montserrat',
+                              fontSize: 14,
+                              color: _getStatusColor(report.status.toString()),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      _formatDateTime(
+                          DateTime.parse(report.created_on.toString())),
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
+                trailing: Padding(
+                  padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+                  child: Icon(Icons.arrow_forward_ios, size: 18),
+                ),
+              ),
+            ),
+            Padding(
+              padding: EdgeInsets.fromLTRB(8.0, 0.0, 8.0, 0.0),
+              child: Divider(
+                height: 0.0,
+                color: Colors.grey,
+              ),
+            )
+          ],
+        );
+      }).toList(),
     );
   }
 

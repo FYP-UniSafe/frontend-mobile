@@ -177,9 +177,9 @@ class _AllAppointmentsState extends State<AllAppointments> {
                             Text(
                               'No Appointments',
                               style: TextStyle(
-                                  fontSize: 20,
-                                  fontWeight: FontWeight.bold,
-                                  color: Color.fromRGBO(8, 100, 175, 1.0)),
+                                  fontSize: 18,
+                                  color: Colors.grey,
+                                  fontWeight: FontWeight.w400),
                             ),
                           ],
                         ),

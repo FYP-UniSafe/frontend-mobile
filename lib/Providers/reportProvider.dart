@@ -477,14 +477,14 @@ class ReportProvider extends ChangeNotifier {
         "Authorization": "Bearer $token",
       });
       if (response.statusCode == 200) {
+        log(response.body);
         final List<dynamic> reportData = json.decode(response.body);
         _reports = reportData.map((data) => Report.fromJson(data)).toList();
         notifyListeners();
       } else if (response.statusCode == 401) {
         AuthProvider.refreshToken();
-        await fetchReports();
+        await fetchForwardedReports();
       } else {
-        log(response.body);
         throw Exception('Failed to load reports');
       }
     } catch (error) {
@@ -492,7 +492,39 @@ class ReportProvider extends ChangeNotifier {
     }
   }
 
-  List<Report> getReportsForwardedToPolice() => _reports
-      .where((report) => report.status.toString().toLowerCase() == 'forwarded to police')
-      .toList();
+  Future<void> fetchAnonymousForwardedReports() async {
+    String? token = await LocalStorage.getToken();
+    final url = '$baseUrl/reports/anonymous/list/forwarded';
+    try {
+      final response = await http.get(Uri.parse(url), headers: {
+        "Authorization": "Bearer $token",
+      });
+      if (response.statusCode == 200) {
+        log(response.body);
+        final List<dynamic> reportData = json.decode(response.body);
+        _anonymousReports =
+            reportData.map((data) => Report.fromJson(data)).toList();
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken();
+        await fetchAnonymousForwardedReports();
+      } else {
+        throw Exception('Failed to load anonymous reports');
+      }
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  List<Report> getReportsForwardedToPolice() {
+    return _reports
+        .where((report) => report.status.toString() == "forwarded to police")
+        .toList();
+  }
+
+  List<Report> getAnonymousReportsForwardedToPolice() {
+    return _anonymousReports
+        .where((report) => report.status.toString() == "forwarded to police")
+        .toList();
+  }
 }

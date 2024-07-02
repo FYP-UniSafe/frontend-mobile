@@ -482,8 +482,8 @@ class _ReportDetailsState extends State<ReportActions> {
                     report.status.toString().trim() != 'RESOLVED') ...[
                   Padding(
                     padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         if (!report.status
                                 .toString()
@@ -562,7 +562,7 @@ class _ReportDetailsState extends State<ReportActions> {
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               fixedSize: Size(
-                                  MediaQuery.of(context).size.width * 0.44, 50),
+                                  MediaQuery.of(context).size.width * 0.9, 50),
                               backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
                               padding: EdgeInsets.all(12.0),
                               shape: RoundedRectangleBorder(
@@ -576,6 +576,9 @@ class _ReportDetailsState extends State<ReportActions> {
                               ),
                             ),
                           ),
+                        SizedBox(
+                          height: 8.0,
+                        ),
                         ElevatedButton(
                           onPressed: () async {
                             showDialog(
@@ -645,7 +648,7 @@ class _ReportDetailsState extends State<ReportActions> {
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
                             fixedSize: Size(
-                                MediaQuery.of(context).size.width * 0.44, 50),
+                                MediaQuery.of(context).size.width * 0.9, 50),
                             backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
                             padding: EdgeInsets.all(12.0),
                             shape: RoundedRectangleBorder(
@@ -671,8 +674,8 @@ class _ReportDetailsState extends State<ReportActions> {
                       .contains("forwarded"))
                     Padding(
                       padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           if (!report.status
                               .toString()
@@ -754,7 +757,7 @@ class _ReportDetailsState extends State<ReportActions> {
                               style: ElevatedButton.styleFrom(
                                 foregroundColor: Colors.white,
                                 fixedSize: Size(
-                                    MediaQuery.of(context).size.width * 0.44,
+                                    MediaQuery.of(context).size.width * 0.9,
                                     50),
                                 backgroundColor:
                                     Color.fromRGBO(8, 100, 175, 1.0),
@@ -770,6 +773,9 @@ class _ReportDetailsState extends State<ReportActions> {
                                 ),
                               ),
                             ),
+                          SizedBox(
+                            height: 8.0,
+                          ),
                           ElevatedButton(
                             onPressed: () async {
                               showDialog(
@@ -838,7 +844,7 @@ class _ReportDetailsState extends State<ReportActions> {
                             style: ElevatedButton.styleFrom(
                               foregroundColor: Colors.white,
                               fixedSize: Size(
-                                  MediaQuery.of(context).size.width * 0.44, 50),
+                                  MediaQuery.of(context).size.width * 0.9, 50),
                               backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
                               padding: EdgeInsets.all(12.0),
                               shape: RoundedRectangleBorder(

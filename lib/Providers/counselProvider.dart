@@ -15,8 +15,10 @@ class CounselProvider extends ChangeNotifier {
 
   bool? get isRequested => _isRequested;
   List<Counsel> _appointments = [];
+  List<Counsel> _allAppointments = [];
 
   List<Counsel> get appointments => _appointments;
+  List<Counsel> get allAppointments => _allAppointments;
 
   // Future requestAppointment({required Counsel appointment}) async {
   //   log(appointment.toJsonCounselData().toString());
@@ -136,6 +138,39 @@ class CounselProvider extends ChangeNotifier {
       }
     } catch (e) {
       _appointments = [];
+      notifyListeners();
+    }
+  }
+
+  Future getAllAppointments() async {
+    String? token = await LocalStorage.getToken();
+    try {
+      http.Response response =
+          await http.get(Uri.parse("$baseUrl/appointments/list/all"), headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      });
+
+      if (response.statusCode == 200) {
+        log(response.body);
+        List output = jsonDecode(response.body);
+        _allAppointments =
+            output.map((data) => Counsel.fromJson(data)).toList();
+        _allAppointments.sort;
+
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        log(response.body);
+        AuthProvider.refreshToken();
+        await getAllAppointments();
+      } else {
+        log(response.body);
+        _allAppointments = [];
+        notifyListeners();
+      }
+    } catch (e) {
+      _allAppointments = [];
       notifyListeners();
     }
   }
