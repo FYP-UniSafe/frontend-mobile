@@ -72,8 +72,11 @@ Future<void> initializeApp() async {
       if (session) {
         try {
           await AuthProvider.refreshToken();
-          reportProvider.getReports();
-          counselProvider.getAppointments();
+          Future.wait([
+          reportProvider.getReports(),
+            counselProvider.getAppointments(),
+            counselProvider.getAllAppointments()
+          ]);
         } catch (e) {
           log(e.toString());
         }

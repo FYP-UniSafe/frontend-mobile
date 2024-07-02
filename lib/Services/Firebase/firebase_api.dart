@@ -8,6 +8,15 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../Models/push_notification.dart';
 import '../../Models/received_notification.dart';
 
+
+Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
+  if (kDebugMode) {
+    print("Handling a background message: ${message.messageId}");
+    print("Handling a background Title: ${message.notification?.title}");
+    print("Handling a background Title: ${message.notification?.body}");
+  }
+}
+
 class FirebaseApi extends ChangeNotifier {
   final _firebaseMessaging = FirebaseMessaging.instance;
   PushNotification? _notificationInfo;
@@ -97,13 +106,7 @@ class FirebaseApi extends ChangeNotifier {
     });
   }
 
-  Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
-    if (kDebugMode) {
-      print("Handling a background message: ${message.messageId}");
-      print("Handling a background Title: ${message.notification?.title}");
-      print("Handling a background Title: ${message.notification?.body}");
-    }
-  }
+
 
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();

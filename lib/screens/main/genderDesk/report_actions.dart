@@ -12,8 +12,12 @@ import '../../../Widgets/Flashbar/flashbar.dart';
 class ReportActions extends StatefulWidget {
   final Report report;
   final bool isAnonymous;
+  final bool? isPolice;
   const ReportActions(
-      {super.key, required this.report, required this.isAnonymous});
+      {super.key,
+      required this.report,
+      required this.isAnonymous,
+      this.isPolice});
 
   @override
   State<ReportActions> createState() => _ReportDetailsState();
@@ -478,209 +482,195 @@ class _ReportDetailsState extends State<ReportActions> {
                 SizedBox(
                   height: 10.0,
                 ),
-                if (report.status.toString() != 'REJECTED' &&
-                    report.status.toString().trim() != 'RESOLVED') ...[
-                  Padding(
-                    padding: EdgeInsets.only(left: 8.0, right: 8.0),
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        if (!report.status
-                                .toString()
-                                .toLowerCase()
-                                .contains("forwarded") &&
-                            !report.status
-                                .toString()
-                                .toLowerCase()
-                                .contains("progress"))
-                          ElevatedButton(
-                            onPressed: () async {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    backgroundColor: Colors.transparent,
-                                    elevation: 0,
-                                    child: Container(
-                                      height: 100,
-                                      width: 100,
-                                      alignment: Alignment.center,
-                                      child: LoadingIndicator(
-                                        indicatorType: Indicator.ballPulseRise,
-                                        colors: [
-                                          Color.fromRGBO(8, 100, 175, 1.0)
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-
-                              try {
-                                if (widget.isAnonymous) {
-                                  await reportProvider.acceptAnonymousReport(
-                                      report.report_id.toString());
-                                } else {
-                                  await reportProvider.acceptReport(
-                                      report.report_id.toString());
-                                }
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              } catch (e) {
-                                Navigator.pop(context);
-
-                                Flashbar(
-                                  flashbarPosition: FlashbarPosition.TOP,
-                                  borderRadius: BorderRadius.circular(5),
-                                  backgroundColor: Colors.red,
-                                  icon: Icon(
-                                    CupertinoIcons.exclamationmark_triangle,
-                                    color: Colors.white,
-                                    size: 32,
-                                  ),
-                                  titleText: Text(
-                                    'Alert',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  messageText: Text(
-                                    'The report has already been accepted',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Poppins',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  duration: Duration(seconds: 3),
-                                ).show(context);
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              fixedSize: Size(
-                                  MediaQuery.of(context).size.width * 0.9, 50),
-                              backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
-                              padding: EdgeInsets.all(12.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
+                if (widget.isPolice ?? false) ...[
+                  if (report.status.toString().trim() != 'RESOLVED') ...[
+                    ElevatedButton(
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              child: Container(
+                                height: 100,
+                                width: 100,
+                                alignment: Alignment.center,
+                                child: LoadingIndicator(
+                                  indicatorType:
+                                  Indicator.ballPulseRise,
+                                  colors: [
+                                    Color.fromRGBO(8, 100, 175, 1.0)
+                                  ],
+                                ),
                               ),
-                            ),
-                            child: Text(
-                              'Accept Report',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                              ),
-                            ),
-                          ),
-                        SizedBox(
-                          height: 8.0,
-                        ),
-                        ElevatedButton(
-                          onPressed: () async {
-                            showDialog(
-                              context: context,
-                              barrierDismissible: false,
-                              builder: (BuildContext context) {
-                                return Dialog(
-                                  backgroundColor: Colors.transparent,
-                                  elevation: 0,
-                                  child: Container(
-                                    height: 100,
-                                    width: 100,
-                                    alignment: Alignment.center,
-                                    child: LoadingIndicator(
-                                      indicatorType: Indicator.ballPulseRise,
-                                      colors: [
-                                        Color.fromRGBO(8, 100, 175, 1.0)
-                                      ],
-                                    ),
-                                  ),
-                                );
-                              },
                             );
-
-                            try {
-                              if (widget.isAnonymous) {
-                                await reportProvider.closeAnonymousReport(
-                                    report.report_id.toString());
-                              } else {
-                                await reportProvider
-                                    .closeReport(report.report_id.toString());
-                              }
-                              Navigator.pop(context);
-                              Navigator.pop(context);
-                            } catch (e) {
-                              Navigator.pop(context);
-
-                              Flashbar(
-                                flashbarPosition: FlashbarPosition.TOP,
-                                borderRadius: BorderRadius.circular(5),
-                                backgroundColor: Colors.red,
-                                icon: Icon(
-                                  CupertinoIcons.exclamationmark_triangle,
-                                  color: Colors.white,
-                                  size: 32,
-                                ),
-                                titleText: Text(
-                                  'Alert',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'Poppins',
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                messageText: Text(
-                                  '$e',
-                                  style: TextStyle(
-                                      color: Colors.white,
-                                      fontFamily: 'Poppins',
-                                      fontSize: 16,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                                duration: Duration(seconds: 3),
-                              ).show(context);
-                            }
                           },
-                          style: ElevatedButton.styleFrom(
-                            foregroundColor: Colors.white,
-                            fixedSize: Size(
-                                MediaQuery.of(context).size.width * 0.9, 50),
-                            backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
-                            padding: EdgeInsets.all(12.0),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5.0),
+                        );
+
+                        try {
+                          if (widget.isAnonymous) {
+                            await reportProvider.acceptAnonymousReport(
+                                report.report_id.toString());
+                          } else {
+                            await reportProvider.acceptReport(
+                                report.report_id.toString());
+                          }
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        } catch (e) {
+                          Navigator.pop(context);
+
+                          Flashbar(
+                            flashbarPosition: FlashbarPosition.TOP,
+                            borderRadius: BorderRadius.circular(5),
+                            backgroundColor: Colors.red,
+                            icon: Icon(
+                              CupertinoIcons.exclamationmark_triangle,
+                              color: Colors.white,
+                              size: 32,
                             ),
-                          ),
-                          child: Text(
-                            'Close Report',
-                            style: TextStyle(
-                              fontSize: 16.0,
+                            titleText: Text(
+                              'Alert',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500),
                             ),
-                          ),
+                            messageText: Text(
+                              'The report has already been accepted',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            duration: Duration(seconds: 3),
+                          ).show(context);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        fixedSize: Size(
+                            MediaQuery.of(context).size.width * 0.9,
+                            50),
+                        backgroundColor:
+                        Color.fromRGBO(8, 100, 175, 1.0),
+                        padding: EdgeInsets.all(12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
                         ),
-                      ],
+                      ),
+                      child: Text(
+                        'Accept Report',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                        ),
+                      ),
                     ),
-                  ),
-                  SizedBox(
-                    height: 8.0,
-                  ),
-                  if (!report.status
-                      .toString()
-                      .toLowerCase()
-                      .contains("forwarded"))
+                    SizedBox(
+                      height: 8,
+                    ),
+                    ElevatedButton(
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              child: Container(
+                                height: 100,
+                                width: 100,
+                                alignment: Alignment.center,
+                                child: LoadingIndicator(
+                                  indicatorType: Indicator.ballPulseRise,
+                                  colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+
+                        try {
+                          if (widget.isAnonymous) {
+                            await reportProvider.closeAnonymousReport(
+                                report.report_id.toString());
+                          } else {
+                            await reportProvider
+                                .closeReport(report.report_id.toString());
+                          }
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        } catch (e) {
+                          Navigator.pop(context);
+
+                          Flashbar(
+                            flashbarPosition: FlashbarPosition.TOP,
+                            borderRadius: BorderRadius.circular(5),
+                            backgroundColor: Colors.red,
+                            icon: Icon(
+                              CupertinoIcons.exclamationmark_triangle,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                            titleText: Text(
+                              'Alert',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            messageText: Text(
+                              '$e',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            duration: Duration(seconds: 3),
+                          ).show(context);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        foregroundColor: Colors.white,
+                        fixedSize:
+                            Size(MediaQuery.of(context).size.width * 0.9, 50),
+                        backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                        padding: EdgeInsets.all(12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
+                      child: Text(
+                        'Close Report',
+                        style: TextStyle(
+                          fontSize: 16.0,
+                        ),
+                      ),
+                    ),
+                  ],
+                ] else ...[
+                  if (report.status.toString() != 'REJECTED' &&
+                      report.status.toString().trim() != 'RESOLVED') ...[
                     Padding(
                       padding: EdgeInsets.only(left: 8.0, right: 8.0),
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
                           if (!report.status
-                              .toString()
-                              .toLowerCase()
-                              .contains("progress"))
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains("forwarded") &&
+                              !report.status
+                                  .toString()
+                                  .toLowerCase()
+                                  .contains("progress"))
                             ElevatedButton(
                               onPressed: () async {
                                 showDialog(
@@ -708,23 +698,303 @@ class _ReportDetailsState extends State<ReportActions> {
 
                                 try {
                                   if (widget.isAnonymous) {
-                                    await reportProvider.rejectAnonymousReport(
-                                      report.report_id.toString(),
-                                      report.rejection_reason.toString(),
-                                      report.status.toString(),
-                                    );
+                                    await reportProvider.acceptAnonymousReport(
+                                        report.report_id.toString());
                                   } else {
-                                    await reportProvider.rejectReport(
-                                      report.report_id.toString(),
-                                      report.rejection_reason.toString(),
-                                      report.status.toString(),
-                                    );
+                                    await reportProvider.acceptReport(
+                                        report.report_id.toString());
                                   }
                                   Navigator.pop(context);
                                   Navigator.pop(context);
                                 } catch (e) {
                                   Navigator.pop(context);
 
+                                  Flashbar(
+                                    flashbarPosition: FlashbarPosition.TOP,
+                                    borderRadius: BorderRadius.circular(5),
+                                    backgroundColor: Colors.red,
+                                    icon: Icon(
+                                      CupertinoIcons.exclamationmark_triangle,
+                                      color: Colors.white,
+                                      size: 32,
+                                    ),
+                                    titleText: Text(
+                                      'Alert',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Poppins',
+                                          fontSize: 18,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    messageText: Text(
+                                      'The report has already been accepted',
+                                      style: TextStyle(
+                                          color: Colors.white,
+                                          fontFamily: 'Poppins',
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.w500),
+                                    ),
+                                    duration: Duration(seconds: 3),
+                                  ).show(context);
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                fixedSize: Size(
+                                    MediaQuery.of(context).size.width * 0.9,
+                                    50),
+                                backgroundColor:
+                                    Color.fromRGBO(8, 100, 175, 1.0),
+                                padding: EdgeInsets.all(12.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                              ),
+                              child: Text(
+                                'Accept Report',
+                                style: TextStyle(
+                                  fontSize: 16.0,
+                                ),
+                              ),
+                            ),
+                          SizedBox(
+                            height: 8.0,
+                          ),
+                          ElevatedButton(
+                            onPressed: () async {
+                              showDialog(
+                                context: context,
+                                barrierDismissible: false,
+                                builder: (BuildContext context) {
+                                  return Dialog(
+                                    backgroundColor: Colors.transparent,
+                                    elevation: 0,
+                                    child: Container(
+                                      height: 100,
+                                      width: 100,
+                                      alignment: Alignment.center,
+                                      child: LoadingIndicator(
+                                        indicatorType: Indicator.ballPulseRise,
+                                        colors: [
+                                          Color.fromRGBO(8, 100, 175, 1.0)
+                                        ],
+                                      ),
+                                    ),
+                                  );
+                                },
+                              );
+
+                              try {
+                                if (widget.isAnonymous) {
+                                  await reportProvider.closeAnonymousReport(
+                                      report.report_id.toString());
+                                } else {
+                                  await reportProvider
+                                      .closeReport(report.report_id.toString());
+                                }
+                                Navigator.pop(context);
+                                Navigator.pop(context);
+                              } catch (e) {
+                                Navigator.pop(context);
+
+                                Flashbar(
+                                  flashbarPosition: FlashbarPosition.TOP,
+                                  borderRadius: BorderRadius.circular(5),
+                                  backgroundColor: Colors.red,
+                                  icon: Icon(
+                                    CupertinoIcons.exclamationmark_triangle,
+                                    color: Colors.white,
+                                    size: 32,
+                                  ),
+                                  titleText: Text(
+                                    'Alert',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins',
+                                        fontSize: 18,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  messageText: Text(
+                                    '$e',
+                                    style: TextStyle(
+                                        color: Colors.white,
+                                        fontFamily: 'Poppins',
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w500),
+                                  ),
+                                  duration: Duration(seconds: 3),
+                                ).show(context);
+                              }
+                            },
+                            style: ElevatedButton.styleFrom(
+                              foregroundColor: Colors.white,
+                              fixedSize: Size(
+                                  MediaQuery.of(context).size.width * 0.9, 50),
+                              backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                              padding: EdgeInsets.all(12.0),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                            ),
+                            child: Text(
+                              'Close Report',
+                              style: TextStyle(
+                                fontSize: 16.0,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(
+                      height: 8.0,
+                    ),
+                    if (!report.status
+                        .toString()
+                        .toLowerCase()
+                        .contains("forwarded"))
+                      Padding(
+                        padding: EdgeInsets.only(left: 8.0, right: 8.0),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.start,
+                          children: [
+                            if (!report.status
+                                .toString()
+                                .toLowerCase()
+                                .contains("progress"))
+                              ElevatedButton(
+                                onPressed: () async {
+                                  showDialog(
+                                    context: context,
+                                    barrierDismissible: false,
+                                    builder: (BuildContext context) {
+                                      return Dialog(
+                                        backgroundColor: Colors.transparent,
+                                        elevation: 0,
+                                        child: Container(
+                                          height: 100,
+                                          width: 100,
+                                          alignment: Alignment.center,
+                                          child: LoadingIndicator(
+                                            indicatorType:
+                                                Indicator.ballPulseRise,
+                                            colors: [
+                                              Color.fromRGBO(8, 100, 175, 1.0)
+                                            ],
+                                          ),
+                                        ),
+                                      );
+                                    },
+                                  );
+
+                                  try {
+                                    if (widget.isAnonymous) {
+                                      await reportProvider
+                                          .rejectAnonymousReport(
+                                        report.report_id.toString(),
+                                        report.rejection_reason.toString(),
+                                        report.status.toString(),
+                                      );
+                                    } else {
+                                      await reportProvider.rejectReport(
+                                        report.report_id.toString(),
+                                        report.rejection_reason.toString(),
+                                        report.status.toString(),
+                                      );
+                                    }
+                                    Navigator.pop(context);
+                                    Navigator.pop(context);
+                                  } catch (e) {
+                                    Navigator.pop(context);
+
+                                    Flashbar(
+                                      flashbarPosition: FlashbarPosition.TOP,
+                                      borderRadius: BorderRadius.circular(5),
+                                      backgroundColor: Colors.red,
+                                      icon: Icon(
+                                        CupertinoIcons.exclamationmark_triangle,
+                                        color: Colors.white,
+                                        size: 32,
+                                      ),
+                                      titleText: Text(
+                                        'Alert',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'Poppins',
+                                            fontSize: 18,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      messageText: Text(
+                                        '$e',
+                                        style: TextStyle(
+                                            color: Colors.white,
+                                            fontFamily: 'Poppins',
+                                            fontSize: 16,
+                                            fontWeight: FontWeight.w500),
+                                      ),
+                                      duration: Duration(seconds: 3),
+                                    ).show(context);
+                                  }
+                                },
+                                style: ElevatedButton.styleFrom(
+                                  foregroundColor: Colors.white,
+                                  fixedSize: Size(
+                                      MediaQuery.of(context).size.width * 0.9,
+                                      50),
+                                  backgroundColor:
+                                      Color.fromRGBO(8, 100, 175, 1.0),
+                                  padding: EdgeInsets.all(12.0),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                ),
+                                child: Text(
+                                  'Reject Report',
+                                  style: TextStyle(
+                                    fontSize: 16.0,
+                                  ),
+                                ),
+                              ),
+                            SizedBox(
+                              height: 8.0,
+                            ),
+                            ElevatedButton(
+                              onPressed: () async {
+                                showDialog(
+                                  context: context,
+                                  barrierDismissible: false,
+                                  builder: (BuildContext context) {
+                                    return Dialog(
+                                      backgroundColor: Colors.transparent,
+                                      elevation: 0,
+                                      child: Container(
+                                        height: 100,
+                                        width: 100,
+                                        alignment: Alignment.center,
+                                        child: LoadingIndicator(
+                                          indicatorType:
+                                              Indicator.ballPulseRise,
+                                          colors: [
+                                            Color.fromRGBO(8, 100, 175, 1.0)
+                                          ],
+                                        ),
+                                      ),
+                                    );
+                                  },
+                                );
+
+                                try {
+                                  if (widget.isAnonymous) {
+                                    await reportProvider.forwardAnonymousReport(
+                                        report.report_id.toString());
+                                  } else {
+                                    await reportProvider.forwardReport(
+                                        report.report_id.toString());
+                                  }
+                                  Navigator.pop(context);
+                                  Navigator.pop(context);
+                                } catch (e) {
+                                  Navigator.pop(context);
                                   Flashbar(
                                     flashbarPosition: FlashbarPosition.TOP,
                                     borderRadius: BorderRadius.circular(5),
@@ -767,101 +1037,17 @@ class _ReportDetailsState extends State<ReportActions> {
                                 ),
                               ),
                               child: Text(
-                                'Reject Report',
+                                'Forward Report',
                                 style: TextStyle(
                                   fontSize: 16.0,
                                 ),
                               ),
-                            ),
-                          SizedBox(
-                            height: 8.0,
-                          ),
-                          ElevatedButton(
-                            onPressed: () async {
-                              showDialog(
-                                context: context,
-                                barrierDismissible: false,
-                                builder: (BuildContext context) {
-                                  return Dialog(
-                                    backgroundColor: Colors.transparent,
-                                    elevation: 0,
-                                    child: Container(
-                                      height: 100,
-                                      width: 100,
-                                      alignment: Alignment.center,
-                                      child: LoadingIndicator(
-                                        indicatorType: Indicator.ballPulseRise,
-                                        colors: [
-                                          Color.fromRGBO(8, 100, 175, 1.0)
-                                        ],
-                                      ),
-                                    ),
-                                  );
-                                },
-                              );
-
-                              try {
-                                if (widget.isAnonymous) {
-                                  await reportProvider.forwardAnonymousReport(
-                                      report.report_id.toString());
-                                } else {
-                                  await reportProvider.forwardReport(
-                                      report.report_id.toString());
-                                }
-                                Navigator.pop(context);
-                                Navigator.pop(context);
-                              } catch (e) {
-                                Navigator.pop(context);
-                                Flashbar(
-                                  flashbarPosition: FlashbarPosition.TOP,
-                                  borderRadius: BorderRadius.circular(5),
-                                  backgroundColor: Colors.red,
-                                  icon: Icon(
-                                    CupertinoIcons.exclamationmark_triangle,
-                                    color: Colors.white,
-                                    size: 32,
-                                  ),
-                                  titleText: Text(
-                                    'Alert',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Poppins',
-                                        fontSize: 18,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  messageText: Text(
-                                    '$e',
-                                    style: TextStyle(
-                                        color: Colors.white,
-                                        fontFamily: 'Poppins',
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.w500),
-                                  ),
-                                  duration: Duration(seconds: 3),
-                                ).show(context);
-                              }
-                            },
-                            style: ElevatedButton.styleFrom(
-                              foregroundColor: Colors.white,
-                              fixedSize: Size(
-                                  MediaQuery.of(context).size.width * 0.9, 50),
-                              backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
-                              padding: EdgeInsets.all(12.0),
-                              shape: RoundedRectangleBorder(
-                                borderRadius: BorderRadius.circular(5.0),
-                              ),
-                            ),
-                            child: Text(
-                              'Forward Report',
-                              style: TextStyle(
-                                fontSize: 16.0,
-                              ),
-                            ),
-                          )
-                        ],
-                      ),
-                    )
-                ],
+                            )
+                          ],
+                        ),
+                      )
+                  ],
+                ]
               ],
             ),
           ),

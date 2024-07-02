@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/resources/formats.dart';
+import 'package:unisafe/screens/main/genderDesk/report_actions.dart';
 import '../../Models/Report.dart';
 import '../../Providers/reportProvider.dart';
 
@@ -27,7 +28,6 @@ class _PFDashboardState extends State<PFDashboard> {
   void didChangeDependencies() {
     _reportProvider = Provider.of<ReportProvider>(context);
     _policeReports = _reportProvider.getReportsForwardedToPolice();
-    super.didChangeDependencies();
     _anonymousPoliceReports =
         _reportProvider.getAnonymousReportsForwardedToPolice();
     super.didChangeDependencies();
@@ -36,7 +36,7 @@ class _PFDashboardState extends State<PFDashboard> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: _policeReports.isEmpty && _anonymousPoliceReports.isEmpty
+      body: _policeReports.isEmpty || _anonymousPoliceReports.isEmpty
           ? Center(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -59,8 +59,10 @@ class _PFDashboardState extends State<PFDashboard> {
             )
           : RefreshIndicator(
               onRefresh: () async {
-                await _reportProvider.fetchForwardedReports();
-                await _reportProvider.fetchAnonymousForwardedReports();
+                await Future.wait([
+                  _reportProvider.fetchForwardedReports(),
+                  _reportProvider.fetchAnonymousForwardedReports()
+                ]);
               },
               color: Color.fromRGBO(8, 100, 175, 1),
               child: SingleChildScrollView(
@@ -89,7 +91,7 @@ class _PFDashboardState extends State<PFDashboard> {
                             ),
                           ),
                         ),
-                        _buildReportSection(_policeReports),
+                        _buildReportSection(_policeReports,isAnonymous: false),
                       ],
                       if (_anonymousPoliceReports.isNotEmpty) ...[
                         SizedBox(height: 16),
@@ -103,7 +105,7 @@ class _PFDashboardState extends State<PFDashboard> {
                             ),
                           ),
                         ),
-                        _buildReportSection(_anonymousPoliceReports),
+                        _buildReportSection(_anonymousPoliceReports,isAnonymous: true),
                       ],
                     ],
                   ),
@@ -113,14 +115,16 @@ class _PFDashboardState extends State<PFDashboard> {
     );
   }
 
-  Widget _buildReportSection(List<Report> reports) {
+  Widget _buildReportSection(List<Report> reports,{required bool isAnonymous}) {
     return Column(
       children: reports.map((report) {
         return Column(
           mainAxisAlignment: MainAxisAlignment.start,
           children: [
             GestureDetector(
-              onTap: () {},
+              onTap: () {
+                Navigator.push(context, MaterialPageRoute(builder: (_)=>ReportActions(report: report, isAnonymous: isAnonymous,isPolice: true,)));
+              },
               child: ListTile(
                 title: Text(
                   "Report: ${report.abuse_type.toString()}",

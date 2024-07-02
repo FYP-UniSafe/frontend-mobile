@@ -21,8 +21,7 @@ class _CUDashboardState extends State<CUDashboard> {
   @override
   void didChangeDependencies() {
     _counselProvider = Provider.of<CounselProvider>(context);
-    _allAppointments = _counselProvider.appointments;
-    print("Appointments loaded: ${_allAppointments.length}");
+    _allAppointments = _counselProvider.allAppointments;
     super.didChangeDependencies();
   }
 

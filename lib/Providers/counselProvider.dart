@@ -1,10 +1,9 @@
 import 'dart:convert';
 import 'dart:developer';
-
+import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-
 import '../Models/Counsel.dart';
 import '../Services/storage.dart';
 import '../resources/constants.dart';
@@ -153,23 +152,22 @@ class CounselProvider extends ChangeNotifier {
       });
 
       if (response.statusCode == 200) {
-        log(response.body);
         List output = jsonDecode(response.body);
         _allAppointments =
             output.map((data) => Counsel.fromJson(data)).toList();
         _allAppointments.sort;
-
         notifyListeners();
       } else if (response.statusCode == 401) {
         log(response.body);
         AuthProvider.refreshToken();
         await getAllAppointments();
       } else {
-        log(response.body);
         _allAppointments = [];
         notifyListeners();
+    throw HttpException(response.body);
       }
-    } catch (e) {
+    } catch (e,stackTrace) {
+      log('',error: e,stackTrace: stackTrace,name: "CounselProvider");
       _allAppointments = [];
       notifyListeners();
     }
