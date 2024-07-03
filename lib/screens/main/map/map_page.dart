@@ -44,7 +44,7 @@ class _MapPageState extends State<MapPage> {
 
       await Future.wait(locationProvider.reportLocations.map((report) async {
         if (report.cases > 0) {
-          double radius = report.cases.toDouble() * 100;
+          double radius = report.cases.toDouble() * 50;
           final Uint8List markerIcon =
               await createCustomMarkerBitmapWithReportCount(
                   report.cases.toString(), radius);

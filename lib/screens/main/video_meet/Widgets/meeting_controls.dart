@@ -59,7 +59,7 @@ class MeetingControls extends StatelessWidget {
                 ),
               ),
               SizedBox(
-                width: MediaQuery.of(context).size.width * 0.46,
+                width: MediaQuery.of(context).size.width * 0.455,
                 child: ElevatedButton(
                   onPressed: onToggleCameraButtonPressed,
                   style: ElevatedButton.styleFrom(

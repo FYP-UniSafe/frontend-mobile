@@ -12,8 +12,8 @@ Future<Uint8List> createCustomMarkerBitmapWithText(String text) async {
   final double height = 300.0;
 
   final double textPadding = 5.0;
-  final double pinHeight = 200.0;
-  final double pinWidth = 100.0;
+  final double pinHeight = 150.0;
+  final double pinWidth = 75.0;
   final double pinHeadRadius = pinWidth / 2;
 
   final TextPainter textPainter = TextPainter(
