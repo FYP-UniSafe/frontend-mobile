@@ -44,9 +44,9 @@
 	<key>CADisableMinimumFrameDurationOnPhone</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
-    <string>$(PRODUCT_NAME) Camera Usage!</string>
+    <string>Camera will be used for video calls in the app</string>
     <key>NSMicrophoneUsageDescription</key>
-    <string>$(PRODUCT_NAME) Microphone Usage!</string>
+    <string>Microphone will be used for online meetings in the app</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 </dict>
