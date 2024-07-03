@@ -6,6 +6,7 @@ import 'package:unisafe/resources/formats.dart';
 import '../../../Models/Counsel.dart';
 import '../../../Providers/counselProvider.dart';
 import '../../../Services/stateObserver.dart';
+import 'appointmentDetails.dart';
 
 class AllAppointments extends StatefulWidget {
   const AllAppointments({super.key});
@@ -18,6 +19,7 @@ class _AllAppointmentsState extends State<AllAppointments> {
   final _appStateObserver = AppStateObserver();
   List<Counsel> _appointments = [];
   late CounselProvider _counselProvider;
+
   @override
   void didChangeDependencies() {
     _counselProvider = Provider.of<CounselProvider>(context);
@@ -40,6 +42,16 @@ class _AllAppointmentsState extends State<AllAppointments> {
 
   @override
   Widget build(BuildContext context) {
+    // Group appointments into physical and online
+    Map<String, List<Counsel>> groupedAppointments = {
+      'Physical': _appointments
+          .where((appointment) => appointment.session_type == 'Physical')
+          .toList(),
+      'Online': _appointments
+          .where((appointment) => appointment.session_type == 'Online')
+          .toList(),
+    };
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -64,85 +76,112 @@ class _AllAppointmentsState extends State<AllAppointments> {
         child: SizedBox(
           width: MediaQuery.of(context).size.width,
           height: MediaQuery.of(context).size.height,
-          child: _appointments.isNotEmpty
-              ? RefreshIndicator(
-                  onRefresh: () async {
-                    await _counselProvider.getAppointments();
-                  },
-                  color: Color.fromRGBO(8, 100, 175, 1),
-                  child: ListView.separated(
-                    itemCount: _appointments.length,
+          child: ListView(
+            children: groupedAppointments.entries.map((entry) {
+              String sessionType = entry.key;
+              List<Counsel> appointments = entry.value;
+
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(
+                      left: 8.0,
+                      right: 8.0,
+                      bottom: 8.0,
+                      top: 8.0,
+                    ),
+                    child: Text(
+                      '$sessionType Appointments'.toUpperCase(),
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  ListView.separated(
+                    shrinkWrap: true,
+                    physics: NeverScrollableScrollPhysics(),
+                    itemCount: appointments.length,
                     itemBuilder: (context, i) {
-                      return ListTile(
-                        title: Text(
-                          "${_appointments[i].session_type.toString()} Appointment",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold),
-                        ),
-                        subtitle: Column(
-                          mainAxisAlignment: MainAxisAlignment.start,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            RichText(
-                              text: TextSpan(
-                                text: 'Appointment ID: ',
-                                style: TextStyle(
-                                    fontFamily: 'Montserrat',
-                                    fontSize: 14,
-                                    color: Colors.black),
-                                children: [
-                                  TextSpan(
-                                    text: _appointments[i]
-                                        .appointment_id
-                                        .toString(),
-                                    style: TextStyle(
-                                      fontFamily: 'Montserrat',
-                                      fontSize: 14,
-                                    ),
-                                  ),
-                                ],
+                      return GestureDetector(
+                        onTap: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => AppointmentDetails(
+                                appointment: appointments[i],
                               ),
                             ),
-                            SizedBox(
-                              height: 2,
-                            ),
-                            RichText(
-                              text: TextSpan(
-                                text: 'Status: ',
-                                style: TextStyle(
+                          );
+                        },
+                        child: ListTile(
+                          title: RichText(
+                            text: TextSpan(
+                              text: 'Appointment ID: ',
+                              style: TextStyle(
+                                  fontFamily: 'Montserrat',
+                                  fontSize: 14,
+                                  color: Colors.black),
+                              children: [
+                                TextSpan(
+                                  text:
+                                      appointments[i].appointment_id.toString(),
+                                  style: TextStyle(
                                     fontFamily: 'Montserrat',
                                     fontSize: 14,
-                                    color: Colors.black),
-                                children: [
-                                  TextSpan(
-                                    text: _appointments[i]
-                                        .status
-                                        .toString()
-                                        .capitalizeFirstLetterOfEachWord(),
-                                    style: TextStyle(
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          subtitle: Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              SizedBox(
+                                height: 2,
+                              ),
+                              RichText(
+                                text: TextSpan(
+                                  text: 'Status: ',
+                                  style: TextStyle(
                                       fontFamily: 'Montserrat',
                                       fontSize: 14,
-                                      color: _getStatusColor(_appointments[i]
+                                      color: Colors.black),
+                                  children: [
+                                    TextSpan(
+                                      text: appointments[i]
                                           .status
                                           .toString()
-                                          .capitalizeFirstLetterOfEachWord()),
+                                          .capitalizeFirstLetterOfEachWord(),
+                                      style: TextStyle(
+                                        fontFamily: 'Montserrat',
+                                        fontSize: 14,
+                                        color: _getStatusColor(appointments[i]
+                                            .status
+                                            .toString()
+                                            .capitalizeFirstLetterOfEachWord()),
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
                               ),
+                              SizedBox(height: 8),
+                              Text(
+                                _formatDateTime(DateTime.parse(
+                                    appointments[i].created_on.toString())),
+                                style: TextStyle(fontSize: 12),
+                              ),
+                            ],
+                          ),
+                          trailing: Padding(
+                            padding: EdgeInsets.fromLTRB(16, 0, 0, 0),
+                            child: Icon(
+                              Icons.arrow_forward_ios,
+                              size: 18,
                             ),
-                            SizedBox(height: 8),
-                            Text(
-                              _formatDateTime(DateTime.parse(
-                                  _appointments[i].created_on.toString())),
-                              style: TextStyle(fontSize: 12),
-                            ),
-                          ],
-                        ),
-                        trailing: Text(
-                          _formatDate(
-                              DateTime.parse(_appointments[i].date.toString())),
-                          style: TextStyle(fontSize: 12),
+                          ),
                         ),
                       );
                     },
@@ -156,37 +195,10 @@ class _AllAppointmentsState extends State<AllAppointments> {
                       );
                     },
                   ),
-                )
-              : RefreshIndicator(
-                  onRefresh: () async {
-                    await _counselProvider.getAppointments();
-                  },
-                  child: ListView(
-                    children: [
-                      SizedBox(
-                          height: MediaQuery.of(context).size.height * 0.35),
-                      Center(
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Icon(
-                              Icons.hourglass_empty,
-                              size: 40,
-                              color: Color.fromRGBO(8, 100, 175, 0.6),
-                            ),
-                            Text(
-                              'No Appointments',
-                              style: TextStyle(
-                                  fontSize: 18,
-                                  color: Colors.grey,
-                                  fontWeight: FontWeight.w400),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+                ],
+              );
+            }).toList(),
+          ),
         ),
       ),
     );
@@ -195,14 +207,7 @@ class _AllAppointmentsState extends State<AllAppointments> {
   String _formatDateTime(DateTime date) {
     final formattedDate = DateFormat('dd/MM/yyyy').format(date.toLocal());
     final formattedTime = DateFormat('HH:mm').format(date.toLocal());
-
     return formattedDate + " | " + formattedTime;
-  }
-
-  String _formatDate(DateTime date) {
-    final formattedDate = DateFormat('dd/MM/yyyy').format(date.toLocal());
-
-    return formattedDate;
   }
 
   Color _getStatusColor(String status) {

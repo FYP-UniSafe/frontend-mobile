@@ -99,7 +99,7 @@ class CounselProvider extends ChangeNotifier {
         notifyListeners();
         if (kDebugMode) {
           print(response.statusCode);
-          log(responseBody);
+          log(response.body);
           print('Appointment request failed');
         }
       }
@@ -171,5 +171,37 @@ class CounselProvider extends ChangeNotifier {
       _allAppointments = [];
       notifyListeners();
     }
+  }
+
+  Future<void> scheduleAppointment(String start_time, String end_time,
+      String appointment_id, String physical_location) async {
+    String? token = await LocalStorage.getToken();
+    final response = await http.post(
+      Uri.parse('$baseUrl/appointments/accept/$appointment_id/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: jsonEncode(<String, String>{
+        'start_time': start_time,
+        'end_time': end_time,
+        'appointment_id': appointment_id,
+        'physical_location': physical_location,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      log(response.body);
+      final Map<String, dynamic> responseData = jsonDecode(response.body);
+
+      // Show a success message or do something with the appointment data
+    } else {
+      log(response.body);
+      // Handle the error
+      throw Exception('Failed to schedule the appointment');
+    }
+
+    notifyListeners();
   }
 }

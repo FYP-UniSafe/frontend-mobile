@@ -183,24 +183,25 @@ class _ReportDetailsState extends State<ReportActions> {
                         Row(
                           children: [
                             if (widget.isPolice ?? false) ...[
-                              Column(
-                                //mainAxisAlignment: MainAxisAlignment.start,
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    'ASSIGNED POLICE: ',
-                                    style: TextStyle(
-                                        fontSize: 16,
-                                        fontWeight: FontWeight.bold,
-                                        color: Colors.white),
-                                  ),
-                                  Text(
-                                    report.assigned_officer.toString(),
-                                    style: TextStyle(
-                                        fontSize: 16, color: Colors.white),
-                                  ),
-                                ],
-                              ),
+                              if (report.assigned_officer != null)
+                                Column(
+                                  //mainAxisAlignment: MainAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      'ASSIGNED POLICE: ',
+                                      style: TextStyle(
+                                          fontSize: 16,
+                                          fontWeight: FontWeight.bold,
+                                          color: Colors.white),
+                                    ),
+                                    Text(
+                                      report.assigned_officer.toString(),
+                                      style: TextStyle(
+                                          fontSize: 16, color: Colors.white),
+                                    ),
+                                  ],
+                                ),
                             ] else ...[
                               Column(
                                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -561,7 +562,6 @@ class _ReportDetailsState extends State<ReportActions> {
                             } else {
                               await reportProvider
                                   .receiveReport(report.report_id.toString());
-
                             }
                             await Future.wait([
                               reportProvider.fetchForwardedReports(),

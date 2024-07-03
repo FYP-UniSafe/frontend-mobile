@@ -453,11 +453,9 @@ class _ReportFormState extends State<ReportForm> {
                                       bodyMedium: TextStyle(
                                           fontWeight: FontWeight.bold)),
                                   colorScheme: ColorScheme.light(
-                                    primary: Color.fromRGBO(8, 100, 175,
-                                        1.0), // header background color
-                                    onPrimary:
-                                        Colors.white, // header text color
-                                    onSurface: Colors.black, // body text color
+                                    primary: Color.fromRGBO(8, 100, 175, 1.0),
+                                    onPrimary: Colors.white,
+                                    onSurface: Colors.black,
                                   ),
                                   datePickerTheme: DatePickerThemeData(
                                       weekdayStyle: TextStyle(

@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
@@ -6,10 +9,13 @@ import 'package:unisafe/resources/formats.dart';
 import '../../../Models/Counsel.dart';
 import '../../../Providers/counselProvider.dart';
 import '../../../Services/stateObserver.dart';
+import '../../../resources/validator.dart';
 
 class AppointmentDetails extends StatefulWidget {
   final Counsel appointment;
-  const AppointmentDetails({super.key, required this.appointment});
+  final bool? isConsultant;
+  const AppointmentDetails(
+      {super.key, required this.appointment, this.isConsultant});
 
   @override
   State<AppointmentDetails> createState() => _AppointmentDetailsState();
@@ -17,6 +23,9 @@ class AppointmentDetails extends StatefulWidget {
 
 class _AppointmentDetailsState extends State<AppointmentDetails> {
   final _appStateObserver = AppStateObserver();
+  final TextEditingController _startTimeController = TextEditingController();
+  final TextEditingController _endTimeController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
 
   @override
   void didChangeDependencies() {
@@ -31,6 +40,9 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
 
   @override
   void dispose() {
+    _startTimeController.dispose();
+    _endTimeController.dispose();
+    _locationController.dispose();
     WidgetsBinding.instance.removeObserver(_appStateObserver);
     super.dispose();
   }
@@ -39,6 +51,7 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
   Widget build(BuildContext context) {
     final appointment = widget.appointment;
     final counselProvider = Provider.of<CounselProvider>(context);
+
     return Scaffold(
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -180,6 +193,27 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
                           ],
                         ),
                         if (appointment.status == 'SCHEDULED') ...[
+                          if (appointment.session_type.toString() ==
+                              'Online') ...[
+                            Row(
+                              children: [
+                                Text(
+                                  'MEETING ID: ',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white),
+                                ),
+                                Text(
+                                  appointment.meeting_id
+                                      .toString()
+                                      .toUpperCase(),
+                                  style: TextStyle(
+                                      fontSize: 16, color: Colors.white),
+                                ),
+                              ],
+                            )
+                          ],
                           Row(
                             children: [
                               Text(
@@ -431,12 +465,181 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
                     ),
                   ),
                 ),
+                SizedBox(
+                  height: 16.0,
+                ),
+                if (widget.isConsultant ?? false) ...[
+                  if (appointment.status.toString() == 'REQUESTED') ...[
+                    StatefulBuilder(
+                      builder: (BuildContext context, StateSetter setState) {
+                        return Column(
+                          children: [
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 8.0, right: 8.0),
+                              child: TextFormField(
+                                controller: _startTimeController,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 12.0),
+                                  labelText: 'Start Time',
+                                  suffixIcon: Icon(Icons.watch_later),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 1.3),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                ),
+                                onTap: () =>
+                                    _selectTime(context, _startTimeController),
+                                readOnly: true,
+                                onChanged: (value) {
+                                  setState(() {});
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 16.0),
+                            Padding(
+                              padding:
+                                  const EdgeInsets.only(left: 8.0, right: 8.0),
+                              child: TextFormField(
+                                controller: _endTimeController,
+                                decoration: InputDecoration(
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 12.0),
+                                  labelText: 'End Time',
+                                  suffixIcon: Icon(Icons.watch_later),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 1.3),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                ),
+                                onTap: () =>
+                                    _selectTime(context, _endTimeController),
+                                readOnly: true,
+                                onChanged: (value) {
+                                  setState(() {});
+                                },
+                              ),
+                            ),
+                            SizedBox(height: 16.0),
+                            if (appointment.session_type.toString() ==
+                                'Physical') ...[
+                              Padding(
+                                padding: const EdgeInsets.only(
+                                    left: 8.0, right: 8.0),
+                                child: TextFormField(
+                                  controller: _locationController,
+                                  style: TextStyle(color: Colors.black),
+                                  decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 12.0, vertical: 12.0),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 1.1),
+                                    ),
+                                    labelText: "Location",
+                                  ),
+                                  validator: (text) =>
+                                      TextFormValidators.textFieldValidator(
+                                          text),
+                                ),
+                              ),
+                              SizedBox(height: 16.0),
+                            ],
+                            ElevatedButton(
+                              onPressed: _startTimeController.text.isNotEmpty &&
+                                          _endTimeController.text.isNotEmpty ||
+                                      _locationController.text.isNotEmpty
+                                  ? () async {
+                                      try {
+                                        await Provider.of<CounselProvider>(
+                                                context,
+                                                listen: false)
+                                            .scheduleAppointment(
+                                                _startTimeController.text,
+                                                _endTimeController.text,
+                                                appointment.appointment_id
+                                                    .toString(),
+                                                appointment.physical_location
+                                                    .toString());
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  'Appointment scheduled successfully')),
+                                        );
+                                      } catch (error) {
+                                        ScaffoldMessenger.of(context)
+                                            .showSnackBar(
+                                          SnackBar(
+                                              content: Text(
+                                                  'Failed to schedule the appointment')),
+                                        );
+                                      }
+                                    }
+                                  : null,
+                              style: ElevatedButton.styleFrom(
+                                foregroundColor: Colors.white,
+                                fixedSize: Size(
+                                    MediaQuery.of(context).size.width * 0.9,
+                                    50),
+                                backgroundColor:
+                                    Color.fromRGBO(8, 100, 175, 1.0),
+                                padding: EdgeInsets.all(12.0),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(5.0),
+                                ),
+                              ),
+                              child: Text(
+                                'Schedule',
+                                style: TextStyle(
+                                  fontSize: 18.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        );
+                      },
+                    ),
+                  ],
+                ],
               ],
             ),
           ),
         ),
       ),
     );
+  }
+
+  Future<void> _selectTime(
+      BuildContext context, TextEditingController controller) async {
+    final TimeOfDay? pickedTime = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.now(),
+    );
+
+    if (pickedTime != null) {
+      final MaterialLocalizations localizations =
+          MaterialLocalizations.of(context);
+      final String formattedTime = localizations.formatTimeOfDay(pickedTime,
+          alwaysUse24HourFormat: true);
+      setState(() {
+        controller.text = formattedTime;
+      });
+    }
   }
 
   String _formatDate(DateTime date) {
