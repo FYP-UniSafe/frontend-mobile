@@ -82,7 +82,8 @@ class _MeetingScreenState extends State<MeetingScreen> {
 
     _room.on(Events.roomLeft, () {
       participants.clear();
-      Navigator.popUntil(context, ModalRoute.withName('/'));
+      Navigator.pop(context);
+      // Navigator.popUntil(context, ModalRoute.withName('/'));
     });
   }
 
@@ -100,6 +101,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
         appBar: AppBar(
           leading: IconButton(
             onPressed: () {
+              _room.leave();
               Navigator.pop(context);
             },
             icon: Icon(
@@ -147,7 +149,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
                   child: GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
+                      crossAxisCount: 1,
                       crossAxisSpacing: 10,
                       mainAxisSpacing: 10,
                       mainAxisExtent: 300,

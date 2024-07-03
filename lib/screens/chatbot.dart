@@ -144,15 +144,9 @@ class _ChatbotState extends State<Chatbot> {
                     IconButton(
                       padding: EdgeInsets.all(15.0),
                       iconSize: 22.0,
-                      style: ButtonStyle(
-                        backgroundColor:
-                            WidgetStateProperty.resolveWith((states) {
-                          if (states.contains(WidgetState.pressed)) {
-                            return Color.fromRGBO(8, 100, 175, 1.0);
-                          }
-                          return Color.fromRGBO(8, 100, 175, 1.0);
-                        }),
-                        foregroundColor: WidgetStateProperty.all(Colors.white),
+                      style: IconButton.styleFrom(
+                        backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                        foregroundColor: Colors.white
                       ),
                       onPressed: () {
                         sendMessage();
