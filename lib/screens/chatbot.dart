@@ -35,12 +35,6 @@ class _ChatbotState extends State<Chatbot> {
     try {
       final response = await model.generateContent(
         content,
-        safetySettings: [
-          SafetySetting(
-            HarmCategory.unspecified,
-            HarmBlockThreshold.none,
-          ),
-        ],
       );
 
       setState(() {
@@ -145,9 +139,8 @@ class _ChatbotState extends State<Chatbot> {
                       padding: EdgeInsets.all(15.0),
                       iconSize: 22.0,
                       style: IconButton.styleFrom(
-                        backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
-                        foregroundColor: Colors.white
-                      ),
+                          backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                          foregroundColor: Colors.white),
                       onPressed: () {
                         sendMessage();
                       },
