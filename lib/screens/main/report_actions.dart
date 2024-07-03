@@ -561,7 +561,12 @@ class _ReportDetailsState extends State<ReportActions> {
                             } else {
                               await reportProvider
                                   .receiveReport(report.report_id.toString());
+
                             }
+                            await Future.wait([
+                              reportProvider.fetchForwardedReports(),
+                              reportProvider.fetchAnonymousForwardedReports()
+                            ]);
                             Navigator.pop(context);
                             Navigator.pop(context);
                           } catch (e) {
