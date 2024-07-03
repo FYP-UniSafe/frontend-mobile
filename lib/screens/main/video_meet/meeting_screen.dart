@@ -82,7 +82,7 @@ class _MeetingScreenState extends State<MeetingScreen> {
 
     _room.on(Events.roomLeft, () {
       participants.clear();
-      _room.end();
+      // _room.end();
       Navigator.pop(context);
       // Navigator.popUntil(context, ModalRoute.withName('/'));
     });
