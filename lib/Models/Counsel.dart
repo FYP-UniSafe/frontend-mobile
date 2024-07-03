@@ -23,6 +23,9 @@ class Counsel {
   String? reportId;
   String? client;
   String? consultant;
+  String? meeting_id;
+  String? meeting_token;
+
 
   Counsel({
     this.student_email,
@@ -45,6 +48,8 @@ class Counsel {
     this.physical_location,
     this.start_time,
     this.timeSlot,
+    this.meeting_id,
+    this.meeting_token
   });
 
   Map<String, dynamic> toJsonCounselData() {
@@ -69,6 +74,30 @@ class Counsel {
     };
   }
 
+  Map<String,dynamic> toMeetingJson()=>{
+  "appointment_id": appointment_id,
+  "created_on": created_on,
+  "status": status,
+  "session_type":session_type,
+  "date": date,
+  "start_time": start_time,
+  "end_time":end_time,
+  "time_slot": timeSlot,
+  "physical_location": physical_location,
+  "meeting_id": meeting_id,
+  "meeting_token": meeting_token,
+  "student_full_name": student_full_name,
+  "student_email": student_email,
+  "student_phone": student_phone,
+  "student_reg_no": student_reg_no,
+  "student_gender": student_gender,
+  "consultant_phone": consultant_phone,
+  "consultant_office": consultant_office,
+  "report_id": reportId,
+  "client": client,
+  "consultant": consultant
+  };
+
   static Counsel fromJson(Map<String, dynamic> json) {
     return Counsel(
       student_full_name: json['student_full_name'],
@@ -91,6 +120,8 @@ class Counsel {
       physical_location: json['physical_location'],
       start_time: json['start_time'],
       end_time: json['end_time'],
+      meeting_id:json.containsKey('meeting_id')? json['meeting_id']:null,
+      meeting_token:json.containsKey('meeting_token')? json['meeting_token']:null
     );
   }
 }
