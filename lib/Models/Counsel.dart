@@ -13,13 +13,13 @@ class Counsel {
   String? created_on;
   String? status;
 
-  String? startTime;
-  String? endTime;
+  String? start_time;
+  String? end_time;
   String? timeSlot;
-  String? physicalLocation;
+  String? physical_location;
 
-  String? consultantPhone;
-  String? consultantOffice;
+  String? consultant_phone;
+  String? consultant_office;
   String? reportId;
   String? client;
   String? consultant;
@@ -39,11 +39,11 @@ class Counsel {
     this.client,
     this.reportId,
     this.consultant,
-    this.consultantOffice,
-    this.consultantPhone,
-    this.endTime,
-    this.physicalLocation,
-    this.startTime,
+    this.consultant_office,
+    this.consultant_phone,
+    this.end_time,
+    this.physical_location,
+    this.start_time,
     this.timeSlot,
   });
 
@@ -58,14 +58,14 @@ class Counsel {
       'student_reg_no': student_reg_no,
       'session_type': session_type,
       'client': client,
-      'consultantPhone': consultantPhone,
-      'endTime': endTime,
-      'physicalLocation': physicalLocation,
-      'startTime': startTime,
+      'consultantPhone': consultant_phone,
+      'end_time': end_time,
+      'physicalLocation': physical_location,
+      'start_time': start_time,
       'timeSlot': timeSlot,
       'reportId': reportId,
       'consultant': consultant,
-      'consultantOffice': consultantOffice
+      'consultantOffice': consultant_office
     };
   }
 
@@ -73,6 +73,7 @@ class Counsel {
     return Counsel(
       student_full_name: json['student_full_name'],
       student_gender: json['student_gender'],
+      student_phone: json['student_phone'],
       //college: json['college'],
       date: json['date'],
       created_on: json['created_on'],
@@ -83,13 +84,13 @@ class Counsel {
       status: json['status'],
       client: json['client'],
       consultant: json['consultant'],
-      consultantOffice: json['consultantOffice'],
-      consultantPhone: json['consultantPhone'],
+      consultant_office: json['consultant_office'],
+      consultant_phone: json['consultant_phone'],
       timeSlot: json['timeSlot'],
       reportId: json['reportId'],
-      physicalLocation: json['physicalLocation'],
-      startTime: json['startTime'],
-      endTime: json['endTime'],
+      physical_location: json['physical_location'],
+      start_time: json['start_time'],
+      end_time: json['end_time'],
     );
   }
 }

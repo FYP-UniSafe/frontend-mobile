@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/resources/formats.dart';
-import 'package:unisafe/screens/main/genderDesk/report_actions.dart';
-import '../../Models/Report.dart';
-import '../../Providers/reportProvider.dart';
+import 'package:unisafe/screens/main/report_actions.dart';
+import '../../../Models/Report.dart';
+import '../../../Providers/reportProvider.dart';
 
 class PFDashboard extends StatefulWidget {
   const PFDashboard({super.key});
@@ -91,7 +91,7 @@ class _PFDashboardState extends State<PFDashboard> {
                             ),
                           ),
                         ),
-                        _buildReportSection(_policeReports,isAnonymous: false),
+                        _buildReportSection(_policeReports, isAnonymous: false),
                       ],
                       if (_anonymousPoliceReports.isNotEmpty) ...[
                         SizedBox(height: 16),
@@ -105,7 +105,8 @@ class _PFDashboardState extends State<PFDashboard> {
                             ),
                           ),
                         ),
-                        _buildReportSection(_anonymousPoliceReports,isAnonymous: true),
+                        _buildReportSection(_anonymousPoliceReports,
+                            isAnonymous: true),
                       ],
                     ],
                   ),
@@ -115,7 +116,8 @@ class _PFDashboardState extends State<PFDashboard> {
     );
   }
 
-  Widget _buildReportSection(List<Report> reports,{required bool isAnonymous}) {
+  Widget _buildReportSection(List<Report> reports,
+      {required bool isAnonymous}) {
     return Column(
       children: reports.map((report) {
         return Column(
@@ -123,7 +125,14 @@ class _PFDashboardState extends State<PFDashboard> {
           children: [
             GestureDetector(
               onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (_)=>ReportActions(report: report, isAnonymous: isAnonymous,isPolice: true,)));
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (_) => ReportActions(
+                              report: report,
+                              isAnonymous: isAnonymous,
+                              isPolice: true,
+                            )));
               },
               child: ListTile(
                 title: Text(
@@ -217,14 +226,8 @@ class _PFDashboardState extends State<PFDashboard> {
 
   Color _getStatusColor(String status) {
     switch (status) {
-      case 'Rejected':
-        return Colors.red;
-      case 'Pending':
-        return Colors.orange;
-      case 'Resolved':
+      case 'RESOLVED':
         return Colors.green;
-      case 'In Progress':
-        return Colors.grey;
       default:
         return Color.fromRGBO(8, 100, 175, 1.0);
     }

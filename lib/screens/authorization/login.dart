@@ -254,7 +254,10 @@ class _LoginState extends State<Login> {
             _authProvider.isLoggedIn == true) {
           await Future.wait([
             reportProvider.getReports(),
+            reportProvider.fetchAnonymousForwardedReports(),
+            reportProvider.fetchForwardedReports(),
             counselProvider.getAppointments(),
+            counselProvider.getAllAppointments(),
             Provider.of<LocalStorageProvider>(context, listen: false)
                 .initialize()
           ]);

@@ -4,7 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:fl_chart/fl_chart.dart';
 import 'package:unisafe/Models/ReportDataPerYear.dart';
 import 'package:unisafe/resources/formats.dart';
-import 'package:unisafe/screens/main/genderDesk/report_actions.dart';
+import 'package:unisafe/screens/main/report_actions.dart';
 
 import '../../../Models/AbuseReport.dart';
 import '../../../Models/Report.dart';

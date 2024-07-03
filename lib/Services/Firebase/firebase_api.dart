@@ -8,7 +8,6 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import '../../Models/push_notification.dart';
 import '../../Models/received_notification.dart';
 
-
 Future _firebaseMessagingBackgroundHandler(RemoteMessage message) async {
   if (kDebugMode) {
     print("Handling a background message: ${message.messageId}");
@@ -33,7 +32,7 @@ class FirebaseApi extends ChangeNotifier {
     await _firebaseMessaging.requestPermission();
     _fcmToken = await _firebaseMessaging.getToken();
     if (kDebugMode) {
-      log("Token: $_fcmToken");
+      log("Token: $_fcmToken", name: "Firebase_token");
     }
 
     _requestAndRegisterNotification();
@@ -105,8 +104,6 @@ class FirebaseApi extends ChangeNotifier {
       notifyListeners();
     });
   }
-
-
 
   final FlutterLocalNotificationsPlugin _flutterLocalNotificationsPlugin =
       FlutterLocalNotificationsPlugin();

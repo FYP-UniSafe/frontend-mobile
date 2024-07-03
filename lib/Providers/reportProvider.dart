@@ -83,7 +83,6 @@ class ReportProvider extends ChangeNotifier {
   }
 
   Future createAnonymousReport({required Report report}) async {
-
     try {
       var uri = Uri.parse('$baseUrl/reports/anonymous/create');
       var request = http.MultipartRequest('POST', uri);
@@ -270,6 +269,60 @@ class ReportProvider extends ChangeNotifier {
     } else {
       print('Failed to accept report: ${response.statusCode}');
       throw Exception('Failed to accept report');
+    }
+  }
+
+  Future<void> receiveReport(String report_id) async {
+    String? token = await LocalStorage.getToken();
+
+    final url = Uri.parse('$baseUrl/reports/receive');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'report_id': report_id,
+      },
+    );
+    if (response.statusCode == 200) {
+      print('Receive Report Response: ${jsonDecode(response.body)}');
+      getReportsForwardedToPolice();
+
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await receiveReport(report_id);
+    } else {
+      print('Failed to receive report: ${response.statusCode}');
+      throw Exception('Failed to receive report');
+    }
+  }
+
+  Future<void> receiveAnonymousReport(String report_id) async {
+    String? token = await LocalStorage.getToken();
+
+    final url = Uri.parse('$baseUrl/reports/anonymous/receive');
+    final response = await http.put(
+      url,
+      headers: {
+        'Authorization': 'Bearer $token',
+      },
+      body: {
+        'report_id': report_id,
+      },
+    );
+    if (response.statusCode == 200) {
+      print('Receive Report Response: ${jsonDecode(response.body)}');
+
+      getAnonymousReportsForwardedToPolice();
+      notifyListeners();
+    } else if (response.statusCode == 401) {
+      AuthProvider.refreshToken();
+      await receiveAnonymousReport(report_id);
+    } else {
+      print('Failed to receive report: ${response.statusCode}');
+      throw Exception('Failed to receive report');
     }
   }
 
@@ -496,7 +549,6 @@ class ReportProvider extends ChangeNotifier {
         "Authorization": "Bearer $token",
       });
       if (response.statusCode == 200) {
-
         final List<dynamic> reportData = json.decode(response.body);
         _anonymousReports =
             reportData.map((data) => Report.fromJson(data)).toList();
@@ -508,21 +560,26 @@ class ReportProvider extends ChangeNotifier {
       } else {
         throw Exception('Failed to load anonymous reports');
       }
-    } catch (error,stackTrace) {
-      log("",error:error,stackTrace:stackTrace,name: "AnonymousPoliceCatch");
+    } catch (error, stackTrace) {
+      log("",
+          error: error, stackTrace: stackTrace, name: "AnonymousPoliceCatch");
       throw error;
     }
   }
 
   List<Report> getReportsForwardedToPolice() {
     return _reports
-        .where((report) => report.status.toString().toLowerCase() == "forwarded to police")
+        .where((report) =>
+            report.status.toString().toLowerCase() == "forwarded to police" ||
+            report.status.toString().toLowerCase() == "resolved")
         .toList();
   }
 
   List<Report> getAnonymousReportsForwardedToPolice() {
     return _anonymousReports
-        .where((report) => report.status.toString().toLowerCase() == "forwarded to police")
+        .where((report) =>
+            report.status.toString().toLowerCase() == "forwarded to police" ||
+            report.status.toString().toLowerCase() == "resolved")
         .toList();
   }
 }

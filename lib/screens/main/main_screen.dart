@@ -3,10 +3,10 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/screens/main/counsel/counsel_page.dart';
-import 'package:unisafe/screens/main/cu_dashboard.dart';
+import 'package:unisafe/screens/main/counsel/cu_dashboard.dart';
 import 'package:unisafe/screens/main/genderDesk/gd_dashboard.dart';
 import 'package:unisafe/screens/main/homepage.dart';
-import 'package:unisafe/screens/main/pf_dashboard.dart';
+import 'package:unisafe/screens/main/police/pf_dashboard.dart';
 import 'package:unisafe/screens/profile/profile_page.dart';
 import 'package:unisafe/screens/main/report/report_page.dart';
 

@@ -164,10 +164,10 @@ class CounselProvider extends ChangeNotifier {
       } else {
         _allAppointments = [];
         notifyListeners();
-    throw HttpException(response.body);
+        //throw HttpException(response.body);
       }
-    } catch (e,stackTrace) {
-      log('',error: e,stackTrace: stackTrace,name: "CounselProvider");
+    } catch (e, stackTrace) {
+      log('', error: e, stackTrace: stackTrace, name: "CounselProvider");
       _allAppointments = [];
       notifyListeners();
     }
