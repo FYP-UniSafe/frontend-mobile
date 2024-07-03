@@ -111,6 +111,7 @@ class _AllAppointmentsState extends State<AllAppointments> {
                             MaterialPageRoute(
                               builder: (context) => AppointmentDetails(
                                 appointment: appointments[i],
+                                isStudent: true,
                               ),
                             ),
                           );

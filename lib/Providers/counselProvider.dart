@@ -79,7 +79,6 @@ class CounselProvider extends ChangeNotifier {
           },
           body: appointment.toJsonCounselData());
       var responseBody = response.body;
-      // log("Response body: $responseBody");
 
       if (response.statusCode == 200 || response.statusCode == 201) {
         var output = jsonDecode(responseBody);
@@ -192,16 +191,50 @@ class CounselProvider extends ChangeNotifier {
     );
 
     if (response.statusCode == 200) {
+      await getAllAppointments();
+      //log(response.body);
+    } else if (response.statusCode == 401) {
       log(response.body);
-      final Map<String, dynamic> responseData = jsonDecode(response.body);
-
-      // Show a success message or do something with the appointment data
+      AuthProvider.refreshToken();
+      await scheduleAppointment(
+          start_time, end_time, appointment_id, physical_location);
     } else {
-      log(response.body);
-      // Handle the error
+      //log(response.body);
+
       throw Exception('Failed to schedule the appointment');
     }
 
     notifyListeners();
+  }
+
+  Future<void> cancelAppointment(String appointment_id) async {
+    String? token = await LocalStorage.getToken();
+    final url = '$baseUrl/appointments/cancel/$appointment_id/';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      //log(response.body);
+      if (response.statusCode == 200) {
+        await getAppointments();
+
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        //log(response.body);
+        AuthProvider.refreshToken();
+        await cancelAppointment(appointment_id);
+      } else {
+        // log(response.body);
+        throw Exception('Failed to cancel the appointment');
+      }
+    } catch (error) {
+      print(error);
+      throw error;
+    }
   }
 }

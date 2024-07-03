@@ -3,19 +3,26 @@ import 'dart:developer';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/resources/formats.dart';
+import 'package:unisafe/screens/main/video_meet/meeting_screen.dart';
 
 import '../../../Models/Counsel.dart';
 import '../../../Providers/counselProvider.dart';
 import '../../../Services/stateObserver.dart';
+import '../../../Widgets/Flashbar/flashbar.dart';
 import '../../../resources/validator.dart';
 
 class AppointmentDetails extends StatefulWidget {
   final Counsel appointment;
   final bool? isConsultant;
+  final bool? isStudent;
   const AppointmentDetails(
-      {super.key, required this.appointment, this.isConsultant});
+      {super.key,
+      required this.appointment,
+      this.isConsultant,
+      this.isStudent});
 
   @override
   State<AppointmentDetails> createState() => _AppointmentDetailsState();
@@ -563,30 +570,73 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
                                           _endTimeController.text.isNotEmpty ||
                                       _locationController.text.isNotEmpty
                                   ? () async {
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false,
+                                        builder: (BuildContext context) {
+                                          return Dialog(
+                                            backgroundColor: Colors.transparent,
+                                            elevation: 0,
+                                            child: Container(
+                                              height: 100,
+                                              width: 100,
+                                              alignment: Alignment.center,
+                                              child: LoadingIndicator(
+                                                indicatorType:
+                                                    Indicator.ballPulseRise,
+                                                colors: [
+                                                  Color.fromRGBO(
+                                                      8, 100, 175, 1.0)
+                                                ],
+                                              ),
+                                            ),
+                                          );
+                                        },
+                                      );
                                       try {
                                         await Provider.of<CounselProvider>(
                                                 context,
                                                 listen: false)
                                             .scheduleAppointment(
-                                                _startTimeController.text,
-                                                _endTimeController.text,
-                                                appointment.appointment_id
-                                                    .toString(),
-                                                appointment.physical_location
-                                                    .toString());
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                              content: Text(
-                                                  'Appointment scheduled successfully')),
+                                          _startTimeController.text,
+                                          _endTimeController.text,
+                                          appointment.appointment_id.toString(),
+                                          _locationController.text,
                                         );
+                                        Navigator.pop(context);
+                                        Navigator.pop(context);
                                       } catch (error) {
-                                        ScaffoldMessenger.of(context)
-                                            .showSnackBar(
-                                          SnackBar(
-                                              content: Text(
-                                                  'Failed to schedule the appointment')),
-                                        );
+                                        Navigator.pop(context);
+                                        Flashbar(
+                                          flashbarPosition:
+                                              FlashbarPosition.TOP,
+                                          borderRadius:
+                                              BorderRadius.circular(5),
+                                          backgroundColor: Colors.red,
+                                          icon: Icon(
+                                            CupertinoIcons
+                                                .exclamationmark_triangle,
+                                            color: Colors.white,
+                                            size: 32,
+                                          ),
+                                          titleText: Text(
+                                            'Alert',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'Poppins',
+                                                fontSize: 18,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          messageText: Text(
+                                            '$error',
+                                            style: TextStyle(
+                                                color: Colors.white,
+                                                fontFamily: 'Poppins',
+                                                fontSize: 16,
+                                                fontWeight: FontWeight.w500),
+                                          ),
+                                          duration: Duration(seconds: 3),
+                                        ).show(context);
                                       }
                                     }
                                   : null,
@@ -613,6 +663,138 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
                           ],
                         );
                       },
+                    ),
+                  ],
+                ],
+                if (appointment.session_type.toString() == 'Online' &&
+                    appointment.status == 'SCHEDULED') ...[
+                  ElevatedButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => MeetingScreen(
+                          meetingId: appointment.meeting_id.toString(),
+                          token: appointment.meeting_token.toString(),
+                        ),
+                      ),
+                    ),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 3,
+                      backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                      foregroundColor: Colors.white,
+                      /*side: BorderSide(
+                          width: 1.0,
+                          color: Color.fromRGBO(8, 100, 175, 1.0),
+                        ),*/
+                      padding: EdgeInsets.all(12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'Join Meeting',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+                if (widget.isStudent ?? false) ...[
+                  if (appointment.status == 'REQUESTED') ...[
+                    ElevatedButton(
+                      onPressed: () async {
+                        showDialog(
+                          context: context,
+                          barrierDismissible: false,
+                          builder: (BuildContext context) {
+                            return Dialog(
+                              backgroundColor: Colors.transparent,
+                              elevation: 0,
+                              child: Container(
+                                height: 100,
+                                width: 100,
+                                alignment: Alignment.center,
+                                child: LoadingIndicator(
+                                  indicatorType: Indicator.ballPulseRise,
+                                  colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                                ),
+                              ),
+                            );
+                          },
+                        );
+                        try {
+                          await Provider.of<CounselProvider>(context,
+                                  listen: false)
+                              .cancelAppointment(
+                                  appointment.appointment_id.toString());
+                          Navigator.pop(context);
+                          Navigator.pop(context);
+                        } catch (error) {
+                          Navigator.pop(context);
+                          Flashbar(
+                            flashbarPosition: FlashbarPosition.TOP,
+                            borderRadius: BorderRadius.circular(5),
+                            backgroundColor: Colors.red,
+                            icon: Icon(
+                              CupertinoIcons.exclamationmark_triangle,
+                              color: Colors.white,
+                              size: 32,
+                            ),
+                            titleText: Text(
+                              'Alert',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            messageText: Text(
+                              '$error',
+                              style: TextStyle(
+                                  color: Colors.white,
+                                  fontFamily: 'Poppins',
+                                  fontSize: 16,
+                                  fontWeight: FontWeight.w500),
+                            ),
+                            duration: Duration(seconds: 3),
+                          ).show(context);
+                        }
+                      },
+                      style: ElevatedButton.styleFrom(
+                        elevation: 3,
+                        backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                        foregroundColor: Colors.white,
+                        /*side: BorderSide(
+                          width: 1.0,
+                          color: Color.fromRGBO(8, 100, 175, 1.0),
+                        ),*/
+                        padding: EdgeInsets.all(12.0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(5.0),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Align(
+                              alignment: Alignment.center,
+                              child: Text(
+                                'Cancel Meeting',
+                                style: TextStyle(
+                                    fontSize: 17,
+                                    fontWeight: FontWeight.normal),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ],
                 ],
@@ -670,9 +852,9 @@ class _AppointmentDetailsState extends State<AppointmentDetails> {
   Color _getStatusColor(String status) {
     switch (status) {
       case 'Cancelled':
-        return Colors.grey;
-      case 'Missed':
         return Colors.red;
+      case 'Missed':
+        return Colors.grey;
       case 'Requested':
         return Colors.orange;
       case 'Scheduled':

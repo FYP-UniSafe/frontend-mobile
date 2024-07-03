@@ -98,6 +98,16 @@ class _MeetingScreenState extends State<MeetingScreen> {
       onWillPop: () => _onWillPop(),
       child: Scaffold(
         appBar: AppBar(
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(
+              Icons.arrow_back_ios,
+              size: 20.0,
+              color: Colors.white,
+            ),
+          ),
           backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
           surfaceTintColor: Color.fromRGBO(8, 100, 175, 1.0),
           title: const Text(
@@ -112,7 +122,24 @@ class _MeetingScreenState extends State<MeetingScreen> {
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Text(widget.meetingId),
+              Text(
+                'Meeting Workspace',
+                style: TextStyle(
+                  fontSize: 20,
+                ),
+              ),
+              Divider(
+                height: 30.0,
+                color: Color.fromRGBO(8, 100, 175, 1.0),
+              ),
+              /*if (widget.meetingId == null)
+                Text(
+                  widget.meetingId.toString(),
+                  style: TextStyle(
+                    fontSize: 18,
+                  ),
+                ),*/
+
               //render all participant
               Expanded(
                 child: Padding(
