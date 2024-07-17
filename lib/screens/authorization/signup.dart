@@ -1,8 +1,19 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:flutter_libphonenumber/flutter_libphonenumber.dart';
+import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
+import 'package:unisafe/Providers/authProvider.dart';
 import 'package:unisafe/screens/authorization/login.dart';
+import 'package:unisafe/screens/authorization/otp.dart';
+import '../../Models/User.dart';
 import '../../Providers/profileProvider.dart';
+import '../../Services/stateObserver.dart';
+import '../../Services/storage.dart';
+import '../../Widgets/Flashbar/flashbar.dart';
 import '../../resources/validator.dart';
+import '../main/main_screen.dart';
 
 class SignUp extends StatefulWidget {
   const SignUp({super.key});
@@ -45,8 +56,18 @@ class _SignUpState extends State<SignUp> {
   final _student = TextEditingController();
   final _gender = TextEditingController();
   final _counsel = TextEditingController();
-  final _police = TextEditingController();
+  final _policeID = TextEditingController();
   late ProfileTypeProvider profileTypeProvider;
+  late AuthProvider _authProvider;
+
+  final _fullName = TextEditingController();
+  final _email = TextEditingController();
+  final _password = TextEditingController();
+  final _phone = TextEditingController();
+  final _registration = TextEditingController();
+  final _staffID = TextEditingController();
+  final _office = TextEditingController();
+  final _policeStation = TextEditingController();
 
   String? college;
   String? gender;
@@ -56,9 +77,23 @@ class _SignUpState extends State<SignUp> {
 
   final _formKey = GlobalKey<FormState>();
 
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
   @override
   void didChangeDependencies() {
     profileTypeProvider = Provider.of<ProfileTypeProvider>(context);
+    _authProvider = Provider.of<AuthProvider>(context);
     super.didChangeDependencies();
   }
 
@@ -74,7 +109,7 @@ class _SignUpState extends State<SignUp> {
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               SizedBox(
-                height: MediaQuery.of(context).size.height * 0.08,
+                height: MediaQuery.of(context).size.height * 0.07,
               ),
               Text(
                 'Sign Up',
@@ -102,7 +137,7 @@ class _SignUpState extends State<SignUp> {
                       padding: EdgeInsets.only(top: 8.0),
                       children: [
                         TextFormField(
-                          initialValue: fieldValue,
+                          controller: _fullName,
                           onChanged: (value) {
                             setState(() {
                               fieldValue = value;
@@ -128,6 +163,7 @@ class _SignUpState extends State<SignUp> {
                         ),
                         SizedBox(height: 16.0),
                         TextFormField(
+                          controller: _phone,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
@@ -182,6 +218,7 @@ class _SignUpState extends State<SignUp> {
                         ),
                         SizedBox(height: 16.0),
                         TextFormField(
+                          controller: _email,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
@@ -202,6 +239,7 @@ class _SignUpState extends State<SignUp> {
                         ),
                         SizedBox(height: 16.0),
                         TextFormField(
+                          controller: _password,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           obscureText: _isHidden,
                           style: TextStyle(color: Colors.black),
@@ -272,16 +310,30 @@ class _SignUpState extends State<SignUp> {
                         ),
                         SizedBox(height: 16.0),
                         if (profileTypeProvider.selectedProfileType ==
-                            'student')
+                            'student') ...[
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextFormField(
+                                controller: _registration,
                                 onChanged: (value) {
                                   profileTypeProvider
                                       .setRegistrationNumber(value);
                                 },
                                 decoration: InputDecoration(
+                                    contentPadding: EdgeInsets.symmetric(
+                                        horizontal: 12.0, vertical: 12.0),
+                                    border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    enabledBorder: OutlineInputBorder(
+                                      borderSide: BorderSide(
+                                          color: Colors.black, width: 1.3),
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
+                                    focusedBorder: OutlineInputBorder(
+                                      borderRadius: BorderRadius.circular(5.0),
+                                    ),
                                     labelText: 'Registration Number'),
                               ),
                               SizedBox(height: 16.0),
@@ -322,49 +374,125 @@ class _SignUpState extends State<SignUp> {
                               ),
                             ],
                           ),
+                        ],
                         if (profileTypeProvider.selectedProfileType ==
                                 'gender_desk' ||
                             profileTypeProvider.selectedProfileType ==
-                                'counselling_unit')
+                                'counselling_unit') ...[
                           TextFormField(
+                            controller: _staffID,
                             onChanged: (value) {
                               profileTypeProvider.setStaffID(value);
                             },
-                            decoration: InputDecoration(labelText: 'Staff ID'),
+                            decoration: InputDecoration(
+                              labelText: 'Staff ID',
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 12.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1.3),
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                            ),
                           ),
-                        if (profileTypeProvider.selectedProfileType == 'police')
+                          SizedBox(height: 16.0),
+                          TextFormField(
+                            controller: _office,
+                            onChanged: (value) {
+                              profileTypeProvider.setStaffID(value);
+                            },
+                            decoration: InputDecoration(
+                              labelText: 'Office',
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 12.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1.3),
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                            ),
+                          ),
+                        ],
+                        if (profileTypeProvider.selectedProfileType ==
+                            'police') ...[
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
                               TextFormField(
+                                controller: _policeID,
                                 onChanged: (value) {
                                   profileTypeProvider.setPoliceID(value);
                                 },
-                                decoration:
-                                    InputDecoration(labelText: 'Police ID'),
+                                decoration: InputDecoration(
+                                  labelText: 'Police ID',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 12.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 1.3),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                ),
                               ),
                               SizedBox(height: 16.0),
                               TextFormField(
+                                controller: _policeStation,
                                 onChanged: (value) {
                                   profileTypeProvider.setStation(value);
                                 },
-                                decoration:
-                                    InputDecoration(labelText: 'Station'),
+                                decoration: InputDecoration(
+                                  labelText: 'Station',
+                                  contentPadding: EdgeInsets.symmetric(
+                                      horizontal: 12.0, vertical: 12.0),
+                                  border: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(
+                                        color: Colors.black, width: 1.3),
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                  focusedBorder: OutlineInputBorder(
+                                    borderRadius: BorderRadius.circular(5.0),
+                                  ),
+                                ),
                               ),
                             ],
                           ),
+                        ],
                         SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () {
                             final profileType =
                                 profileTypeProvider.selectedProfileType;
                             if (_formKey.currentState!.validate()) {
-                              if (profileTypeProvider.selectedProfileType ==
-                                  'option1') {
-                                Navigator.pushNamed(context, '/option1Page');
-                              } else if (selectedOption == 'option2') {
-                              } else if (selectedOption == 'option3') {
-                              } else if (selectedOption == 'option4') {}
+                              if (profileType == 'student') {
+                                _studentSignup();
+                              } else if (profileType == 'counselling_unit') {
+                                _consultantSignup();
+                              } else if (profileType == 'gender_desk') {
+                                _genderDeskSignup();
+                              } else if (profileType == 'police') {
+                                _policeSignup();
+                              }
                             }
                           },
                           style: ElevatedButton.styleFrom(
@@ -382,27 +510,30 @@ class _SignUpState extends State<SignUp> {
                           ),
                         ),
                         SizedBox(height: 8.0),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              'Already have an account? ',
-                              style: TextStyle(
-                                  color: Colors.black, fontSize: 18.0),
-                            ),
-                            GestureDetector(
-                              onTap: () => Navigator.pushAndRemoveUntil(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => Login()),
-                                  (route) => false),
-                              child: Text(
-                                'Login',
+                        SafeArea(
+                          bottom: true,
+                          top: false,
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Already have an account? ',
                                 style: TextStyle(
-                                    color: Colors.blue, fontSize: 18.0),
+                                    color: Colors.black, fontSize: 18.0),
                               ),
-                            ),
-                          ],
+                              GestureDetector(
+                                onTap: () => Navigator.pushReplacement(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) => Login())),
+                                child: Text(
+                                  'Login',
+                                  style: TextStyle(
+                                      color: Colors.blue, fontSize: 18.0),
+                                ),
+                              ),
+                            ],
+                          ),
                         ),
                       ],
                     ),
@@ -420,5 +551,326 @@ class _SignUpState extends State<SignUp> {
     setState(() {
       _isHidden = !_isHidden;
     });
+  }
+
+  _studentSignup() async {
+    if (_formKey.currentState!.validate()) {
+      if (_email.text.isNotEmpty &&
+          _password.text.isNotEmpty &&
+          _fullName.text.isNotEmpty &&
+          _registration.text.isNotEmpty &&
+          college != null &&
+          gender != null) {
+        Map<String, dynamic> phoneNumber =
+            await parse(_phone.text, region: 'TZ');
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.registerStudent(
+            user: User(
+                email: _email.text,
+                password: _password.text,
+                full_name: _fullName.text,
+                gender: gender,
+                college: college,
+                phone_number: phoneNumber['e164'],
+                reg_no: _registration.text));
+
+        if (_authProvider.isLoggedIn != null &&
+            _authProvider.isLoggedIn == true) {
+          await Provider.of<LocalStorageProvider>(context, listen: false)
+              .initialize();
+          Navigator.pop(context);
+
+          Navigator.pushAndRemoveUntil(context,
+              MaterialPageRoute(builder: (context) => Otp()), (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.red,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.white,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Signup Failed',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
+  }
+
+  _genderDeskSignup() async {
+    if (_formKey.currentState!.validate()) {
+      if (_email.text.isNotEmpty &&
+          _password.text.isNotEmpty &&
+          _fullName.text.isNotEmpty &&
+          _staffID.text.isNotEmpty &&
+          _office.text.isNotEmpty) {
+        Map<String, dynamic> phoneNumber =
+            await parse(_phone.text, region: 'TZ');
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.registerGenderDesk(
+            user: User(
+                email: _email.text,
+                password: _password.text,
+                full_name: _fullName.text,
+                gender: gender,
+                phone_number: phoneNumber['e164'],
+                staff_no: _staffID.text,
+                office: _office.text));
+
+        if (_authProvider.isLoggedIn != null &&
+            _authProvider.isLoggedIn == true) {
+          await Provider.of<LocalStorageProvider>(context, listen: false)
+              .initialize();
+          Navigator.pop(context);
+
+          Navigator.pushAndRemoveUntil(context,
+              MaterialPageRoute(builder: (context) => Otp()), (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.red,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.white,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Signup Failed',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
+  }
+
+  _consultantSignup() async {
+    if (_formKey.currentState!.validate()) {
+      if (_email.text.isNotEmpty &&
+          _password.text.isNotEmpty &&
+          _fullName.text.isNotEmpty &&
+          _staffID.text.isNotEmpty &&
+          _office.text.isNotEmpty) {
+        Map<String, dynamic> phoneNumber =
+            await parse(_phone.text, region: 'TZ');
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.registerConsultant(
+            user: User(
+                email: _email.text,
+                password: _password.text,
+                full_name: _fullName.text,
+                gender: gender,
+                phone_number: phoneNumber['e164'],
+                staff_no: _staffID.text,
+                office: _office.text));
+
+        if (_authProvider.isLoggedIn != null &&
+            _authProvider.isLoggedIn == true) {
+          await Provider.of<LocalStorageProvider>(context, listen: false)
+              .initialize();
+          Navigator.pop(context);
+
+          Navigator.pushAndRemoveUntil(context,
+              MaterialPageRoute(builder: (context) => Otp()), (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.red,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.white,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Signup Failed',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
+  }
+
+  _policeSignup() async {
+    if (_formKey.currentState!.validate()) {
+      if (_email.text.isNotEmpty &&
+          _password.text.isNotEmpty &&
+          _fullName.text.isNotEmpty &&
+          _policeID.text.isNotEmpty &&
+          _policeStation.text.isNotEmpty) {
+        Map<String, dynamic> phoneNumber =
+            await parse(_phone.text, region: 'TZ');
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.registerPolice(
+            user: User(
+                email: _email.text,
+                password: _password.text,
+                full_name: _fullName.text,
+                gender: gender,
+                phone_number: phoneNumber['e164'],
+                police_no: _policeID.text,
+                station: _policeStation.text));
+
+        if (_authProvider.isLoggedIn != null &&
+            _authProvider.isLoggedIn == true) {
+          await Provider.of<LocalStorageProvider>(context, listen: false)
+              .initialize();
+          Navigator.pop(context);
+
+          Navigator.pushAndRemoveUntil(context,
+              MaterialPageRoute(builder: (context) => Otp()), (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.red,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.white,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Signup Failed',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
   }
 }

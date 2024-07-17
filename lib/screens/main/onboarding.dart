@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 import 'package:unisafe/Services/storage.dart';
-import 'package:unisafe/screens/authorization/login.dart';
+import 'package:unisafe/screens/main/main_screen.dart';
+
+import '../../Services/stateObserver.dart';
 
 class Onboarding extends StatefulWidget {
   const Onboarding({super.key});
@@ -13,7 +15,17 @@ class Onboarding extends StatefulWidget {
 class _OnboardingState extends State<Onboarding> {
   final controller = PageController();
   bool isLastPage = false;
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
     controller.dispose();
 
     super.dispose();
@@ -188,7 +200,7 @@ class _OnboardingState extends State<Onboarding> {
                     await LocalStorage.storeOnboarding();
                     Navigator.of(context).push(
                       MaterialPageRoute(
-                        builder: (BuildContext context) => Login(),
+                        builder: (BuildContext context) => MainScreen(),
                       ),
                     );
                   },

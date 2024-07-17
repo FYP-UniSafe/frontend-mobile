@@ -1,0 +1,240 @@
+import 'dart:convert';
+import 'dart:developer';
+import 'dart:io';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
+import '../Models/Counsel.dart';
+import '../Services/storage.dart';
+import '../resources/constants.dart';
+import 'authProvider.dart';
+
+class CounselProvider extends ChangeNotifier {
+  bool? _isRequested;
+
+  bool? get isRequested => _isRequested;
+  List<Counsel> _appointments = [];
+  List<Counsel> _allAppointments = [];
+
+  List<Counsel> get appointments => _appointments;
+  List<Counsel> get allAppointments => _allAppointments;
+
+  // Future requestAppointment({required Counsel appointment}) async {
+  //   log(appointment.toJsonCounselData().toString());
+  //   String? token = await LocalStorage.getToken();
+  //   try {
+  //     var uri = Uri.parse('$baseUrl/appointments/create');
+  //     var request = http.MultipartRequest('POST', uri);
+  //
+  //     appointment.toJsonCounselData().forEach((key, value) {
+  //       request.fields[key] = value;
+  //     });
+  //
+  //     request.headers['Content-Type'] = 'application/json';
+  //     request.headers['Accept'] = 'application/json';
+  //     request.headers['Authorization'] = 'Bearer $token';
+  //     final response = await request.send();
+  //
+  //     String responseBody = await response.stream.bytesToString();
+  //     log('Response body: $responseBody');
+  //
+  //     if (response.statusCode == 200 || response.statusCode == 201) {
+  //       var output = jsonDecode(responseBody);
+  //       if (kDebugMode) {
+  //         print('Appointment requested successfully');
+  //       }
+  //       await getAppointments();
+  //       _isRequested = true;
+  //       notifyListeners();
+  //     } else if (response.statusCode == 401) {
+  //       log(responseBody);
+  //       AuthProvider.refreshToken();
+  //       await requestAppointment(appointment: appointment);
+  //     } else {
+  //       log(responseBody);
+  //       _isRequested = false;
+  //       notifyListeners();
+  //       if (kDebugMode) {
+  //         print(response.statusCode);
+  //         log(responseBody);
+  //         print('Appointment request failed');
+  //       }
+  //     }
+  //   } catch (e) {
+  //     _isRequested = false;
+  //     notifyListeners();
+  //     if (kDebugMode) {
+  //       print(e.toString());
+  //     }
+  //   }
+  // }
+  Future requestAppointment({required Counsel appointment}) async {
+    String? token = await LocalStorage.getToken();
+    try {
+      var uri = Uri.parse('$baseUrl/appointments/create');
+      var response = await http.post(uri,
+          headers: {
+            "Accept": "application/json",
+            "Authorization": "Bearer $token"
+          },
+          body: appointment.toJsonCounselData());
+      var responseBody = response.body;
+
+      if (response.statusCode == 200 || response.statusCode == 201) {
+        var output = jsonDecode(responseBody);
+        if (kDebugMode) {
+          print('Appointment requested successfully');
+        }
+        await getAppointments();
+        _isRequested = true;
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        log(responseBody);
+        AuthProvider.refreshToken();
+        await requestAppointment(appointment: appointment);
+      } else {
+        log(responseBody);
+        _isRequested = false;
+        notifyListeners();
+        if (kDebugMode) {
+          print(response.statusCode);
+          log(response.body);
+          print('Appointment request failed');
+        }
+      }
+    } catch (e) {
+      _isRequested = false;
+      notifyListeners();
+      if (kDebugMode) {
+        print(e.toString());
+      }
+    }
+  }
+
+  Future getAppointments() async {
+    String? token = await LocalStorage.getToken();
+    try {
+      http.Response response = await http
+          .get(Uri.parse("$baseUrl/appointments/list/requested"), headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      });
+
+      if (response.statusCode == 200) {
+        List output = jsonDecode(response.body);
+        _appointments = output.map((data) => Counsel.fromJson(data)).toList();
+        _appointments.sort;
+
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        AuthProvider.refreshToken();
+        await getAppointments();
+      } else {
+        _appointments = [];
+        notifyListeners();
+      }
+    } catch (e) {
+      _appointments = [];
+      notifyListeners();
+    }
+  }
+
+  Future getAllAppointments() async {
+    String? token = await LocalStorage.getToken();
+    try {
+      http.Response response =
+          await http.get(Uri.parse("$baseUrl/appointments/list/all"), headers: {
+        "Content-Type": "application/json",
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      });
+
+      if (response.statusCode == 200) {
+        List output = jsonDecode(response.body);
+        _allAppointments =
+            output.map((data) => Counsel.fromJson(data)).toList();
+        _allAppointments.sort;
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        log(response.body);
+        AuthProvider.refreshToken();
+        await getAllAppointments();
+      } else {
+        _allAppointments = [];
+        notifyListeners();
+        //throw HttpException(response.body);
+      }
+    } catch (e, stackTrace) {
+      log('', error: e, stackTrace: stackTrace, name: "CounselProvider");
+      _allAppointments = [];
+      notifyListeners();
+    }
+  }
+
+  Future<void> scheduleAppointment(String start_time, String end_time,
+      String appointment_id, String physical_location) async {
+    String? token = await LocalStorage.getToken();
+    final response = await http.post(
+      Uri.parse('$baseUrl/appointments/accept/$appointment_id/'),
+      headers: <String, String>{
+        'Content-Type': 'application/json',
+        "Accept": "application/json",
+        "Authorization": "Bearer $token",
+      },
+      body: jsonEncode(<String, String>{
+        'start_time': start_time,
+        'end_time': end_time,
+        'appointment_id': appointment_id,
+        'physical_location': physical_location,
+      }),
+    );
+
+    if (response.statusCode == 200) {
+      await getAllAppointments();
+      //log(response.body);
+    } else if (response.statusCode == 401) {
+      log(response.body);
+      AuthProvider.refreshToken();
+      await scheduleAppointment(
+          start_time, end_time, appointment_id, physical_location);
+    } else {
+      //log(response.body);
+
+      throw Exception('Failed to schedule the appointment');
+    }
+
+    notifyListeners();
+  }
+
+  Future<void> cancelAppointment(String appointment_id) async {
+    String? token = await LocalStorage.getToken();
+    final url = '$baseUrl/appointments/cancel/$appointment_id/';
+
+    try {
+      final response = await http.post(
+        Uri.parse(url),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        },
+      );
+      //log(response.body);
+      if (response.statusCode == 200) {
+        await getAppointments();
+
+        notifyListeners();
+      } else if (response.statusCode == 401) {
+        //log(response.body);
+        AuthProvider.refreshToken();
+        await cancelAppointment(appointment_id);
+      } else {
+        // log(response.body);
+        throw Exception('Failed to cancel the appointment');
+      }
+    } catch (error) {
+      print(error);
+      throw error;
+    }
+  }
+}

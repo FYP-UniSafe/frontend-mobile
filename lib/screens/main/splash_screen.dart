@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:unisafe/screens/authorization/login.dart';
 import 'package:unisafe/screens/main/onboarding.dart';
+import '../../Services/stateObserver.dart';
 import '../authorization/signup.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -11,10 +12,24 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
+
+
+  final _appStateObserver = AppStateObserver();
+
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
+
   @override
   void initState() {
-    super.initState();
+    WidgetsBinding.instance.addObserver(_appStateObserver);
     _navigateToHome();
+    super.initState();
+
   }
 
   Future<void> _navigateToHome() async {

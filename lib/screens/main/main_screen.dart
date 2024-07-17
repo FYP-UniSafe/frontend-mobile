@@ -1,8 +1,18 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'package:unisafe/screens/main/counsel/counsel_page.dart';
+import 'package:unisafe/screens/main/counsel/cu_dashboard.dart';
+import 'package:unisafe/screens/main/genderDesk/gd_dashboard.dart';
 import 'package:unisafe/screens/main/homepage.dart';
+import 'package:unisafe/screens/main/police/pf_dashboard.dart';
 import 'package:unisafe/screens/profile/profile_page.dart';
 import 'package:unisafe/screens/main/report/report_page.dart';
+
+import '../../Models/User.dart';
+import '../../Services/stateObserver.dart';
+import '../../Services/storage.dart';
 
 class MainScreen extends StatefulWidget {
   const MainScreen({super.key});
@@ -12,42 +22,117 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  List _pages = [
-    HomePage(),
-    ReportPage(),
-    CounselPage(),
-    ProfilePage(),
-  ];
-  List _titles = [
-    'UniSafe',
-    'Report a GBV',
-    'Seek Counsel',
-    'Profile',
-  ];
+  List _pages = [];
+  List _titles = [];
 
+  User? user;
   int currentSelectedIndex = 0;
+  late LocalStorageProvider _storageProvider;
 
   void updateCurrentIndex(int index) {
     setState(() {
       currentSelectedIndex = index;
     });
+  }
 
-    /*switch (index) {
-        case 0:
-          // Navigate to the Home page
-          break;
-        case 1:
-          // Navigate to the Report a GBV page
-          break;
-        case 2:
-          // Navigate to the Settings page
-          break;
-        case 3:
-          // Navigate to the Profile page
-          Navigator.push(
-              context, MaterialPageRoute(builder: (context) => ProfilePage()));
-          break;
-      }*/
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    _storageProvider =
+        Provider.of<LocalStorageProvider>(context, listen: false);
+    _initializePages();
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _storageProvider = Provider.of<LocalStorageProvider>(context);
+    _initializePages();
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
+  Future<void> _initializePages() async {
+    try {
+      user = _storageProvider.user;
+      if (user?.is_genderdesk == true) {
+        _pages = [
+          GDDashboard(),
+          ProfilePage(),
+        ];
+
+        _titles = [
+          'UniSafe',
+          'Profile',
+        ];
+        if (currentSelectedIndex > _pages.length) {
+          currentSelectedIndex = 0;
+        }
+      } else if (user?.is_consultant == true) {
+        _pages = [
+          CUDashboard(),
+          ProfilePage(),
+        ];
+        _titles = [
+          'UniSafe',
+          'Profile',
+        ];
+        if (currentSelectedIndex > _pages.length) {
+          currentSelectedIndex = 0;
+        }
+      } else if (user?.is_police == true) {
+        _pages = [
+          PFDashboard(),
+          ProfilePage(),
+        ];
+        _titles = [
+          'UniSafe',
+          'Profile',
+        ];
+        if (currentSelectedIndex > _pages.length) {
+          currentSelectedIndex = 0;
+        }
+      } else {
+        _pages = [
+          HomePage(),
+          ReportPage(),
+          CounselPage(),
+          ProfilePage(),
+        ];
+        _titles = [
+          'UniSafe',
+          'Report a GBV',
+          'Seek Counsel',
+          'Profile',
+        ];
+        if (currentSelectedIndex > _pages.length) {
+          currentSelectedIndex = 0;
+        }
+      }
+    } catch (e) {
+      _pages = [
+        HomePage(),
+        ReportPage(),
+        CounselPage(),
+        ProfilePage(),
+      ];
+      _titles = [
+        'UniSafe',
+        'Report a GBV',
+        'Seek Counsel',
+        'Profile',
+      ];
+      if (currentSelectedIndex > _pages.length) {
+        currentSelectedIndex = 0;
+      }
+    }
   }
 
   @override
@@ -76,18 +161,20 @@ class _MainScreenState extends State<MainScreen> {
                 size: 26.0,
               ),
               label: 'Home'),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.report,
-                size: 26.0,
-              ),
-              label: 'Report a GBV'),
-          BottomNavigationBarItem(
-              icon: Icon(
-                Icons.assistant,
-                size: 26.0,
-              ),
-              label: 'Seek Counsel'),
+          if (user != null ? (user!.is_student ?? false) : true)
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.report,
+                  size: 26.0,
+                ),
+                label: 'Report a GBV'),
+          if (user != null ? (user!.is_student ?? false) : true)
+            BottomNavigationBarItem(
+                icon: Icon(
+                  Icons.assistant,
+                  size: 26.0,
+                ),
+                label: 'Seek Counsel'),
           BottomNavigationBarItem(
               icon: Icon(
                 Icons.person,

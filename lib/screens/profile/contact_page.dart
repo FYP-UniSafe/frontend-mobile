@@ -1,6 +1,9 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_linkify/flutter_linkify.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import '../../Services/stateObserver.dart';
 
 class ContactPage extends StatefulWidget {
   const ContactPage({super.key});
@@ -10,6 +13,21 @@ class ContactPage extends StatefulWidget {
 }
 
 class _ContactPageState extends State<ContactPage> {
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -136,11 +154,14 @@ class _ContactPageState extends State<ContactPage> {
                 SizedBox(
                   height: 4.0,
                 ),
-                Linkify(
-                  onOpen: _onOpen,
-                  text:
-                      "Please contact unisafe.reports@gmail.com for any queries relating to GBV incident reporting, counselling services or user account.",
-                  style: TextStyle(fontSize: 16.0),
+                SafeArea(
+                  bottom: true,
+                  child: Linkify(
+                    onOpen: _onOpen,
+                    text:
+                        "Please contact unisafe.reports@gmail.com for any queries relating to GBV incident reporting, counselling services or user account.",
+                    style: TextStyle(fontSize: 16.0),
+                  ),
                 )
               ],
             ),

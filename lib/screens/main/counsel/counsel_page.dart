@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+import 'package:unisafe/Services/storage.dart';
 import 'package:unisafe/screens/main/counsel/all_appointments.dart';
-
 import 'package:unisafe/screens/main/counsel/book_counsel.dart';
+
+import '../../../Models/User.dart';
+import '../../../Services/stateObserver.dart';
 
 class CounselPage extends StatefulWidget {
   const CounselPage({super.key});
@@ -11,6 +15,30 @@ class CounselPage extends StatefulWidget {
 }
 
 class _CounselPageState extends State<CounselPage> {
+  final _appStateObserver = AppStateObserver();
+  late LocalStorageProvider _storageProvider;
+  late User _user;
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _storageProvider = Provider.of<LocalStorageProvider>(context);
+    try {
+      _user = _storageProvider.user!;
+    } catch (e) {}
+    super.didChangeDependencies();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -47,36 +75,37 @@ class _CounselPageState extends State<CounselPage> {
               SizedBox(
                 height: 16.0,
               ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => BookCounsel(),
+              if (_storageProvider.user != null)
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => BookCounsel(),
+                      ),
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    backgroundColor: Colors.white,
-                    side: BorderSide(
+                    style: ElevatedButton.styleFrom(
+                      elevation: 3,
+                      backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                      /*side: BorderSide(
                       width: 1.0,
                       color: Color.fromRGBO(8, 100, 175, 1.0),
+                    ),*/
+                      padding: EdgeInsets.all(12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
                     ),
-                    padding: EdgeInsets.all(12.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  child: Text(
-                    'Book Session Here',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(8, 100, 175, 1.0),
+                    child: Text(
+                      'Book Session Here',
+                      style: TextStyle(
+                        fontSize: 18.0,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
                     ),
                   ),
                 ),
-              ),
               SizedBox(
                 height: 20.0,
               ),
@@ -89,7 +118,7 @@ class _CounselPageState extends State<CounselPage> {
                 color: Color.fromRGBO(8, 100, 175, 1.0),
               ),
               Text(
-                'View scheduled appointments below',
+                'View scheduled appointments',
                 style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
               ),
               SizedBox(
@@ -110,104 +139,52 @@ class _CounselPageState extends State<CounselPage> {
                   width: double.infinity,
                 ),
               ),
-              SizedBox(
-                width: double.infinity,
-                child: ElevatedButton(
-                  onPressed: () => Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (BuildContext context) => AllAppointments(),
+              if (_storageProvider.user != null) ...[
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton(
+                    onPressed: () => Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (BuildContext context) => AllAppointments(),
+                      ),
                     ),
-                  ),
-                  style: ElevatedButton.styleFrom(
-                    elevation: 3,
-                    backgroundColor: Colors.white,
-                    side: BorderSide(
-                      width: 1.0,
-                      color: Color.fromRGBO(8, 100, 175, 1.0),
+                    style: ElevatedButton.styleFrom(
+                      elevation: 3,
+                      backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                      foregroundColor: Colors.white,
+                      /*side: BorderSide(
+                          width: 1.0,
+                          color: Color.fromRGBO(8, 100, 175, 1.0),
+                        ),*/
+                      padding: EdgeInsets.all(12.0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(5.0),
+                      ),
                     ),
-                    padding: EdgeInsets.all(12.0),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(5.0),
-                    ),
-                  ),
-                  child: Text(
-                    'All Appointments',
-                    style: TextStyle(
-                      fontSize: 18.0,
-                      fontWeight: FontWeight.bold,
-                      color: Color.fromRGBO(8, 100, 175, 1.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Align(
+                            alignment: Alignment.center,
+                            child: Text(
+                              'All Appointments',
+                              style: TextStyle(
+                                  fontSize: 17, fontWeight: FontWeight.normal),
+                            ),
+                          ),
+                        ),
+                        Icon(
+                          Icons.arrow_forward_ios,
+                          size: 20.0,
+                        ),
+                      ],
                     ),
                   ),
                 ),
-              ),
-              SizedBox(
-                height: 12.0,
-              ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.45,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => AllAppointments(),
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        elevation: 3,
-                        backgroundColor: Colors.white,
-                        side: BorderSide(
-                          width: 1.0,
-                          color: Color.fromRGBO(8, 100, 175, 1.0),
-                        ),
-                        padding: EdgeInsets.all(12.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                      ),
-                      child: Text(
-                        'Open',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(8, 100, 175, 1.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  SizedBox(
-                    width: MediaQuery.of(context).size.width * 0.45,
-                    child: ElevatedButton(
-                      onPressed: () => Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (BuildContext context) => AllAppointments(),
-                        ),
-                      ),
-                      style: ElevatedButton.styleFrom(
-                        elevation: 3,
-                        backgroundColor: Colors.white,
-                        side: BorderSide(
-                          width: 1.0,
-                          color: Color.fromRGBO(8, 100, 175, 1.0),
-                        ),
-                        padding: EdgeInsets.all(12.0),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
-                        ),
-                      ),
-                      child: Text(
-                        'Closed',
-                        style: TextStyle(
-                          fontSize: 18.0,
-                          fontWeight: FontWeight.bold,
-                          color: Color.fromRGBO(8, 100, 175, 1.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
+                SizedBox(
+                  height: 12.0,
+                ),
+              ]
             ],
           ),
         ),

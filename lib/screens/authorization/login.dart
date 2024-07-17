@@ -3,10 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:loading_indicator/loading_indicator.dart';
 import 'package:provider/provider.dart';
 import 'package:unisafe/Providers/authProvider.dart';
-import 'package:unisafe/screens/authorization/password_reset.dart';
+import 'package:unisafe/Providers/counselProvider.dart';
+import 'package:unisafe/Services/storage.dart';
+import 'package:unisafe/main.dart';
+import 'package:unisafe/screens/authorization/forgot_password.dart';
 import 'package:unisafe/screens/authorization/signup.dart';
 
-import '../../Providers/Models/User.dart';
+import '../../Models/User.dart';
+import '../../Providers/reportProvider.dart';
+import '../../Services/stateObserver.dart';
 import '../../Widgets/Flashbar/flashbar.dart';
 import '../../resources/validator.dart';
 import '../main/main_screen.dart';
@@ -25,12 +30,29 @@ class _LoginState extends State<Login> {
 
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  late ReportProvider reportProvider;
+  late CounselProvider counselProvider;
 
   late AuthProvider _authProvider;
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
 
   @override
   void didChangeDependencies() {
     _authProvider = Provider.of<AuthProvider>(context);
+    reportProvider = Provider.of<ReportProvider>(context);
+    counselProvider = Provider.of<CounselProvider>(context);
     super.didChangeDependencies();
   }
 
@@ -134,7 +156,7 @@ class _LoginState extends State<Login> {
                               onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          PasswordReset())),
+                                          ForgotPassword())),
                               child: Text(
                                 'Forgot Password?',
                                 style: TextStyle(
@@ -170,11 +192,10 @@ class _LoginState extends State<Login> {
                                   color: Colors.black, fontSize: 18.0),
                             ),
                             GestureDetector(
-                              onTap: () => Navigator.pushAndRemoveUntil(
+                              onTap: () => Navigator.pushReplacement(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => SignUp()),
-                                  (route) => false),
+                                      builder: (context) => SignUp())),
                               child: Text(
                                 'Sign Up',
                                 style: TextStyle(
@@ -231,26 +252,37 @@ class _LoginState extends State<Login> {
 
         if (_authProvider.isLoggedIn != null &&
             _authProvider.isLoggedIn == true) {
+          await Future.wait([
+            reportProvider.getReports(),
+            reportProvider.fetchAnonymousForwardedReports(),
+            reportProvider.fetchForwardedReports(),
+            counselProvider.getAppointments(),
+            counselProvider.getAllAppointments(),
+            Provider.of<LocalStorageProvider>(context, listen: false)
+                .initialize()
+          ]);
+
           Navigator.pop(context);
-          Navigator.pushAndRemoveUntil(
-              context,
-              MaterialPageRoute(builder: (context) => MainScreen()),
-              (route) => false);
+          Navigator.pop(context);
+          // Navigator.pushAndRemoveUntil(
+          //     context,
+          //     MaterialPageRoute(builder: (context) => MainScreen()),
+          //     (route) => false);
         } else {
           Navigator.pop(context);
           Flashbar(
             flashbarPosition: FlashbarPosition.TOP,
-            borderRadius: BorderRadius.circular(12),
-            backgroundColor: Colors.black,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.red,
             icon: Icon(
               CupertinoIcons.exclamationmark_triangle,
-              color: Colors.red,
+              color: Colors.white,
               size: 32,
             ),
             titleText: Text(
               'Alert',
               style: TextStyle(
-                  color: Colors.red,
+                  color: Colors.white,
                   fontFamily: 'Poppins',
                   fontSize: 18,
                   fontWeight: FontWeight.w500),
@@ -258,7 +290,7 @@ class _LoginState extends State<Login> {
             messageText: Text(
               'Login Failed',
               style: TextStyle(
-                  color: Colors.red,
+                  color: Colors.white,
                   fontFamily: 'Poppins',
                   fontSize: 16,
                   fontWeight: FontWeight.w500),

@@ -48,6 +48,15 @@ dependencies:
   http: ^1.2.1
   shared_preferences: '>=2.0.0 <3.0.0'
   flutter_secure_storage: ^9.0.0
+  flutter_libphonenumber: ^2.2.1
+  image_picker: ^1.0.8
+  google_maps_flutter: ^2.6.1
+  fl_chart: ^0.68.0
+  collection: ^1.18.0
+  firebase_core: ^3.1.1
+  firebase_messaging: ^15.0.2
+  flutter_local_notifications: ^17.2.1
+  videosdk: ^1.1.12
 
 dev_dependencies:
   flutter_test:
@@ -56,10 +65,8 @@ dev_dependencies:
 
 flutter_launcher_icons:
   android: "launcher_icon"
-  ios: true
   image_path: "assets/images/unisafe_icon.png"
   adaptive_icon_background: "#0864AF"
-  remove_alpha_ios: true
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
@@ -94,6 +101,10 @@ flutter:
       - assets/images/world-bank-group.png
       - assets/images/un_women.png
       - assets/images/who_gbv.png
+      - assets/images/amnesty_logo.jpg
+      - assets/images/HRW_Logo.jpg
+      - assets/images/nkr.png
+      - assets/images/logo_ud.png
       - .env
 
   # An image asset can refer to one or more resolution-specific "variants", see

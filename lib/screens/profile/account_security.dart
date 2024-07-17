@@ -1,7 +1,15 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:loading_indicator/loading_indicator.dart';
+import 'package:provider/provider.dart';
 import 'package:unisafe/resources/validator.dart';
 
-import '../authorization/password_reset.dart';
+import '../../Models/User.dart';
+import '../../Providers/authProvider.dart';
+import '../../Services/stateObserver.dart';
+import '../../Widgets/Flashbar/flashbar.dart';
+import '../authorization/login.dart';
+import '../authorization/forgot_password.dart';
 
 class AccountSecurity extends StatefulWidget {
   const AccountSecurity({super.key});
@@ -13,6 +21,31 @@ class AccountSecurity extends StatefulWidget {
 class _AccountSecurityState extends State<AccountSecurity> {
   final _formKey = GlobalKey<FormState>();
   bool _isHidden = true;
+  bool _isHidden2 = true;
+  late AuthProvider _authProvider;
+  String old_password = '';
+  String new_password = '';
+  final _oldpasswordController = TextEditingController();
+  final _newpasswordController = TextEditingController();
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
+  @override
+  void didChangeDependencies() {
+    _authProvider = Provider.of<AuthProvider>(context);
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -60,6 +93,7 @@ class _AccountSecurityState extends State<AccountSecurity> {
                           height: 20.0,
                         ),
                         TextFormField(
+                          controller: _oldpasswordController,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           obscureText: _isHidden,
                           style: TextStyle(color: Colors.black),
@@ -102,7 +136,7 @@ class _AccountSecurityState extends State<AccountSecurity> {
                               onTap: () => Navigator.of(context).push(
                                   MaterialPageRoute(
                                       builder: (BuildContext context) =>
-                                          PasswordReset())),
+                                          ForgotPassword())),
                               child: Text(
                                 'Forgot login details?',
                                 style: TextStyle(
@@ -115,8 +149,9 @@ class _AccountSecurityState extends State<AccountSecurity> {
                           height: 8.0,
                         ),
                         TextFormField(
+                          controller: _newpasswordController,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
-                          obscureText: _isHidden,
+                          obscureText: _isHidden2,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
                             contentPadding: EdgeInsets.symmetric(
@@ -132,9 +167,9 @@ class _AccountSecurityState extends State<AccountSecurity> {
                             ),
                             labelText: 'New Password',
                             suffixIcon: InkWell(
-                              onTap: _togglePasswordView,
+                              onTap: _togglePasswordView2,
                               child: Icon(
-                                _isHidden
+                                _isHidden2
                                     ? Icons.visibility
                                     : Icons.visibility_off,
                                 size: 20,
@@ -147,9 +182,7 @@ class _AccountSecurityState extends State<AccountSecurity> {
                         ),
                         SizedBox(height: 20.0),
                         ElevatedButton(
-                          onPressed: () {
-                            if (_formKey.currentState!.validate()) {}
-                          },
+                          onPressed: _changePassword,
                           style: ElevatedButton.styleFrom(
                             foregroundColor: Colors.white,
                             backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
@@ -180,5 +213,80 @@ class _AccountSecurityState extends State<AccountSecurity> {
     setState(() {
       _isHidden = !_isHidden;
     });
+  }
+
+  void _togglePasswordView2() {
+    setState(() {
+      _isHidden2 = !_isHidden2;
+    });
+  }
+
+  _changePassword() async {
+    if (_formKey.currentState!.validate()) {
+      if (_oldpasswordController.text.isNotEmpty &&
+          _newpasswordController.text.isNotEmpty) {
+        showDialog(
+            context: context,
+            barrierDismissible: false,
+            builder: (BuildContext context) {
+              return Dialog(
+                backgroundColor: Colors.transparent,
+                elevation: 0,
+                child: Container(
+                  height: 100,
+                  width: 100,
+                  alignment: Alignment.center,
+                  child: LoadingIndicator(
+                    indicatorType: Indicator.ballPulseRise,
+                    colors: [Color.fromRGBO(8, 100, 175, 1.0)],
+                  ),
+                ),
+              );
+            });
+
+        await _authProvider.changePassword(
+          old_password: _oldpasswordController.text,
+          new_password: _newpasswordController.text,
+        );
+        if (_authProvider.isChanged != null &&
+            _authProvider.isChanged == true) {
+          Navigator.pop(context);
+
+          Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(builder: (context) => Login()),
+              (route) => false);
+        } else {
+          Navigator.pop(context);
+          Flashbar(
+            flashbarPosition: FlashbarPosition.TOP,
+            borderRadius: BorderRadius.circular(5),
+            backgroundColor: Colors.red,
+            icon: Icon(
+              CupertinoIcons.exclamationmark_triangle,
+              color: Colors.white,
+              size: 32,
+            ),
+            titleText: Text(
+              'Alert',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 18,
+                  fontWeight: FontWeight.w500),
+            ),
+            messageText: Text(
+              'Password Change Failed',
+              style: TextStyle(
+                  color: Colors.white,
+                  fontFamily: 'Poppins',
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500),
+            ),
+            duration: Duration(seconds: 3),
+          ).show(context);
+        }
+      }
+    }
   }
 }

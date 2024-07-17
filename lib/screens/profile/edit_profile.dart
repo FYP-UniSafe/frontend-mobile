@@ -1,6 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:unisafe/resources/formats.dart';
 import 'package:unisafe/resources/validator.dart';
-import 'package:unisafe/resources/validator.dart';
+import 'dart:io';
+
+import '../../Services/stateObserver.dart';
+import '../../Services/storage.dart';
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -11,6 +17,52 @@ class EditProfile extends StatefulWidget {
 
 class _EditProfileState extends State<EditProfile> {
   final _formKey = GlobalKey<FormState>();
+
+  TextEditingController _fullName = TextEditingController();
+  TextEditingController _phone = TextEditingController();
+  TextEditingController _email = TextEditingController();
+
+  late LocalStorageProvider storageProvider;
+
+  final _appStateObserver = AppStateObserver();
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
+  }
+
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    final storageProviders =
+        Provider.of<LocalStorageProvider>(context, listen: false);
+
+    if (storageProviders.user!.full_name != null) {
+      _fullName = TextEditingController(text: storageProviders.user!.full_name);
+    }
+
+    if (storageProviders.user!.phone_number != null) {
+      _phone = TextEditingController(text: storageProviders.user!.phone_number);
+    }
+
+    if (storageProviders.user!.email != null) {
+      _email = TextEditingController(text: storageProviders.user!.email);
+    }
+    if (storageProviders.user!.college != null) {
+      college = storageProviders.user!.college;
+    }
+
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    storageProvider = Provider.of<LocalStorageProvider>(context);
+
+    super.didChangeDependencies();
+  }
+
   List<String> colleges = [
     "CoSS",
     "CoICT",
@@ -32,8 +84,25 @@ class _EditProfileState extends State<EditProfile> {
   ];
   String? college;
 
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _changeProfileImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
+    if (pickedFile != null) {
+      File imageFile = File(pickedFile.path);
+      await LocalStorage.storeProfileImage(imageFile, profile: '');
+
+      setState(() {
+        // Update your profile image widget with the new image
+        //_profileImage = imageFile;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    print(storageProvider.user!.college);
     return Scaffold(
         resizeToAvoidBottomInset: true,
         appBar: AppBar(
@@ -61,38 +130,25 @@ class _EditProfileState extends State<EditProfile> {
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Center(
-                child: Stack(
-                  children: [
-                    SizedBox(
-                      width: 120,
-                      height: 120,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(100),
-                        child: Image(
-                          image: AssetImage('assets/images/profile_image.jpg'),
-                        ),
-                      ),
-                    ),
-                    Positioned(
-                      bottom: 0,
-                      right: 0,
-                      child: Container(
-                        width: 35,
-                        height: 35,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(100),
-                        ),
-                        child: IconButton(
-                          icon: Icon(
-                            Icons.photo_camera,
-                            size: 28.0,
-                          ),
-                          color: Colors.grey.shade700,
-                          onPressed: () {},
-                        ),
-                      ),
-                    ),
-                  ],
+                child: SizedBox(
+                  width: 100,
+                  height: 100,
+                  child: Material(
+                    elevation: 4,
+                    shadowColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(60),
+                        side: BorderSide(color: Colors.grey)),
+                    child: Center(
+                        child: Text(
+                      storageProvider.user!.full_name
+                          .toString()
+                          .extractInitials(),
+                      textAlign: TextAlign.center,
+                      style:
+                          TextStyle(fontSize: 42, fontWeight: FontWeight.w500),
+                    )),
+                  ),
                 ),
               ),
               SizedBox(
@@ -108,6 +164,7 @@ class _EditProfileState extends State<EditProfile> {
                       padding: EdgeInsets.only(top: 8.0),
                       children: [
                         TextFormField(
+                          controller: _fullName,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
@@ -128,6 +185,7 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
+                          controller: _phone,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
@@ -148,6 +206,7 @@ class _EditProfileState extends State<EditProfile> {
                         ),
                         SizedBox(height: 20.0),
                         TextFormField(
+                          controller: _email,
                           autovalidateMode: AutovalidateMode.onUserInteraction,
                           style: TextStyle(color: Colors.black),
                           decoration: InputDecoration(
@@ -167,41 +226,43 @@ class _EditProfileState extends State<EditProfile> {
                               TextFormValidators.emailValidator(text!),
                         ),
                         SizedBox(height: 20.0),
-                        DropdownButtonFormField(
-                          //alignment: Alignment.bottomCenter,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          borderRadius: BorderRadius.circular(5.0),
-                          icon: Icon(Icons.arrow_drop_down),
-                          hint: Text('College / School'),
-                          validator: (text) =>
-                              TextFormValidators.chooseItems(text),
-                          decoration: InputDecoration(
-                            contentPadding: EdgeInsets.symmetric(
-                                horizontal: 12.0, vertical: 12.0),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
+                        if (storageProvider.user?.is_student == true)
+                          DropdownButtonFormField(
+                            //alignment: Alignment.bottomCenter,
+                            autovalidateMode:
+                                AutovalidateMode.onUserInteraction,
+                            borderRadius: BorderRadius.circular(5.0),
+                            icon: Icon(Icons.arrow_drop_down),
+                            hint: Text('College / School'),
+                            validator: (text) =>
+                                TextFormValidators.chooseItems(text),
+                            decoration: InputDecoration(
+                              contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12.0, vertical: 12.0),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderSide:
+                                    BorderSide(color: Colors.black, width: 1.3),
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(5.0),
+                              ),
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: Colors.black, width: 1.3),
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
-                            focusedBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(5.0),
-                            ),
+                            value: college,
+                            items: colleges
+                                .map((e) => DropdownMenuItem<String>(
+                                    value: e.toString(), child: Text(e)))
+                                .toList(),
+                            onChanged: (value) {
+                              setState(() {
+                                college = value;
+                              });
+                            },
                           ),
-                          value: college,
-                          items: colleges
-                              .map((e) => DropdownMenuItem<String>(
-                                  value: e.toString(), child: Text(e)))
-                              .toList(),
-                          onChanged: (value) {
-                            setState(() {
-                              college = value;
-                            });
-                          },
-                        ),
-                        SizedBox(height: 30.0),
+                        SizedBox(height: 20.0),
                         ElevatedButton(
                           onPressed: () {
                             if (_formKey.currentState!.validate()) {}

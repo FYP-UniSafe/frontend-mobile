@@ -2,8 +2,10 @@ import 'package:email_validator/email_validator.dart';
 
 class TextFormValidators {
   static String? passwordValidator(String password) {
-    if (password.isEmpty) {
-      return "Password can't be empty";
+    RegExp passwordPattern = RegExp(
+        r"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%?&])[A-Za-z\d@$!%?&]{8,}$");
+    if (!passwordPattern.hasMatch(password)) {
+      return 'At least one uppercase, one digit and one special character is required';
     }
     return null;
   }
@@ -21,10 +23,11 @@ class TextFormValidators {
   }
 
   static String? phoneValidator(String phone) {
-    RegExp phoneNumberPattern = RegExp(r'^\d{10,}$');
+    RegExp phoneNumberPattern1 = RegExp(r'^\d{10,}$');
+    RegExp phoneNumberPattern = RegExp(r'^\+\d{1,3}\d{9,}$');
     if (phone.isEmpty) {
       return 'Phone Number is required';
-    } else if (!phoneNumberPattern.hasMatch(phone)) {
+    } else if (!phoneNumberPattern.hasMatch(phone)&&!phoneNumberPattern1.hasMatch(phone)){
       return 'At least 10 digits required';
     }
     return null;

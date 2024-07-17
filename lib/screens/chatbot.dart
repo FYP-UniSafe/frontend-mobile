@@ -1,6 +1,8 @@
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:google_generative_ai/google_generative_ai.dart';
 import 'package:intl/intl.dart';
+import '../Services/stateObserver.dart';
 
 class Chatbot extends StatefulWidget {
   const Chatbot({super.key});
@@ -12,27 +14,55 @@ class Chatbot extends StatefulWidget {
 class _ChatbotState extends State<Chatbot> {
   final TextEditingController _userMessage = TextEditingController();
 
-  static const apiKey = "AIzaSyCmo0AfJPbR6hlCPkvzhOlpSi4xaToU5IY";
+  static const apiKey = "AIzaSyD3sr9dj9MhXRI7QaklXF34PRam3g73oTA";
 
-  final model = GenerativeModel(model: 'gemini-pro', apiKey: apiKey);
+  final model = GenerativeModel(
+    model: 'gemini-1.5-pro',
+    apiKey: apiKey,
+  );
 
   final List<Message> _messages = [];
 
   Future<void> sendMessage() async {
     final message = _userMessage.text;
     _userMessage.clear();
-
     setState(() {
       _messages
           .add(Message(isUser: true, message: message, date: DateTime.now()));
     });
 
     final content = [Content.text(message)];
-    final response = await model.generateContent(content);
-    setState(() {
-      _messages.add(Message(
-          isUser: false, message: response.text ?? "", date: DateTime.now()));
-    });
+    try {
+      final response = await model.generateContent(
+        content,
+      );
+
+      setState(() {
+        _messages.add(Message(
+            isUser: false, message: response.text ?? "", date: DateTime.now()));
+      });
+    } catch (e) {
+      log('Error: $e');
+      /*setState(() {
+        _messages.add(Message(
+            isUser: false,
+            message: "Error: Unable to generate response.",
+            date: DateTime.now()));
+      });*/
+    }
+  }
+
+  final _appStateObserver = AppStateObserver();
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(_appStateObserver);
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(_appStateObserver);
+    super.dispose();
   }
 
   @override
@@ -53,7 +83,7 @@ class _ChatbotState extends State<Chatbot> {
             ),
           ),
           title: Text(
-            'Chat Bot',
+            'Conversational AI',
             style: TextStyle(
                 fontSize: 20.0,
                 fontWeight: FontWeight.bold,
@@ -75,52 +105,49 @@ class _ChatbotState extends State<Chatbot> {
                     );
                   }),
             ),
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
-              child: Row(
-                children: [
-                  Expanded(
-                    flex: 15,
-                    child: TextFormField(
-                      controller: _userMessage,
-                      style: TextStyle(color: Colors.black),
-                      decoration: InputDecoration(
-                        contentPadding: EdgeInsets.symmetric(
-                            horizontal: 12.0, vertical: 12.0),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
+            SafeArea(
+              top: false,
+              bottom: true,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 8.0, vertical: 8.0),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 15,
+                      child: TextFormField(
+                        controller: _userMessage,
+                        style: TextStyle(color: Colors.black),
+                        decoration: InputDecoration(
+                          contentPadding: EdgeInsets.symmetric(
+                              horizontal: 12.0, vertical: 12.0),
+                          border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                          ),
+                          enabledBorder: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10.0),
+                            borderSide:
+                                BorderSide(color: Colors.black, width: 1.1),
+                          ),
+                          labelText: 'Message',
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide:
-                              BorderSide(color: Colors.black, width: 1.1),
-                        ),
-                        labelText: 'Message',
                       ),
                     ),
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                  IconButton(
-                    padding: EdgeInsets.all(15.0),
-                    iconSize: 22.0,
-                    style: ButtonStyle(
-                      backgroundColor:
-                          MaterialStateProperty.resolveWith((states) {
-                        if (states.contains(MaterialState.pressed)) {
-                          return Color.fromRGBO(8, 100, 175, 1.0);
-                        }
-                        return Color.fromRGBO(8, 100, 175, 1.0);
-                      }),
-                      foregroundColor: MaterialStateProperty.all(Colors.white),
+                    SizedBox(
+                      width: 10.0,
                     ),
-                    onPressed: () {
-                      sendMessage();
-                    },
-                    icon: Icon(Icons.send),
-                  ),
-                ],
+                    IconButton(
+                      padding: EdgeInsets.all(15.0),
+                      iconSize: 22.0,
+                      style: IconButton.styleFrom(
+                          backgroundColor: Color.fromRGBO(8, 100, 175, 1.0),
+                          foregroundColor: Colors.white),
+                      onPressed: () {
+                        sendMessage();
+                      },
+                      icon: Icon(Icons.send),
+                    ),
+                  ],
+                ),
               ),
             )
           ],

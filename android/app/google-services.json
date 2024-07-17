@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "440705950825",
+    "project_id": "unisafe-421118",
+    "storage_bucket": "unisafe-421118.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:440705950825:android:a36e6a469881eb5c68aef8",
+        "android_client_info": {
+          "package_name": "com.example.unisafe"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAsJiOQnAMkEGEEjBTcd9-VKq80uebj6Mw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
