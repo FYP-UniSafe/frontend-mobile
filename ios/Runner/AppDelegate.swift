@@ -9,7 +9,7 @@ import flutter_local_notifications
     _ application: UIApplication,
     didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
   ) -> Bool {
-    GMSServices.provideAPIKey("AIzaSyBZ1WM4F7jNn0w8s3kaQr1_1yblH9thlT8")
+    GMSServices.provideAPIKey("api_key_here")
     GeneratedPluginRegistrant.register(with: self)
       FlutterLocalNotificationsPlugin.setPluginRegistrantCallback { (registry) in
         GeneratedPluginRegistrant.register(with: registry)
